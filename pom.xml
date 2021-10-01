@@ -31,7 +31,25 @@
         <spring-format.version>0.0.19</spring-format.version>
 
     </properties>
-
+    
+	<developers>
+ <developer>
+ <id>antlopcub</id>
+ <name>Antonio José</name>
+ <email>antlopcub@alum.us.es</email>
+ <url>https://github.com/antlopcub</url>
+ <roles>
+ <role>leader</role>
+ </roles>
+ <properties>
+ <picUrl>
+https://www.anaitgames.com/wp-content/uploads/2020/07/hollow-knight-tn.jpg
+</picUrl>
+ </properties>
+ </developer>
+ <!-- More developers ...-->
+</developers>
+	
     <dependencies>
         <!-- Spring and Spring Boot dependencies -->
         <dependency>
