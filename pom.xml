@@ -63,6 +63,20 @@
 		  </picUrl>
  	    </properties>
  		</developer>
+ 	 <developer>
+        <id>josmarluq</id>
+        <name>Jose</name>
+        <email>josemanuelmartinluque@outlook.com</email>
+        <url>https://github.com/RingoML</url>
+         <roles>
+        <role>leader</role>
+          </roles>
+         <properties>
+            <picUrl>
+          https://i.pinimg.com/474x/44/2a/8c/442a8cdde3891bdabb4763d9d208c494.jpg
+        </picUrl>
+        </properties>
+        </developer>
 
   
   
