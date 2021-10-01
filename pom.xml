@@ -31,8 +31,58 @@
         <spring-format.version>0.0.19</spring-format.version>
 
     </properties>
+
+  
   
 		<developers>
+      
+      <developer>
+        <id>ivamorgra</id>
+        <name>Ivan</name>
+        <email>imorenogranado@gmail.com</email>
+        <url>https://github.com/ivamorgra</url>
+         <roles>
+        <role>leader</role>
+          </roles>
+         <properties>
+            <picUrl>
+          https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/1200/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=fl2H3Opv
+        </picUrl>
+        </properties>
+        </developer>
+      <developer>
+ 		<id>Rafasana14</id>
+		<name>Rafa</name>
+ 		  <email>rafasana9@gmail.com</email>
+ 		  <url></url>
+ 		  <roles>
+ 			  <role>leader</role>
+ 		  </roles>
+ 	    <properties>
+		  <picUrl>
+		  </picUrl>
+ 	    </properties>
+ 		</developer>
+
+  
+  
+  
+  
+      <developer>
+      <id>antlopcub</id>
+      <name>Antonio José</name>
+      <email>antlopcub@alum.us.es</email>
+      <url>https://github.com/antlopcub</url>
+      <roles>
+      <role>leader</role>
+       </roles>
+       <properties>
+      <picUrl>
+      https://www.anaitgames.com/wp-content/uploads/2020/07/hollow-knight-tn.jpg
+      </picUrl>
+      </properties>
+      </developer>
+      
       <developer>
         <id>migrivros</id>
         <name>Miguel Angel Rivas Rosado</name>
