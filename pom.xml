@@ -31,9 +31,31 @@
         <spring-format.version>0.0.19</spring-format.version>
 
     </properties>
+
   
   
 		<developers>
+      
+      <developer>
+        <id>ivamorgra</id>
+        <name>Ivan</name>
+        <email>imorenogranado@gmail.com</email>
+        <url>https://github.com/ivamorgra</url>
+         <roles>
+        <role>leader</role>
+          </roles>
+         <properties>
+            <picUrl>
+          https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/1200/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=fl2H3Opv
+        </picUrl>
+        </properties>
+        </developer>
+      <!-- More developers ...-->
+
+  
+  
+  
+  
       <developer>
       <id>antlopcub</id>
       <name>Antonio José</name>
@@ -78,7 +100,7 @@
         </properties>
       </developer>
 	  </developers>
-  
+
     <dependencies>
         <!-- Spring and Spring Boot dependencies -->
         <dependency>
