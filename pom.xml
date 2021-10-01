@@ -31,22 +31,51 @@
         <spring-format.version>0.0.19</spring-format.version>
 
     </properties>
-	<developers>
- 		<developer>
- 			<id>Leo</id>
-			<name>Leonardo</name>
- 			<email>leo@tmht.com</email>
- 			<url>http://www.tmht.com/leo</url>
- 			<roles>
- 				<role>leader</role>
- 			</roles>
- 	<properties>
-		<picUrl>
-			
-		</picUrl>
- 	</properties>
- 		</developer>
-	</developers>
+  
+		<developers>
+      <developer>
+        <id>migrivros</id>
+        <name>Miguel Angel Rivas Rosado</name>
+        <email>migrivros@alum.us.es</email>
+        <url>https://github.com/migrivros</url>
+        <roles>
+          <role>leader</role>
+        </roles>
+        <properties>
+          <picUrl>
+            https://avatars.githubusercontent.com/u/80229162?v=4
+          </picUrl>
+        </properties>
+      </developer>
+      <developer>
+ 			  <id>Rafasana14</id>
+			  <name>Rafa</name>
+ 			  <email>rafasana9@gmail.com</email>
+ 			  <url></url>
+ 			  <roles>
+ 				  <role>leader</role>
+ 			  </roles>
+ 	      <properties>
+		      <picUrl>
+			    </picUrl>
+ 	      </properties>
+ 		  </developer>
+      <developer>
+        <id>damgomser</id>
+        <name>Damaris Gomez Serrano</name>
+        <email>damarisgomezse@gmail.com</email>
+        <url>https://github.com/Damaris1008</url>
+        <roles>
+          <role>leader</role>
+        </roles>
+        <properties>
+          <picUrl>
+            https://avatars.githubusercontent.com/u/78866641?v=4
+          </picUrl>
+        </properties>
+      </developer>
+	  </developers>
+
     <dependencies>
         <!-- Spring and Spring Boot dependencies -->
         <dependency>
