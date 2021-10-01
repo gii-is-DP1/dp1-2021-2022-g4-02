@@ -50,7 +50,19 @@
         </picUrl>
         </properties>
         </developer>
-      <!-- More developers ...-->
+      <developer>
+ 		<id>Rafasana14</id>
+		<name>Rafa</name>
+ 		  <email>rafasana9@gmail.com</email>
+ 		  <url></url>
+ 		  <roles>
+ 			  <role>leader</role>
+ 		  </roles>
+ 	    <properties>
+		  <picUrl>
+		  </picUrl>
+ 	    </properties>
+ 		</developer>
 
   
   
