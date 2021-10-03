@@ -18,6 +18,10 @@ INSERT INTO authorities(id,username,authority) VALUES (5,'josmarluq','owner');
 INSERT INTO users(username,password,enabled) VALUES ('ivamorgra','passw2',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (6,'ivamorgra','owner');
 
+-- Usuario de Antonio como Owner (dueño)
+INSERT INTO users(username,password,enabled) VALUES ('antlopcub','antlopcub',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (7,'antlopcub','owner');
+
 INSERT INTO vets VALUES (1, 'James', 'Carter');
 INSERT INTO vets VALUES (2, 'Helen', 'Leary');
 INSERT INTO vets VALUES (3, 'Linda', 'Douglas');
@@ -59,6 +63,8 @@ INSERT INTO owners VALUES (11, 'Miguel Ángel', 'Rivas Rosado', 'Calle José de 
 INSERT INTO owners VALUES (12, 'José Manuel', 'Martín Luque', 'Calle Mendez Nuñez', 'Marchena', '615218018', 'josmarluq');
 -- Datos del dueño Iván
 INSERT INTO owners VALUES (13,'Iván','Moreno Granado','Calle Belmonte','Guillena','608299562','ivamorgra');
+-- Datos del dueño Antonio
+INSERT INTO owners VALUES (14,'Antonio José','López Cubiles','Calle Virgen de Guia','Castilleja de la Cuesta','640605765','antlopcub');
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (1, 'Leo', '2010-09-07', 1, 1);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (2, 'Basil', '2012-08-06', 6, 2);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (3, 'Rosy', '2011-04-17', 2, 3);
@@ -80,6 +86,8 @@ INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (15, 'Ringo', '2012
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (16,'Lola','2009-09-12',7,13);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (17,'Budy','2019-01-25',2,13);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (18,'Coco','2021-09-25',5,13);
+-- Mascota de Antonio
+INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (19,'Limón','2021-07-7',1,14);
 
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (1, 7, '2013-01-01', 'rabies shot');
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (2, 8, '2013-01-02', 'rabies shot');
