@@ -10,6 +10,9 @@ INSERT INTO authorities(id,username,authority) VALUES (3,'vet1','veterinarian');
 -- Usuario de Miguel como Owner (dueño)
 INSERT INTO users(username,password,enabled) VALUES ('migrivros','migrivros',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (4,'migrivros','owner');
+-- Usuario de Jose como Owner (dueño)
+INSERT INTO users(username,password,enabled) VALUES ('josmarluq','josmarluq',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (5,'josmarluq','owner');
 
 INSERT INTO vets VALUES (1, 'James', 'Carter');
 INSERT INTO vets VALUES (2, 'Helen', 'Leary');
@@ -47,6 +50,8 @@ INSERT INTO owners VALUES (9, 'David', 'Schroeder', '2749 Blackhawk Trail', 'Mad
 INSERT INTO owners VALUES (10, 'Carlos', 'Estaban', '2335 Independence La.', 'Waunakee', '6085555487', 'owner1');
 -- Datos del dueño Miguel
 INSERT INTO owners VALUES (11, 'Miguel Ángel', 'Rivas Rosado', 'Calle José de Soto y Molina', 'Jerez de la Frontera', '636947113', 'migrivros');
+-- Datos del dueño Jose
+INSERT INTO owners VALUES (12, 'José Manuel', 'Martín Luque', 'Calle Mendez Nuñez', 'Marchena', '615218018', 'josmarluq');
 
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (1, 'Leo', '2010-09-07', 1, 1);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (2, 'Basil', '2012-08-06', 6, 2);
@@ -63,6 +68,8 @@ INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (12, 'Lucky', '2010
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (13, 'Sly', '2012-06-08', 1, 10);
 -- Mascota de Miguel
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (14, 'Scooby', '2019-01-20', 2, 11);
+-- Mascota de Jose
+INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (15, 'Ringo', '2012-01-04', 2, 12);
 
 
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (1, 7, '2013-01-01', 'rabies shot');
