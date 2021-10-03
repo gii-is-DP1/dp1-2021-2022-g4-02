@@ -14,6 +14,10 @@ INSERT INTO authorities(id,username,authority) VALUES (4,'migrivros','owner');
 INSERT INTO users(username,password,enabled) VALUES ('josmarluq','josmarluq',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (5,'josmarluq','owner');
 
+-- Usuario de Iván como Owner (dueño)
+INSERT INTO users(username,password,enabled) VALUES ('ivamorgra','passw2',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (6,'ivamorgra','owner');
+
 INSERT INTO vets VALUES (1, 'James', 'Carter');
 INSERT INTO vets VALUES (2, 'Helen', 'Leary');
 INSERT INTO vets VALUES (3, 'Linda', 'Douglas');
@@ -37,6 +41,7 @@ INSERT INTO types VALUES (3, 'lizard');
 INSERT INTO types VALUES (4, 'snake');
 INSERT INTO types VALUES (5, 'bird');
 INSERT INTO types VALUES (6, 'hamster');
+INSERT INTO types VALUES (7, 'turtle');
 
 INSERT INTO owners VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Madison', '6085551023', 'owner1');
 INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sun Prairie', '6085551749', 'owner1');
@@ -52,7 +57,8 @@ INSERT INTO owners VALUES (10, 'Carlos', 'Estaban', '2335 Independence La.', 'Wa
 INSERT INTO owners VALUES (11, 'Miguel Ángel', 'Rivas Rosado', 'Calle José de Soto y Molina', 'Jerez de la Frontera', '636947113', 'migrivros');
 -- Datos del dueño Jose
 INSERT INTO owners VALUES (12, 'José Manuel', 'Martín Luque', 'Calle Mendez Nuñez', 'Marchena', '615218018', 'josmarluq');
-
+-- Datos del dueño Iván
+INSERT INTO owners VALUES (13,'Iván','Moreno Granado','Calle Belmonte','Guillena','608299562','ivamorgra');
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (1, 'Leo', '2010-09-07', 1, 1);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (2, 'Basil', '2012-08-06', 6, 2);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (3, 'Rosy', '2011-04-17', 2, 3);
@@ -70,10 +76,12 @@ INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (13, 'Sly', '2012-0
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (14, 'Scooby', '2019-01-20', 2, 11);
 -- Mascota de Jose
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (15, 'Ringo', '2012-01-04', 2, 12);
-
+-- Mascota(s) de Iván
+INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (16,'Lola','2009-09-12',7,13);
+INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (17,'Budy','2019-01-25',2,13);
+INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (18,'Coco','2021-09-25',5,13);
 
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (1, 7, '2013-01-01', 'rabies shot');
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (2, 8, '2013-01-02', 'rabies shot');
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (3, 8, '2013-01-03', 'neutered');
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (4, 7, '2013-01-04', 'spayed');
-
