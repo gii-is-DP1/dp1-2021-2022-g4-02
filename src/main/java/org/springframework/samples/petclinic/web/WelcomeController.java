@@ -38,6 +38,24 @@ public class WelcomeController {
 		  personthree.setId(3);
 		  people.add(personthree);
 		  
+		  Person personfour = new Person();
+		  personfour.setFirstName("Antonio José ");
+		  personfour.setLastName("López Cubiles");
+		  personfour.setId(4);
+		  people.add(personfour);
+		  
+		  Person personfive = new Person();
+		  personfive.setFirstName("Jose Manuel ");
+		  personfive.setLastName("Martín Luque");
+		  personfive.setId(5);
+		  people.add(personfive);
+		  
+		  Person personsix = new Person();
+		  personsix.setFirstName("Rafael ");
+		  personsix.setLastName("Sanabria Esparrago");
+		  personsix.setId(6);
+		  people.add(personsix);
+		  
 		  /*Finally, we put the list on model*/
 		  
 		  model.put("persons",people);
