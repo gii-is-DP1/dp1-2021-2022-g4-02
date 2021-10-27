@@ -16,6 +16,6 @@ public class CardServiceTests {
 	@Test
 	public void testCountWithInitialData() {
 		int count = CardService.cardCount();
-		assertEquals(count,2);
+		assertEquals(count,3);
 	}
 }
