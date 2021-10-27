@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.model;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -21,12 +23,13 @@ public class CardService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Card findCardById(int id) throws DataAccessException {
+	public Card findCardById(int id) throws IllegalArgumentException {
 		return cardRepository.findById(id);
+		
 	}
 	
 	@Transactional
 	public void saveCard(Card cardToUpdate) throws DataAccessException {
-		cardRepository.saveCard(cardToUpdate);
+		cardRepository.save(cardToUpdate);
 	}
 }
