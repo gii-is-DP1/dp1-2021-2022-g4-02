@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.model;
+package org.springframework.samples.petclinic.model.card;
 
 import org.springframework.data.repository.CrudRepository;
 
