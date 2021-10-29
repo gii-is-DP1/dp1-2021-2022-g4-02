@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.model;
+package org.springframework.samples.petclinic.model.card;
 
 import javax.validation.Valid;
 
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 @Controller
-//@RequestMapping("/cards")
 public class CardController {
 	
 	private static final String VIEWS_CARDS_CREATE_OR_UPDATE_FORM = "cards/editCard";

@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.model;
+package org.springframework.samples.petclinic.model.card;
 
 
 
@@ -13,12 +13,12 @@ public class CardService {
 	@Autowired
 	private CardRepository cardRepository;
 	
-	@Transactional
+	@Transactional(readOnly = true)
 	public Integer cardCount() {
 		return (int) cardRepository.count();
 	}
 	
-	@Transactional
+	@Transactional(readOnly = true)
 	public Iterable<Card> cardFindAll() {
 		return cardRepository.findAll();
 	}
