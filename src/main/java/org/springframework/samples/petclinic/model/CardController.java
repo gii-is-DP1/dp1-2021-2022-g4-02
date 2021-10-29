@@ -38,14 +38,14 @@ public class CardController {
 	}
 	
     @GetMapping(value = "/cards/{cardId}/edit")
-    public String initUpdateOwnerForm(@PathVariable("cardId") int cardId, Model model) {
+    public String initUpdateCardForm(@PathVariable("cardId") int cardId, Model model) {
     	Card card = this.cardService.findCardById(cardId);
     	model.addAttribute(card);
     	return VIEWS_CARDS_CREATE_OR_UPDATE_FORM;
     }
 
     @PostMapping(value = "/cards/{cardId}/edit")
-    public String processUpdateOwnerForm(@Valid Card card, BindingResult result,
+    public String processUpdateCardForm(@Valid Card card, BindingResult result,
     		@PathVariable("cardId") int cardId) {
     	if (result.hasErrors()) {
     		return VIEWS_CARDS_CREATE_OR_UPDATE_FORM;
