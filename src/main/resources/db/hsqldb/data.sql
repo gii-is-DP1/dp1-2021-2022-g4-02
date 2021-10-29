@@ -114,6 +114,80 @@ INSERT INTO visits(id,pet_id,visit_date,description) VALUES (2, 8, '2013-01-02',
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (3, 8, '2013-01-03', 'neutered');
 INSERT INTO visits(id,pet_id,visit_date,description) VALUES (4, 7, '2013-01-04', 'spayed');
 
+
+---Doblones
 INSERT INTO cards(id, card_type) VALUES (1, 0);
-INSERT INTO cards(id, card_type) VALUES (2, 3);
-INSERT INTO cards(id, card_type) VALUES (3, 6);
+INSERT INTO cards(id, card_type) VALUES (2, 0);
+INSERT INTO cards(id, card_type) VALUES (3, 0);
+INSERT INTO cards(id, card_type) VALUES (4, 0);
+INSERT INTO cards(id, card_type) VALUES (5, 0);
+INSERT INTO cards(id, card_type) VALUES (6, 0);
+INSERT INTO cards(id, card_type) VALUES (7, 0);
+INSERT INTO cards(id, card_type) VALUES (8, 0);
+INSERT INTO cards(id, card_type) VALUES (9, 0);
+INSERT INTO cards(id, card_type) VALUES (10, 0);
+INSERT INTO cards(id, card_type) VALUES (11, 0);
+INSERT INTO cards(id, card_type) VALUES (12, 0);
+INSERT INTO cards(id, card_type) VALUES (13, 0);
+INSERT INTO cards(id, card_type) VALUES (14, 0);
+INSERT INTO cards(id, card_type) VALUES (15, 0);
+INSERT INTO cards(id, card_type) VALUES (16, 0);
+INSERT INTO cards(id, card_type) VALUES (17, 0);
+INSERT INTO cards(id, card_type) VALUES (18, 0);
+INSERT INTO cards(id, card_type) VALUES (19, 0);
+INSERT INTO cards(id, card_type) VALUES (20, 0);
+INSERT INTO cards(id, card_type) VALUES (21, 0);
+INSERT INTO cards(id, card_type) VALUES (22, 0);
+INSERT INTO cards(id, card_type) VALUES (23, 0);
+INSERT INTO cards(id, card_type) VALUES (24, 0);
+INSERT INTO cards(id, card_type) VALUES (25, 0);
+INSERT INTO cards(id, card_type) VALUES (26, 0);
+INSERT INTO cards(id, card_type) VALUES (27, 0);
+---Calices
+INSERT INTO cards(id, card_type) VALUES (28, 1);
+INSERT INTO cards(id, card_type) VALUES (29, 1);
+INSERT INTO cards(id, card_type) VALUES (30, 1);
+---Rubíes
+INSERT INTO cards(id, card_type) VALUES (31, 2);
+INSERT INTO cards(id, card_type) VALUES (32, 2);
+INSERT INTO cards(id, card_type) VALUES (33, 2);
+---Diamantes
+INSERT INTO cards(id, card_type) VALUES (34, 3);
+INSERT INTO cards(id, card_type) VALUES (35, 3);
+INSERT INTO cards(id, card_type) VALUES (36, 3);
+---Collares
+INSERT INTO cards(id, card_type) VALUES (37, 4);
+INSERT INTO cards(id, card_type) VALUES (38, 4);
+INSERT INTO cards(id, card_type) VALUES (39, 4);
+INSERT INTO cards(id, card_type) VALUES (40, 4);
+---Mapas
+INSERT INTO cards(id, card_type) VALUES (41, 5);
+INSERT INTO cards(id, card_type) VALUES (42, 5);
+INSERT INTO cards(id, card_type) VALUES (43, 5);
+INSERT INTO cards(id, card_type) VALUES (44, 5);
+---Coronas
+INSERT INTO cards(id, card_type) VALUES (45, 6);
+INSERT INTO cards(id, card_type) VALUES (46, 6);
+INSERT INTO cards(id, card_type) VALUES (47, 6);
+INSERT INTO cards(id, card_type) VALUES (48, 6);
+---Revólveres
+INSERT INTO cards(id, card_type) VALUES (49, 7);
+INSERT INTO cards(id, card_type) VALUES (50, 7);
+INSERT INTO cards(id, card_type) VALUES (51, 7);
+INSERT INTO cards(id, card_type) VALUES (52, 7);
+INSERT INTO cards(id, card_type) VALUES (53, 7);
+INSERT INTO cards(id, card_type) VALUES (54, 7);
+---Espadas
+INSERT INTO cards(id, card_type) VALUES (55, 8);
+INSERT INTO cards(id, card_type) VALUES (56, 8);
+INSERT INTO cards(id, card_type) VALUES (57, 8);
+INSERT INTO cards(id, card_type) VALUES (58, 8);
+INSERT INTO cards(id, card_type) VALUES (59, 8);
+INSERT INTO cards(id, card_type) VALUES (60, 8);
+---Ron
+INSERT INTO cards(id, card_type) VALUES (61, 9);
+INSERT INTO cards(id, card_type) VALUES (62, 9);
+INSERT INTO cards(id, card_type) VALUES (63, 9);
+INSERT INTO cards(id, card_type) VALUES (64, 9);
+INSERT INTO cards(id, card_type) VALUES (65, 9);
+INSERT INTO cards(id, card_type) VALUES (66, 9);
