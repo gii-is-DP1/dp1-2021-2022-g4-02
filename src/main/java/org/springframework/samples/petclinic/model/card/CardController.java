@@ -21,16 +21,16 @@ public class CardController {
 	private CardService cardService;
 	
 	@GetMapping(value = "/cards")
-	public String listadoCartas(ModelMap modelMap) {
-		String vista = "cards/listadoCartas";
+	public String cardsList(ModelMap modelMap) {
+		String vista = "cards/cardsList";
 		Iterable<Card> cards = cardService.cardFindAll();
 		modelMap.addAttribute("cards", cards);
 		return vista;
 	}
 	
 	@GetMapping(value = "/cards/{cardId}")
-	public String listadoCartaPorId(ModelMap modelMap, @PathVariable("cardId") int cardId){
-		String vista = "cards/cartaDetails";
+	public String cardsListById(ModelMap modelMap, @PathVariable("cardId") int cardId){
+		String vista = "cards/cardDetails";
 		Card card = cardService.findCardById(cardId);
 		modelMap.addAttribute("card", card);
 		return vista;
