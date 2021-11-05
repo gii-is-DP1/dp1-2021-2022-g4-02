@@ -26,7 +26,7 @@ public class Game extends BaseEntity{
 	private Integer currentUserId;
 	/*
 	@NotEmpty
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "game")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "username")
 	private List<Player> players;
 	
 	public void addPlayer(Player player) {

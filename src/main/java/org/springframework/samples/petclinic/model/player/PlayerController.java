@@ -13,7 +13,7 @@ public class PlayerController {
 	
 	@Autowired
 	private PlayerService playerService;
-	/*
+	
 	@GetMapping(value = "/players")
 	public String playersList(ModelMap modelMap) {
 		String vista = "players/playersList";
@@ -31,5 +31,5 @@ public class PlayerController {
 		return vista;
 	}
 	
-    */
+    
 }
