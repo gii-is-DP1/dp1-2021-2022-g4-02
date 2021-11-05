@@ -20,8 +20,11 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.pet.Pet;
+import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 /**
  * Mostly used as a facade for all Petclinic controllers Also a placeholder
@@ -46,6 +49,13 @@ public class AuthoritiesService {
 		authoritiesRepository.save(authorities);
 	}
 	
+	/* Guardado del usuario */
+	@Transactional
+	public void saveUser(User user) {
+		
+		userService.saveUser(user);
+	}
+	
 	@Transactional(readOnly = true)
     public Iterable<User> userFindAll() {
         return userService.userFindAll();
@@ -68,6 +78,5 @@ public class AuthoritiesService {
 		}else
 			throw new DataAccessException("User '"+username+"' not found!") {};
 	}
-
-
+	
 }
