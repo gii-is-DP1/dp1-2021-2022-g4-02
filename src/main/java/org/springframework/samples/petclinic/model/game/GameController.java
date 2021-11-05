@@ -100,7 +100,7 @@ public class GameController {
     		return "redirect:/games/{gameId}";
     	}
 
-    }*/
+    }
     
 
     }

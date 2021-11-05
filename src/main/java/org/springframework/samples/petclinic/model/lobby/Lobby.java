@@ -20,10 +20,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "lobbies")
 public class Lobby extends BaseEntity{
-	@NotEmpty
-	private List<Player> players;
-	@NotEmpty
-	private String code;
-	@OneToOne(mappedBy = "gameId")
-	private Game game;
+//	@NotEmpty
+//	private List<Player> players;
+//	@NotEmpty
+//	private String code;
+//	@OneToOne(mappedBy = "gameId")
+//	private Game game;
 }
