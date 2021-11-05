@@ -19,7 +19,7 @@ import lombok.Setter;
 public class Island extends BaseEntity{
 	@NotEmpty
 	private Integer island;
-	@OneToOne(mappedBy = "cardId")
-	private Card card;
+//	@OneToOne(mappedBy = "cardId")
+//	private Card card;
 	
 }
