@@ -31,4 +31,5 @@ public class User{
 	public static String getCurrentUser() {
 		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
+
 }

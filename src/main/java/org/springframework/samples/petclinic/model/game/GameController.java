@@ -21,7 +21,7 @@ public class GameController {
 	
 	@Autowired
 	private GameService gameService;
-	
+	/*
 	@GetMapping(value = "/games")
 	public String gamesList(ModelMap modelMap) {
 		String vista = "games/gamesList";
@@ -46,7 +46,7 @@ public class GameController {
     }
 
     @PostMapping(value = "/games/create")
-    public String processUpdateGameForm(@Valid Game game,BindingResult result, Player player) {
+    public String processUpdateGameForm(@Valid Game game, Player player, BindingResult result) {
     	if (result.hasErrors()) {
     		return VIEWS_GAMES_CREATE_FORM;
     	}
@@ -99,6 +99,11 @@ public class GameController {
     		this.gameService.saveGame(game);
     		return "redirect:/games/{gameId}";
     	}
+
     }*/
     
+
+    }
+    */
+
 }

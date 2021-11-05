@@ -45,6 +45,16 @@ public class UserService {
 		userRepository.save(user);
 	}
 	
+	@Transactional(readOnly = true)
+    public Iterable<User> userFindAll() {
+        return userRepository.findAll();
+    }
+	
+	@Transactional(readOnly = true)
+    public Integer userCount() {
+        return (int) userRepository.count();
+    }
+	
 	public Optional<User> findUser(String username) {
 		return userRepository.findById(username);
 	}

@@ -27,13 +27,12 @@ public class CardServiceTests {
 	@Test
 	public void testFindAll() {
 		Iterator<Card> cards = CardService.cardFindAll().iterator();
-		Card card1 = cards.next();
-		assertEquals(card1.getId(), 1);
-		Card finalCard = new Card();
-		while(cards.hasNext()) {
-			finalCard=cards.next();
-		}
-		assertEquals(66, finalCard.getId());
+        int i = 1;
+        while(cards.hasNext()) {
+            Card card=cards.next();
+            assertEquals(i, card.getId());
+            i++;
+        }
 	}
 	
 	@Test
