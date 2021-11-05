@@ -21,7 +21,7 @@ public class GameController {
 	
 	@Autowired
 	private GameService gameService;
-	/*
+	
 	@GetMapping(value = "/games")
 	public String gamesList(ModelMap modelMap) {
 		String vista = "games/gamesList";
@@ -81,29 +81,25 @@ public class GameController {
     	}
     }
     
-    /*@GetMapping(value = "/games/{gameId}/edit")
-    public String initUpdateGameForm(@PathVariable("gameId") int gameId, Model model) {
-    	Game game = this.gameService.findGameById(gameId);
-    	model.addAttribute(game);
-    	return VIEWS_GAMES_UPDATE_FORM;
-    }
-
-    @PostMapping(value = "/games/{gameId}/edit")
-    public String processUpdateGameForm(@Valid Game game, BindingResult result,
-    		@PathVariable("gameId") int gameId) {
-    	if (result.hasErrors()) {
-    		return VIEWS_GAMES_UPDATE_FORM;
-    	}
-    	else {
-    		game.setId(gameId);
-    		this.gameService.saveGame(game);
-    		return "redirect:/games/{gameId}";
-    	}
-
-    }
+//    @GetMapping(value = "/games/{gameId}/edit")
+//    public String initUpdateGameForm(@PathVariable("gameId") int gameId, Model model) {
+//    	Game game = this.gameService.findGameById(gameId);
+//    	model.addAttribute(game);
+//    	return VIEWS_GAMES_UPDATE_FORM;
+//    }
+//
+//    @PostMapping(value = "/games/{gameId}/edit")
+//    public String processUpdateGameForm(@Valid Game game, BindingResult result,
+//    		@PathVariable("gameId") int gameId) {
+//    	if (result.hasErrors()) {
+//    		return VIEWS_GAMES_UPDATE_FORM;
+//    	}
+//    	else {
+//    		game.setId(gameId);
+//    		this.gameService.saveGame(game);
+//    		return "redirect:/games/{gameId}";
+//    	}
+//    }
     
-
-    }
-    */
 
 }
