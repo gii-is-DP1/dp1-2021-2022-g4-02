@@ -24,7 +24,7 @@ public class Game extends BaseEntity{
 	
 	@NotEmpty
 	private Integer currentUserId;
-	
+	/*
 	@NotEmpty
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "game")
 	private List<Player> players;
@@ -35,4 +35,5 @@ public class Game extends BaseEntity{
 		}
 		players.add(player);
 	}
+*/
 }

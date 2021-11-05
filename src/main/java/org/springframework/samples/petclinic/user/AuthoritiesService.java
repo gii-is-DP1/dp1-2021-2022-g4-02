@@ -46,6 +46,16 @@ public class AuthoritiesService {
 		authoritiesRepository.save(authorities);
 	}
 	
+	@Transactional(readOnly = true)
+    public Iterable<User> userFindAll() {
+        return userService.userFindAll();
+    }
+	
+	@Transactional(readOnly = true)
+	public Integer userCount() {
+		return (int) userService.userCount();
+	}
+	
 	@Transactional
 	public void saveAuthorities(String username, String role) throws DataAccessException {
 		Authorities authority = new Authorities();

@@ -21,7 +21,7 @@ public class GameController {
 	
 	@Autowired
 	private GameService gameService;
-	
+	/*
 	@GetMapping(value = "/games")
 	public String gamesList(ModelMap modelMap) {
 		String vista = "games/gamesList";
@@ -76,5 +76,5 @@ public class GameController {
     		return "redirect:/games/{gameId}";
     	}
     }
-    
+    */
 }

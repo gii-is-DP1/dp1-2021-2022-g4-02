@@ -13,7 +13,7 @@ public class PlayerController {
 	
 	@Autowired
 	private PlayerService playerService;
-	
+	/*
 	@GetMapping(value = "/players")
 	public String playersList(ModelMap modelMap) {
 		String vista = "players/playersList";
@@ -21,6 +21,7 @@ public class PlayerController {
 		modelMap.addAttribute("players", players);
 		return vista;
 	}
+	
 	
 	@GetMapping(value = "/players/{playerId}")
 	public String playersListById(ModelMap modelMap, @PathVariable("playerId") int playerId){
@@ -30,5 +31,5 @@ public class PlayerController {
 		return vista;
 	}
 	
-    
+    */
 }
