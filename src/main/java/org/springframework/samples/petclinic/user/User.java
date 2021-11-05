@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,4 +27,9 @@ public class User{
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	private Set<Authorities> authorities;
+	
+	public static String getCurrentUser() {
+		return SecurityContextHolder.getContext().getAuthentication().getName();
+	}
+
 }

@@ -15,6 +15,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "players")
 public class Player extends BaseEntity{
+	
 	@NotEmpty
-	private Integer userId;
+	private String username;
+
 }
