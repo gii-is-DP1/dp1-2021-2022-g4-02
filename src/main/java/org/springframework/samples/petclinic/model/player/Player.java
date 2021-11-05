@@ -18,4 +18,5 @@ public class Player extends BaseEntity{
 	
 	@NotEmpty
 	private String username;
+
 }

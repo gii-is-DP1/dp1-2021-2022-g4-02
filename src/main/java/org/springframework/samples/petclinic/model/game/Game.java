@@ -35,5 +35,23 @@ public class Game extends BaseEntity{
 		}
 		players.add(player);
 	}
+	
+	public int countPlayers() {
+		return players.size();
+	}
+	
+	public boolean isNotFull() {
+		return this.countPlayers()<4;
+	}
+	
+	public boolean isReadyToStart() {
+		return this.countPlayers()>=2 && this.countPlayers()<=4;
+	}
+	
+	public void nextPlayer() {
+		this.currentUserId = (this.currentUserId+1)%this.countPlayers();
+	}
+
 */
+
 }
