@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.model.game;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.model.player.Player;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -45,12 +46,12 @@ public class GameController {
     }
 
     @PostMapping(value = "/games/create")
-    public String processUpdateGameForm(@Valid Game game,BindingResult result) {
+    public String processUpdateGameForm(@Valid Game game, Player player, BindingResult result) {
     	if (result.hasErrors()) {
     		return VIEWS_GAMES_CREATE_FORM;
     	}
     	else {
-    		//game.addPlayer();
+    		game.addPlayer(player);
     		this.gameService.saveGame(game);
     		return "redirect:/games/{gameId}";
     	}
