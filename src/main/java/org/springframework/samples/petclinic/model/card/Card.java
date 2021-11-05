@@ -2,10 +2,12 @@ package org.springframework.samples.petclinic.model.card;
 
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.samples.petclinic.model.BaseEntity;
+import org.springframework.samples.petclinic.model.island.Island;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,4 +19,7 @@ import lombok.Setter;
 public class Card extends BaseEntity{
 	@NotEmpty
 	private CardType cardType;
+	
+	@OneToOne(mappedBy = "cards")
+	private Island island;
 }

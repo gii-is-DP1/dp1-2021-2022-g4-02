@@ -24,6 +24,6 @@ public class Lobby extends BaseEntity{
 //	private List<Player> players;
 //	@NotEmpty
 //	private String code;
-//	@OneToOne(mappedBy = "gameId")
+//	@OneToOne(mappedBy = "lobbies")
 //	private Game game;
 }
