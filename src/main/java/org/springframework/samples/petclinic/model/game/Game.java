@@ -9,6 +9,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
@@ -30,7 +31,11 @@ public class Game extends BaseEntity{
 	private Integer currentUserId;
 	
 	@NotEmpty
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "username")
+
 	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Player.class)
+
 	private List<Player> players;
 	
 //    @OneToOne(cascade = CascadeType.ALL)
