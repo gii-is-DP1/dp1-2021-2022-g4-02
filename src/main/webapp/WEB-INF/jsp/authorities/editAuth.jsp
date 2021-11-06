@@ -6,37 +6,37 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
-<petclinic:layout pageName="users">
+<petclinic:layout pageName="auths">
     <jsp:body>
     	<h2>
-            <c:if test="${user['new']}">New </c:if> User
+            <c:if test="${authorities['new']}">New </c:if> Authority
         </h2>
     
-        <form:form modelAttribute="user"
+        <form:form modelAttribute="authorities"
                    class="form-horizontal">
- 
-            <h2> Choose an new user's username </h2>
+ 		<input type="hidden" name="id" value="${authorities.id}"/>
+            <h2> Choose an new user's authority </h2>
                 <div class="control-group">
-            		<petclinic:inputField label="Username" name="username" />	
-                </div>                
-                 <h2> Choose an new user's password </h2>
-                <div class="control-group">
-            		<petclinic:inputField label="Password" name="password" />  		
+            		<petclinic:inputField label="Authority" name="authority" />	
                 </div>
+                <c:if test="${authorities['new']}"><h2> Choose the user </h2>
+                <div class="control-group">
+            		<petclinic:inputField label="User_ID" name="user" />	
+                </div></c:if>                
             <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>
-                        <c:when test="${user['new']}">
-                            <button class="btn btn-default" type="submit">Add User</button>
+                        <c:when test="${authorities['new']}">
+                            <button class="btn btn-default" type="submit">Add Authority</button>
                         </c:when>
                         <c:otherwise>
-                            <button class="btn btn-default" type="submit">Update User</button>
+                            <button class="btn btn-default" type="submit">Update Authority</button>
                         </c:otherwise>
                     </c:choose>
             </div>
         </div>
         </form:form>
-        <c:if test="${!user['new']}">
+        <c:if test="${!authorities['new']}">
         </c:if>
     </jsp:body>
 </petclinic:layout>
