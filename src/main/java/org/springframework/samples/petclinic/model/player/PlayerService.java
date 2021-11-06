@@ -3,11 +3,10 @@ package org.springframework.samples.petclinic.model.player;
 
 
 
-import java.util.Collection;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.pet.PetType;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
