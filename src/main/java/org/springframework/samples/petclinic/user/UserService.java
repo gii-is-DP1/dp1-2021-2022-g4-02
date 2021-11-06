@@ -55,6 +55,8 @@ public class UserService {
         return (int) userRepository.count();
     }
 	
+	
+	
 	public Optional<User> findUser(String username) {
 		return userRepository.findById(username);
 	}

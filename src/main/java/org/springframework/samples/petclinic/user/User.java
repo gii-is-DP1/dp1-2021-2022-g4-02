@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.Getter;
