@@ -11,18 +11,22 @@
     <table id="usersTable" class="table table-striped">
         <thead>
         <tr>
-        	<!-- <th>ID</th> -->
+        	<th>ID</th>
             <th>UserName</th>
+            <th>Authority</th>
         </tr>
         </thead>
         <tbody>
         <c:forEach items="${users}" var="user">
             <tr>
-            	<%-- <td>
+            	<td>
                     <c:out value="${user.id}"/>
-                </td> --%>
+                </td> 
                 <td>
                     <c:out value="${user.username}"/>
+                </td>
+                <td>
+                    <c:out value="${user.authorities}"/>
                 </td>
               
             </tr>

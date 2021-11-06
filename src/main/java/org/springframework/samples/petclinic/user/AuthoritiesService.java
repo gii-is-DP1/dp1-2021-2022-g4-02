@@ -20,11 +20,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.pet.Pet;
-import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+
 
 /**
  * Mostly used as a facade for all Petclinic controllers Also a placeholder
@@ -68,23 +66,33 @@ public class AuthoritiesService {
 	
 	
 	@Transactional(readOnly = true)
-	public User findUserById(String username) throws IllegalArgumentException {
-		User user = userService.findUser(username).get();
+	public User findUserById(Integer id) throws IllegalArgumentException {
+		User user = userService.findUser(id).get();
 		return user;
 	}
 	
+	@Transactional(readOnly = true)
+	public Authorities findAuthByUser(Integer userId) throws IllegalArgumentException {
+		Authorities auth = authoritiesRepository.findAuthByUser(userId);
+		return auth;
+	}
 	
 	@Transactional
-	public void saveAuthorities(String username, String role) throws DataAccessException {
+	public void deleteUser(Integer id) throws DataAccessException {
+		userService.deleteUser(id);
+	}
+	
+	@Transactional
+	public void saveAuthorities(Integer id, String role) throws DataAccessException {
 		Authorities authority = new Authorities();
-		Optional<User> user = userService.findUser(username);
+		Optional<User> user = userService.findUser(id);
 		if(user.isPresent()) {
 			authority.setUser(user.get());
 			authority.setAuthority(role);
 			//user.get().getAuthorities().add(authority);
 			authoritiesRepository.save(authority);
 		}else
-			throw new DataAccessException("User '"+username+"' not found!") {};
+			throw new DataAccessException("User '"+user.get().getUsername()+"' not found!") {};
 	}
 	
 }

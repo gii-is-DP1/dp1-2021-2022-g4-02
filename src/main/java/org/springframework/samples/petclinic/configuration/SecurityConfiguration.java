@@ -39,6 +39,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/cards").permitAll()
 				.antMatchers("/users").permitAll()
 				.antMatchers("/cards/**").permitAll()
+				.antMatchers("/authorities").permitAll()
+				.antMatchers("/admin").permitAll()
 				.antMatchers("/admin/**").hasAnyAuthority("admin")
 				.antMatchers("/owners/**").hasAnyAuthority("owner","admin")				
 				.antMatchers("/vets/**").authenticated()
@@ -68,7 +70,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	        + "where username = ?")
 	      .authoritiesByUsernameQuery(
 	       "select username, authority "
-	        + "from authorities "
+	        + "from authorities natural join users "
 	        + "where username = ?")	      	      
 	      .passwordEncoder(passwordEncoder());	
 	}

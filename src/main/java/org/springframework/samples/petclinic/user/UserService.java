@@ -55,9 +55,19 @@ public class UserService {
         return (int) userRepository.count();
     }
 	
+	@Transactional
+	public void deleteUser(User user) {
+		userRepository.delete(user);
+	}
+	
+	@Transactional
+	public void deleteUser(Integer id) {
+		userRepository.deleteById(id);
+	}
 	
 	
-	public Optional<User> findUser(String username) {
-		return userRepository.findById(username);
+	
+	public Optional<User> findUser(Integer id) {
+		return userRepository.findById(id);
 	}
 }

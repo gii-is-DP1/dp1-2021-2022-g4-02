@@ -1,11 +1,8 @@
 package org.springframework.samples.petclinic.user;
 
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.samples.petclinic.model.BaseEntity;
@@ -18,19 +15,21 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "users")
-public class User{
-	@Id
+public class User extends BaseEntity{
+
 	String username;
 	
 	String password;
 	
 	boolean enabled;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-	private Set<Authorities> authorities;
+	@OneToOne(mappedBy = "user")
+	Authorities authorities;
 	
 	public static String getCurrentUser() {
 		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
+	
+	
 
 }
