@@ -1,16 +1,13 @@
 package org.springframework.samples.petclinic.user;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.model.card.Card;
-import org.springframework.samples.petclinic.model.card.CardService;
-import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.pet.Pet;
-import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
-import org.springframework.samples.petclinic.user.exceptions.DuplicatedUserNameException;
+import org.springframework.samples.petclinic.model.game.Game;
+import org.springframework.samples.petclinic.model.game.GameService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -25,12 +22,31 @@ public class AuthoritiesController {
 	
 	@Autowired
 	private AuthoritiesService authoritiesService;
+	@Autowired
+	private GameService gameService;
 	
 	@GetMapping(value = "/users")
 	public String usersList(ModelMap modelMap) {
 		String vista = "authorities/usersList";
 		Iterable<User> users = authoritiesService.userFindAll();
 		modelMap.addAttribute("users", users);
+		return vista;
+	}
+	/* Listado de partidas jugadas */
+	@GetMapping(value = "/games/finished")
+	public String finishedGamesList(ModelMap modelMap) {
+		String vista = "games/gamesList";
+		List<Game> games = gameService.findFinishedGames();
+		modelMap.addAttribute("games", games);
+		return vista;
+	}
+	
+	/* Listado de partidas en juego */
+	@GetMapping(value = "/games/unfinished")
+	public String unfinishedGamesList(ModelMap modelMap) {
+		String vista = "games/gamesList";
+		List<Game> games = gameService.findUnfinishedGames();
+		modelMap.addAttribute("games", games);
 		return vista;
 	}
 	

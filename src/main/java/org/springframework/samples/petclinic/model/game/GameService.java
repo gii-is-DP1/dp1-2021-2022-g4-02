@@ -3,6 +3,8 @@ package org.springframework.samples.petclinic.model.game;
 
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,16 @@ public class GameService {
 	@Transactional(readOnly = true)
 	public Game findGameById(int id) throws IllegalArgumentException { 
 		return gameRepository.findById(id).get();
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Game> findFinishedGames(){ 
+		return gameRepository.findFinishedGames();
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Game> findUnfinishedGames(){ 
+		return gameRepository.findUnfinishedGames();
 	}
 	
 	@Transactional
