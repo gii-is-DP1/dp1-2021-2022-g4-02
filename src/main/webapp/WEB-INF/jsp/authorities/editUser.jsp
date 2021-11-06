@@ -8,6 +8,10 @@
 
 <petclinic:layout pageName="users">
     <jsp:body>
+    	<h2>
+            <c:if test="${user['new']}">New </c:if> User
+        </h2>
+    
         <form:form modelAttribute="user"
                    class="form-horizontal">
  
@@ -35,9 +39,18 @@
             </div>
             <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button class="btn btn-default" type="submit">Create User</button>
+                <c:choose>
+                        <c:when test="${user['new']}">
+                            <button class="btn btn-default" type="submit">Add User</button>
+                        </c:when>
+                        <c:otherwise>
+                            <button class="btn btn-default" type="submit">Update User</button>
+                        </c:otherwise>
+                    </c:choose>
             </div>
         </div>
         </form:form>
+        <c:if test="${!user['new']}">
+        </c:if>
     </jsp:body>
 </petclinic:layout>

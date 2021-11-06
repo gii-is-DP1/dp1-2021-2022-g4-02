@@ -66,6 +66,14 @@ public class AuthoritiesService {
 		return (int) userService.userCount();
 	}
 	
+	
+	@Transactional(readOnly = true)
+	public User findUserById(String username) throws IllegalArgumentException {
+		User user = userService.findUser(username).get();
+		return user;
+	}
+	
+	
 	@Transactional
 	public void saveAuthorities(String username, String role) throws DataAccessException {
 		Authorities authority = new Authorities();
