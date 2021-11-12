@@ -10,9 +10,9 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface GameRepository extends CrudRepository<Game, Integer>{
 
-	@Query("SELECT game FROM Game game WHERE game.finished=1")
+	@Query("SELECT game FROM Game game WHERE game.fechaFinal IS NOT NULL")
 	List<Game> findFinishedGames();
 	
-	@Query("SELECT game FROM Game game WHERE game.finished=0")
+	@Query("SELECT game FROM Game game WHERE game.fechaFinal IS NULL")
 	List<Game> findUnfinishedGames();
 }

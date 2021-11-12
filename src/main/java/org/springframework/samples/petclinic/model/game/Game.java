@@ -1,10 +1,10 @@
 package org.springframework.samples.petclinic.model.game;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -35,9 +35,11 @@ public class Game extends BaseEntity{
 	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Player.class)
 
 	private List<Player> players;
-	private Boolean finished;
-	private Date date;
-	
+	//private Boolean finished;
+	//private Date date;
+	private  LocalDate fechaComienzo ;
+	private LocalDate fechaFinal;
+	private String code ;
 //    @OneToOne(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "lobby_id", referencedColumnName = "id")
 //    private Lobby lobbies;
@@ -65,6 +67,9 @@ public class Game extends BaseEntity{
 		this.currentUserId = (this.currentUserId+1)%this.countPlayers();
 	}
 
-
-
+	/*
+	public boolean isFinished() {
+		return this.fechaFinal != null;
+	}
+	 */
 }
