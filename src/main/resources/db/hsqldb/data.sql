@@ -190,6 +190,14 @@ INSERT INTO cards(id, card_type) VALUES (64, 9);
 INSERT INTO cards(id, card_type) VALUES (65, 9);
 INSERT INTO cards(id, card_type) VALUES (66, 9);
 
+-- Islas
+INSERT INTO isles(id, card_id) VALUES (1, null);
+INSERT INTO isles(id, card_id) VALUES (2, null);
+INSERT INTO isles(id, card_id) VALUES (3, null);
+INSERT INTO isles(id, card_id) VALUES (4, null);
+INSERT INTO isles(id, card_id) VALUES (5, null);
+INSERT INTO isles(id, card_id) VALUES (6, null);
+
 
 -- Creación de partidas en curso
 -- insert into games(id,current_user,players_id,fecha_comienzo,fecha_final,code) values (1,1,5,'2021-11-12',null,1);

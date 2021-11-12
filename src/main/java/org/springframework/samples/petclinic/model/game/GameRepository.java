@@ -17,7 +17,7 @@ public interface GameRepository extends CrudRepository<Game, Integer>{
 	@Query("SELECT game FROM Game game WHERE game.fechaFinal IS NULL")
 	List<Game> findUnfinishedGames();
 	
-	@Query("SELECT game FROM Game game WHERE game.code =?1")
+	@Query("SELECT game FROM Game game WHERE game.code = ?1")
 	Optional<Game> findByCode(String code);
 	
 }
