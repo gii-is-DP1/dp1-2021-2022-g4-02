@@ -22,6 +22,6 @@ public class Island extends BaseEntity{
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "card_id", referencedColumnName = "id")
-	private Card cards;
+	private Card card;
 	
 }

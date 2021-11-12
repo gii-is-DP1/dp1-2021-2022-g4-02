@@ -1,9 +1,12 @@
 package org.springframework.samples.petclinic.model.game;
 
-import javax.validation.Valid; 
+import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.model.player.Player;
+
+import org.springframework.samples.petclinic.user.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -17,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class GameController {
 	
 	private static final String VIEWS_GAMES_CREATE_FORM = "games/createGame";
-	private static final String VIEWS_GAMES_ENTER_FORM = "games/lobby";
+	private static final String VIEW_GAME_LOBBY = "games/lobby";
 	
 	@Autowired
 	private GameService gameService;
@@ -32,8 +35,8 @@ public class GameController {
 	
 	
 	
-	@GetMapping(value = "/games/{gameId}")
-	public String gamesListById(ModelMap modelMap, @PathVariable("gameId") int gameId){
+	@GetMapping(value = "/games/{code}")
+	public String gamesListById(ModelMap modelMap, @PathVariable("code") int gameId){
 		String vista = "game/gameDetails";
 		Game game = gameService.findGameById(gameId);
 		modelMap.addAttribute("game", game);
@@ -51,7 +54,7 @@ public class GameController {
     }
 
     @PostMapping(value = "/games/create")
-    public String processUpdateGameForm(@Valid Game game, Player player, BindingResult result) {
+    public String processUpdateGameForm(@Valid Game game, User player, BindingResult result) {
     	if (result.hasErrors()) {
     		return VIEWS_GAMES_CREATE_FORM;
     	}
@@ -65,18 +68,24 @@ public class GameController {
     
     
     /*  UNIRSE A PARTIDA   */
-    @GetMapping(value = "/games/{gameId}/enter")
-    public String initEnterGameForm(@PathVariable("gameId") int gameId, Model model, Player player) {
-    	Game game = this.gameService.findGameById(gameId);
-    	model.addAttribute(game);
-    	return VIEWS_GAMES_ENTER_FORM;
+    @GetMapping(value = "/games/{code}/enter")
+    public String initEnterGameForm(@PathVariable("code") String code, Model model, User player) {
+    	
+    	Optional<Game> game = this.gameService.findGameByCode(code);
+    	if(game.isPresent()) {
+    		model.addAttribute(game.get());
+    	
+    	}else {
+    		model.addAttribute("message", "El código introducido no coincide con ninguna partida creada");
+    	}
+    	return VIEW_GAME_LOBBY;
     }
 
-    @PostMapping(value = "/games/{gameId}/enter")
+    @PostMapping(value = "/games/{code}/enter")
     public String processEnterGameForm(@Valid Game game, BindingResult result,
-    		@PathVariable("gameId") int gameId, Player player) {
+    		@PathVariable("gameId") int gameId, User player) {
     	if (result.hasErrors()) {
-    		return VIEWS_GAMES_ENTER_FORM;
+    		return VIEW_GAME_LOBBY;
     	}
     	else {
     		if(game.isNotFull()) {

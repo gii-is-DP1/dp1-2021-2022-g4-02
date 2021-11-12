@@ -20,6 +20,6 @@ public class Card extends BaseEntity{
 	@NotEmpty
 	private CardType cardType;
 	
-	@OneToOne(mappedBy = "cards")
+	@OneToOne(mappedBy = "card")
 	private Island island;
 }

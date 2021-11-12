@@ -4,10 +4,10 @@ INSERT INTO authorities(id,authority,user_id) VALUES (1,'admin',1);
 
 -- One owner user, named owner1 with passwor 0wn3r
 INSERT INTO users(id,username,password,enabled) VALUES (2,'owner1','0wn3r',TRUE);
-
+INSERT INTO authorities(id,authority,user_id) VALUES (8,'player',2);
 -- One vet user, named vet1 with passwor v3t
 INSERT INTO users(id,username,password,enabled) VALUES (3,'vet1','v3t',TRUE);
-
+INSERT INTO authorities(id,authority,user_id) VALUES (9,'player',3);
 
 -- Usuario de Dámaris como Owner (dueño)
 INSERT INTO users(id,username,password,enabled) VALUES (4,'damgomser','damgomser',TRUE);
@@ -189,3 +189,7 @@ INSERT INTO cards(id, card_type) VALUES (63, 9);
 INSERT INTO cards(id, card_type) VALUES (64, 9);
 INSERT INTO cards(id, card_type) VALUES (65, 9);
 INSERT INTO cards(id, card_type) VALUES (66, 9);
+
+
+-- Creación de partidas en curso
+-- insert into games(id,current_user,players_id,fecha_comienzo,fecha_final,code) values (1,1,5,'2021-11-12',null,1);
