@@ -66,8 +66,14 @@ public class UserService {
 	}
 	
 	
-	
+	@Transactional(readOnly = true)
 	public Optional<User> findUser(Integer id) {
 		return userRepository.findById(id);
+	}
+	
+	
+	@Transactional(readOnly = true)
+	public User findCurrentUser() throws DataAccessException {
+		return userRepository.findCurrentUser(User.getCurrentUser());
 	}
 }

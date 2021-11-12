@@ -34,20 +34,20 @@ public class IslandService {
 	@Transactional(readOnly=true)
 	public Card getCardFromIsland (int id) {
 		Island island = findIslandById(id);
-		Card card = island.getCards();
+		Card card = island.getCard();
 		return card;
 	}
 	
 	@Transactional
 	public void emptyIsland(int id) {
 		Island island = findIslandById(id);
-		island.setCards(null);
+		island.setCard(null);
 	}
 	
 	@Transactional
 	public void fillIsland(int id, Card card) {
 		Island island = findIslandById(id);
-		island.setCards(card);
+		island.setCard(card);
 	}
 
 }

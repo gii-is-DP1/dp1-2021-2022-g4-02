@@ -10,10 +10,9 @@
 
     <br></br>
     <div align="right">
-        <p> Cógido de Partida: </p>
+        <p> Cógido de Partida: <c:out value="${game.code}">  </c:out> </p>
     </div>
     <br></br>
-
     <table id="GameLobby" class="table table-striped">
         <thead>
         <tr>
@@ -21,12 +20,14 @@
         </tr>
         </thead>
         <tbody>
+            <c:forEach items="${game.players}" var="user">
             <tr>
-                <td>
-                    <c:out value="${player.username}"/>
+            	<td>
+                    <c:out value="${user.username}"/>
                 </td>
-
+                          
             </tr>
+        </c:forEach>
         </tbody>
     </table>
 
