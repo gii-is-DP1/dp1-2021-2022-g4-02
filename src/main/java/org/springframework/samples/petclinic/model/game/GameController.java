@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class GameController {
 	
 	private static final String VIEWS_GAMES_CREATE_FORM = "games/createGame";
-	private static final String VIEWS_GAMES_ENTER_FORM = "games/enterGame";
+	private static final String VIEWS_GAMES_ENTER_FORM = "games/lobby";
 	
 	@Autowired
 	private GameService gameService;
@@ -30,6 +30,8 @@ public class GameController {
 		return vista;
 	}
 	
+	
+	
 	@GetMapping(value = "/games/{gameId}")
 	public String gamesListById(ModelMap modelMap, @PathVariable("gameId") int gameId){
 		String vista = "game/gameDetails";
@@ -37,6 +39,9 @@ public class GameController {
 		modelMap.addAttribute("game", game);
 		return vista;
 	}
+	
+	
+	/* CREACIÓN DE LA PARTIDA   */
 	
     @GetMapping(value = "/games/create")
     public String initCreateGameForm(Model model) {
@@ -57,6 +62,9 @@ public class GameController {
     	}
     }
     
+    
+    
+    /*  UNIRSE A PARTIDA   */
     @GetMapping(value = "/games/{gameId}/enter")
     public String initEnterGameForm(@PathVariable("gameId") int gameId, Model model, Player player) {
     	Game game = this.gameService.findGameById(gameId);
