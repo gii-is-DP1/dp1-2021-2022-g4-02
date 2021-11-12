@@ -19,8 +19,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "isles")
 public class Island extends BaseEntity{
-//	@NotEmpty
-//	private Integer island;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "card_id", referencedColumnName = "id")
