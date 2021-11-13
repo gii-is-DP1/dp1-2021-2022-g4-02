@@ -20,10 +20,10 @@
         </tr>
         </thead>
         <tbody>
-            <c:forEach items="${game.players}" var="user">
+            <c:forEach items="${game.players}" var="player">
             <tr>
             	<td>
-                    <c:out value="${user.username}"/>
+                    <c:out value="${player.username}"/>
                 </td>
                           
             </tr>
