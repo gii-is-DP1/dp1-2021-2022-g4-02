@@ -40,7 +40,7 @@ public class PlayerService {
 	public Player findCurrentUser() throws DataAccessException {
 		User user = playerRepository.findCurrentUser(User.getCurrentUser());
 		Player player = new Player();
-		player.setUsername(user.getUsername());
+		player.setUser(user);
 		return player;
 	}
 }

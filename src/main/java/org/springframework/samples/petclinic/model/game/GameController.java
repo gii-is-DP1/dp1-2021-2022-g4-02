@@ -5,7 +5,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.samples.petclinic.model.player.Player;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,7 +54,7 @@ public class GameController {
     }
 
     @PostMapping(value = "/games/create")
-    public String processUpdateGameForm(@Valid Game game, User player, BindingResult result) {
+    public String processUpdateGameForm(@Valid Game game, Player player, BindingResult result) {
     	if (result.hasErrors()) {
     		return VIEWS_GAMES_CREATE_FORM;
     	}
@@ -69,7 +69,7 @@ public class GameController {
     
     /*  UNIRSE A PARTIDA   */
     @GetMapping(value = "/games/{code}/enter")
-    public String initEnterGameForm(@PathVariable("code") String code, Model model, User player) {
+    public String initEnterGameForm(@PathVariable("code") String code, Model model, Player player) {
     	
     	Optional<Game> game = this.gameService.findGameByCode(code);
     	if(game.isPresent()) {
@@ -83,7 +83,7 @@ public class GameController {
 
     @PostMapping(value = "/games/{code}/enter")
     public String processEnterGameForm(@Valid Game game, BindingResult result,
-    		@PathVariable("gameId") int gameId, User player) {
+    		@PathVariable("gameId") int gameId, Player player) {
     	if (result.hasErrors()) {
     		return VIEW_GAME_LOBBY;
     	}

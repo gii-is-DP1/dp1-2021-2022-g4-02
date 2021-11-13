@@ -4,18 +4,17 @@ package org.springframework.samples.petclinic.model.game;
 import java.time.LocalDate; 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.model.card.Card;
 import org.springframework.samples.petclinic.model.island.Island;
-import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.model.player.Player;
 import org.springframework.samples.petclinic.util.RandomChain;
 
 import lombok.Getter;
@@ -27,25 +26,22 @@ import lombok.Setter;
 @Table(name = "games")
 public class Game extends BaseEntity{
 	
-	@NotEmpty
-	private Integer currentUser;
-	
-	private Integer diceNumber;
+	private Integer currentUser = 0;
 
 //	private final IslandService islandService = new IslandService();
 	//@OneToMany(cascade = CascadeType.ALL, mappedBy = "username")
 	
 	@NotEmpty
-	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Island.class)
+	@OneToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
 	private List<Island> islands;
 	
 	@NotEmpty
-	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Card.class)
-	private List<Island> cards;
+	@OneToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
+	private List<Card> cards;
 	
 	@NotEmpty
-	@ManyToOne(cascade = CascadeType.ALL,targetEntity = User.class)
-	private List<User> players;
+	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class, mappedBy="games")
+	private List<Player> players;
 	
 	//private Boolean finished;
 	//private Date date;
@@ -56,7 +52,7 @@ public class Game extends BaseEntity{
 //    @JoinColumn(name = "lobby_id", referencedColumnName = "id")
 //    private Lobby lobbies;
 	
-	public void addPlayer(User player) {
+	public void addPlayer(Player player) {
 		if(this.players == null) {
 			this.players = new ArrayList<>();
 		}
@@ -77,11 +73,6 @@ public class Game extends BaseEntity{
 	
 	public void nextPlayer() {
 		this.currentUser = (this.currentUser+1)%this.countPlayers();
-	}
-	
-	public Integer throwDice() {
-		this.diceNumber = ThreadLocalRandom.current().nextInt(1, 7);
-		return diceNumber;
 	}
 
 //	public Card lootIsland(Integer islandNumber) {
