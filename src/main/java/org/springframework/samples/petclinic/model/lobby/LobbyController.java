@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
-@Controller
-public class LobbyController {
+//@Controller
+//public class LobbyController {
 	
 //	private static final String VIEWS_LOBBIES_CREATE_OR_UPDATE_FORM = "lobbies/editLobby";
 //	
@@ -56,4 +56,4 @@ public class LobbyController {
 //    	}
 //    }
     
-}
+//}

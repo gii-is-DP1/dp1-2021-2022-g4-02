@@ -15,15 +15,15 @@ import org.springframework.samples.petclinic.model.player.Player;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@Entity
-@Table(name = "lobbies")
-public class Lobby extends BaseEntity{
+//@Getter
+//@Setter
+//@Entity
+//@Table(name = "lobbies")
+//public class Lobby extends BaseEntity{
 //	@NotEmpty
 //	private List<Player> players;
 //	@NotEmpty
 //	private String code;
 //	@OneToOne(mappedBy = "lobbies")
 //	private Game game;
-}
+//}

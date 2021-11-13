@@ -26,10 +26,10 @@ import lombok.Setter;
 @Table(name = "games")
 public class Game extends BaseEntity{
 	
-	private Integer currentUser = 0;
+	private Integer currentPlayer;
 
 //	private final IslandService islandService = new IslandService();
-	//@OneToMany(cascade = CascadeType.ALL, mappedBy = "username")
+//	@OneToMany(cascade = CascadeType.ALL, mappedBy = "username")
 	
 	@NotEmpty
 	@OneToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
@@ -40,17 +40,12 @@ public class Game extends BaseEntity{
 	private List<Card> cards;
 	
 	@NotEmpty
-	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class, mappedBy="games")
+	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class, mappedBy="game")
 	private List<Player> players;
-	
-	//private Boolean finished;
-	//private Date date;
-	private  LocalDate fechaComienzo ;
-	private LocalDate fechaFinal;
+
+	private  LocalDate fecha_comienzo ;
+	private LocalDate fecha_final;
 	private String code = RandomChain.randomChain(6);
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "lobby_id", referencedColumnName = "id")
-//    private Lobby lobbies;
 	
 	public void addPlayer(Player player) {
 		if(this.players == null) {
@@ -72,7 +67,7 @@ public class Game extends BaseEntity{
 	}
 	
 	public void nextPlayer() {
-		this.currentUser = (this.currentUser+1)%this.countPlayers();
+		this.currentPlayer = (this.currentPlayer+1)%this.countPlayers();
 	}
 
 //	public Card lootIsland(Integer islandNumber) {
@@ -90,9 +85,9 @@ public class Game extends BaseEntity{
 //		return card;
 //	}
 	
-	/*
-	public boolean isFinished() {
-		return this.fechaFinal != null;
-	}
-	 */
+//	
+//	public boolean isFinished() {
+//		return this.fechaFinal != null;
+//	}
+	 
 }

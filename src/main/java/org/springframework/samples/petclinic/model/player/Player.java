@@ -16,7 +16,6 @@ import javax.validation.constraints.NotEmpty;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.model.card.Card;
 import org.springframework.samples.petclinic.model.game.Game;
-import org.springframework.samples.petclinic.model.island.Island;
 import org.springframework.samples.petclinic.user.User;
 
 import lombok.Getter;
@@ -36,7 +35,7 @@ public class Player extends BaseEntity{
 	
 	@NotEmpty
 	@ManyToOne(cascade = CascadeType.ALL, targetEntity = Game.class)
-	private Game games;
+	private Game game;
 	
 	@NotEmpty
 	@OneToMany(cascade = CascadeType.ALL, targetEntity = Card.class, mappedBy="player")

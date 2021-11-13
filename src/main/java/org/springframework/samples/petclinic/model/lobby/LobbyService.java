@@ -8,8 +8,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class LobbyService {
+//@Service
+//public class LobbyService {
 //	@Autowired
 //	private LobbyRepository lobbyRepository;
 //	
@@ -32,4 +32,4 @@ public class LobbyService {
 //	public void saveLobby(Lobby lobbyToUpdate) throws DataAccessException {
 //		lobbyRepository.save(lobbyToUpdate);
 //	}
-}
+//}
