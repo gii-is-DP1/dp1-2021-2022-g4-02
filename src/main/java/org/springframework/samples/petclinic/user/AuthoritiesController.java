@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.user;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -81,8 +82,13 @@ public class AuthoritiesController {
 	/* Edición de un usuario */
 	@GetMapping(value = "admin/{id}/edit")
 	public String initUpdateForm(@PathVariable("id") Integer id, Model model ) {	
-		User user = this.authoritiesService.findUserById(id);
-		model.addAttribute(user);
+		Optional<User> user = this.authoritiesService.findUserById(id);
+		if(user.isPresent()) {
+			model.addAttribute(user.get());
+			model.addAttribute("message", "Usuario encontrado!");
+		}else {
+			model.addAttribute("message", "Usuario no encontrado!");
+		}
 		return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 	}
 	
@@ -93,19 +99,33 @@ public class AuthoritiesController {
 			model.put("user", user);
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}else {
-			User userToUpdate = this.authoritiesService.findUserById(id);
-			BeanUtils.copyProperties(user, userToUpdate);
-			this.authoritiesService.saveUser(userToUpdate);
+			Optional<User> userToUpdate = this.authoritiesService.findUserById(id);
+			if(userToUpdate.isPresent()) {
+				BeanUtils.copyProperties(user, userToUpdate.get());
+				this.authoritiesService.saveUser(userToUpdate.get());
+				model.addAttribute("message", "Usuario encontrado!");
+			}else {
+				model.addAttribute("message", "Usuario no encontrado!");
+			}
+			
 			return "redirect:/admin/users";
 		}
 		
 	}
 	
-	//Borrar usuario
-	@DeleteMapping(value = "admin/users/{id}/delete")
-	public String processDelete(@PathVariable("id") Integer id) {
-		authoritiesService.deleteUser(id);
-		return "redirect:/admin/users";
+	//Borrado de usuario
+	@GetMapping(value = "admin/users/{id}/delete")
+	public String processDelete(@PathVariable("id") Integer id, ModelMap model) {
+		Optional<User> user =  authoritiesService.findUserById(id);
+		
+		if(user.isPresent()) {
+			authoritiesService.deleteUser(user.get());
+			model.addAttribute("message", "Usuario encontrado!");
+		}else {
+			model.addAttribute("message", "Usuario no encontrado!");
+		}
+		
+		 return "redirect:/admin/users";
 	}
 	
 	//Creación de permisos
