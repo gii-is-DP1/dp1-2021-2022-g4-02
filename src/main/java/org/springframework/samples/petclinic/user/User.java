@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.user;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -26,10 +27,10 @@ public class User extends BaseEntity implements Serializable{
 	
 	boolean enabled;
 	
-	@OneToOne(mappedBy = "user")
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
 	Authorities authorities;
 	
-	@OneToOne(mappedBy = "user")
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
 	Player player;
 	
 	public static String getCurrentUser() {
