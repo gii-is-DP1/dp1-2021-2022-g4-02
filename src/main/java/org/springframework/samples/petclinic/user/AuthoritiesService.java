@@ -66,8 +66,8 @@ public class AuthoritiesService {
 	
 	
 	@Transactional(readOnly = true)
-	public User findUserById(Integer id) throws IllegalArgumentException {
-		User user = userService.findUser(id).get();
+	public Optional<User> findUserById(Integer id) throws IllegalArgumentException {
+		Optional<User> user = userService.findUser(id);
 		return user;
 	}
 	
@@ -78,8 +78,8 @@ public class AuthoritiesService {
 	}
 	
 	@Transactional
-	public void deleteUser(Integer id) throws DataAccessException {
-		userService.deleteUser(id);
+	public void deleteUser(User user) throws DataAccessException {
+		userService.deleteUser(user);
 	}
 	
 	@Transactional
