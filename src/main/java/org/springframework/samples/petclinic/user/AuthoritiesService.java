@@ -72,14 +72,19 @@ public class AuthoritiesService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Authorities findAuthByUser(Integer userId) throws IllegalArgumentException {
-		Authorities auth = authoritiesRepository.findAuthByUser(userId);
+	public Optional<Authorities> findAuthByUser(Integer userId) throws IllegalArgumentException {
+		Optional<Authorities> auth = authoritiesRepository.findAuthByUser(userId);
 		return auth;
 	}
 	
 	@Transactional
 	public void deleteUser(User user) throws DataAccessException {
 		userService.deleteUser(user);
+	}
+	
+	@Transactional
+	public void deleteAuth(Authorities auth) throws DataAccessException {
+		authoritiesRepository.delete(auth);;
 	}
 	
 	@Transactional

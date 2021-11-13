@@ -36,11 +36,11 @@ public class PlayerService {
 		playerRepository.save(playerToUpdate);
 	}
 	
-	@Transactional(readOnly = true)
-	public Player findCurrentUser() throws DataAccessException {
-		User user = playerRepository.findCurrentUser(User.getCurrentUser());
-		Player player = new Player();
-		player.setUser(user);
-		return player;
-	}
+//	@Transactional(readOnly = true)
+//	public Player findCurrentUser() throws DataAccessException {
+//		User user = playerRepository.findCurrentUser(User.getCurrentUser());
+//		Player player = new Player();
+//		player.setUser(user);
+//		return player;
+//	}
 }

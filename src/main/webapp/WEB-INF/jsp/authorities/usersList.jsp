@@ -14,7 +14,8 @@
         	<th>ID</th>
             <th>UserName</th>
             <th>Authority</th>
-            <th> Actions </th>
+            <th> User Actions </th>
+            <th> Authorities Actions </th>
         </tr>
         </thead>
         <tbody>
@@ -43,6 +44,21 @@
                         <spring:param name="userId" value="${user.id}"/>
                     </spring:url>
                     <a href="${fn:escapeXml(usereditUrl)}">Editar usuario</a>
+                    </p>
+                </td>
+                <td>
+                 <p>
+                    <spring:url value="/admin/authorities/{userId}/delete" var="authUrl">
+                        <spring:param name="userId" value="${user.id}"/>
+                    </spring:url>
+                    <a href="${fn:escapeXml(authUrl)}">Borrar autoridad</a>
+                   </p>
+                   
+                   <p>
+                     <spring:url value="/admin/authorities/{userId}/edit" var="autheditUrl">
+                        <spring:param name="userId" value="${user.id}"/>
+                    </spring:url>
+                    <a href="${fn:escapeXml(autheditUrl)}">Editar autoridad</a>
                     </p>
                 </td>
               

@@ -22,7 +22,7 @@ public class Authorities extends BaseEntity{
 //  @JoinColumn(name = "lobby_id", referencedColumnName = "id")
 //  private Lobby lobbies;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	User user;
 	

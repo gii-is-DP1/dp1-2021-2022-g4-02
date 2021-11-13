@@ -115,7 +115,7 @@ public class AuthoritiesController {
 	
 	//Borrado de usuario
 	@GetMapping(value = "admin/users/{id}/delete")
-	public String processDelete(@PathVariable("id") Integer id, ModelMap model) {
+	public String processDeleteUser(@PathVariable("id") Integer id, ModelMap model) {
 		Optional<User> user =  authoritiesService.findUserById(id);
 		
 		if(user.isPresent()) {
@@ -149,9 +149,17 @@ public class AuthoritiesController {
 
 	/* Edición de permisos */
 	@GetMapping(value = "admin/authorities/{user}/edit")
-	public String initAuthUpdateForm(@PathVariable("user") Integer id, Model model ) {		
-		Authorities authorities = this.authoritiesService.findAuthByUser(id);
-		model.addAttribute(authorities);
+	public String initAuthUpdateForm(@PathVariable("user") Integer id, Model model ) {	
+		
+		Optional<Authorities> authorities = this.authoritiesService.findAuthByUser(id);
+		if(authorities.isPresent()) {
+			model.addAttribute(authorities.get());
+			model.addAttribute("message", "Permisos encontrados!");
+		}else {
+			model.addAttribute("message", "Permisos no encontrados!");
+		}
+		
+		
 		return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 	}
 	
@@ -162,13 +170,33 @@ public class AuthoritiesController {
 			model.put("authorities", authorities);
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}else {
-			Authorities authToUpdate = this.authoritiesService.findAuthByUser(id);
-			BeanUtils.copyProperties(authorities, authToUpdate);
-			this.authoritiesService.saveAuthorities(authToUpdate);
+			Optional<Authorities> authToUpdate = this.authoritiesService.findAuthByUser(id);
+			if(authToUpdate.isPresent()) {
+				BeanUtils.copyProperties(authorities, authToUpdate.get());
+				this.authoritiesService.saveAuthorities(authToUpdate.get());
+				model.addAttribute("message", "Permisos encontrados!");
+			}else {
+				model.addAttribute("message", "Permisos no encontrados!");
+			}
+			
 			return "redirect:/admin/users";
-		}
-		
+		}		
 	}
+	
+	//Borrado de permisos
+		@GetMapping(value = "admin/authorities/{id}/delete")
+		public String processDeleteAuth(@PathVariable("id") Integer id, ModelMap model) {
+			Optional<Authorities> auth =  authoritiesService.findAuthByUser(id);
+			
+			if(auth.isPresent()) {
+				authoritiesService.deleteAuth(auth.get());
+				model.addAttribute("message", "Permisos encontrados!");
+			}else {
+				model.addAttribute("message", "Permisos no encontrados!");
+			}
+			
+			 return "redirect:/admin/users";
+		}
 	
 	
 	
