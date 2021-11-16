@@ -21,7 +21,7 @@ public class Authorities extends BaseEntity{
 //  @JoinColumn(name = "lobby_id", referencedColumnName = "id")
 //  private Lobby lobbies;
 	
-	@OneToOne
+	@OneToOne(optional=true)
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	User user;
 	

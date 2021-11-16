@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -117,10 +118,14 @@ public class AuthoritiesController {
 	@GetMapping(value = "admin/users/{id}/delete")
 	public String processDeleteUser(@PathVariable("id") Integer id, ModelMap model) {
 		Optional<User> user =  authoritiesService.findUserById(id);
-		
 		if(user.isPresent()) {
-			authoritiesService.deleteUser(user.get());
-			model.addAttribute("message", "Usuario encontrado!");
+			if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
+				authoritiesService.deleteUser(user.get());
+				model.addAttribute("message", "Permisos encontrados!");
+			}
+			else {
+				model.addAttribute("message", "No te puedes borrar a ti mismo");
+			}
 		}else {
 			model.addAttribute("message", "Usuario no encontrado!");
 		}
@@ -150,7 +155,6 @@ public class AuthoritiesController {
 	/* Edición de permisos */
 	@GetMapping(value = "admin/authorities/{user}/edit")
 	public String initAuthUpdateForm(@PathVariable("user") Integer id, Model model ) {	
-		
 		Optional<Authorities> authorities = this.authoritiesService.findAuthByUser(id);
 		if(authorities.isPresent()) {
 			model.addAttribute(authorities.get());
@@ -187,10 +191,16 @@ public class AuthoritiesController {
 		@GetMapping(value = "admin/authorities/{id}/delete")
 		public String processDeleteAuth(@PathVariable("id") Integer id, ModelMap model) {
 			Optional<Authorities> auth =  authoritiesService.findAuthByUser(id);
-			
+
 			if(auth.isPresent()) {
-				authoritiesService.deleteAuth(auth.get());
-				model.addAttribute("message", "Permisos encontrados!");
+				if(!(User.getCurrentUser().equals(auth.get().getUser().getUsername()))) {
+					authoritiesService.deleteAuth(auth.get());
+					model.addAttribute("message", "Permisos encontrados!");
+				}
+
+				else {
+					model.addAttribute("message", "No te puedes borrar tus permisos");
+				}
 			}else {
 				model.addAttribute("message", "Permisos no encontrados!");
 			}
