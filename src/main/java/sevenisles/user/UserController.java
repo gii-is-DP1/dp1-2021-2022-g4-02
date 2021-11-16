@@ -16,16 +16,22 @@
 package sevenisles.user;
 
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
 
 /**
  * @author Juergen Hoeller
@@ -36,37 +42,48 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UserController {
 
-//	private static final String VIEWS_OWNER_CREATE_FORM = "users/createOwnerForm";
-//
-//	private final OwnerService ownerService;
-//
-//	@Autowired
-//	public UserController(OwnerService clinicService) {
-//		this.ownerService = clinicService;
-//	}
-//
-//	@InitBinder
-//	public void setAllowedFields(WebDataBinder dataBinder) {
-//		dataBinder.setDisallowedFields("id");
-//	}
-//
-//	@GetMapping(value = "/users/new")
-//	public String initCreationForm(Map<String, Object> model) {
-//		Owner owner = new Owner();
-//		model.put("owner", owner);
-//		return VIEWS_OWNER_CREATE_FORM;
-//	}
-//
-//	@PostMapping(value = "/users/new")
-//	public String processCreationForm(@Valid Owner owner, BindingResult result) {
-//		if (result.hasErrors()) {
-//			return VIEWS_OWNER_CREATE_FORM;
-//		}
-//		else {
-//			//creating owner, user, and authority
-//			this.ownerService.saveOwner(owner);
-//			return "redirect:/";
-//		}
-//	}
+	private static final String VIEWS_USER_EDIT_FORM = "users/editUserForm";
+	
+	private UserService userService;
+	
+	//Get detalles de usuario
+	@GetMapping(value = "/profile")
+	public String userDetails(ModelMap modelMap){
+		String vista = "users/userDetails";
+		System.out.println(User.getCurrentUser());
+		Optional<User> user = userService.findCurrentUser();
+		System.out.println(user.get().getUsername()+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		if(user.isPresent()) modelMap.addAttribute("user", user.get());
+		else modelMap.addAttribute("message", "No estás logueado!");
+		return vista;
+	}
+	
+	/* Edición de un usuario */
+	@GetMapping(value = "profile/edit")
+	public String initUpdateForm(Model model ) {
+		Optional<User> user = this.userService.findCurrentUser();
+		if(user.isPresent()) model.addAttribute(user.get());
+		else model.addAttribute("message", "No estás logueado!");
+		return VIEWS_USER_EDIT_FORM;
+	}
+	
+	@PostMapping(value = "profile/edit")
+	public String processUpdateUserForm(@Valid User user, BindingResult result,
+			 ModelMap model) {
+		if(result.hasErrors()) {
+			model.put("user", user);
+			return VIEWS_USER_EDIT_FORM;
+		}else {
+			User userToUpdate = this.userService.findCurrentUser().get();
+			BeanUtils.copyProperties(user, userToUpdate);
+			this.userService.saveUser(userToUpdate);
+			return "redirect:/profile";
+		}
+		
+	}
+
+
+
+
 
 }
