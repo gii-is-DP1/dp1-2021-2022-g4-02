@@ -9,13 +9,15 @@ import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.samples.petclinic.model.card.Card;
-import org.springframework.samples.petclinic.user.AuthoritiesService;
-import org.springframework.samples.petclinic.user.User;
+
+import sevenisles.user.Authorities;
+import sevenisles.user.AuthoritiesService;
+import sevenisles.user.User;
 import org.springframework.stereotype.Service;
 
 
@@ -24,6 +26,8 @@ public class AuthoritiesServicesTest {
 	
 	@Autowired
 	private AuthoritiesService AuthoritiesServices;
+	
+	
 	
 	@Test
 	public void testCountWithInitialData() {
@@ -38,5 +42,9 @@ public class AuthoritiesServicesTest {
 		List<User> userslist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(users, Spliterator.ORDERED), false).collect(Collectors.toList());
 		assertEquals(count,userslist.size());
 	}
+	
+	
+	
+	
 	
 }

@@ -40,6 +40,5 @@ public class User extends Person implements Serializable{
 		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 	
-	
 
 }
