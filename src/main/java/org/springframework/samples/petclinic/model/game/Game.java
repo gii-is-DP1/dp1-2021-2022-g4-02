@@ -1,11 +1,13 @@
 package org.springframework.samples.petclinic.model.game;
 
 
-import java.time.LocalDate; 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -43,8 +45,12 @@ public class Game extends BaseEntity{
 	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class, mappedBy="game")
 	private List<Player> players;
 
-	private  LocalDate fecha_comienzo ;
-	private LocalDate fecha_final;
+	@Column(name="hora_comienzo")
+	private  LocalTime horaComienzo;
+	
+	@Column(name="hora_fin")
+	private LocalTime horaFin;
+	
 	private String code = RandomChain.randomChain(6);
 	
 	public void addPlayer(Player player) {

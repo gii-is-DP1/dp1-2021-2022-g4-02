@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import sevenisles.card.Card;
 import sevenisles.player.Player;
 
 
@@ -33,15 +34,17 @@ public class GameController {
 		return vista;
 	}
 	
-	
-	
 	@GetMapping(value = "/games/{code}")
-	public String gamesListById(ModelMap modelMap, @PathVariable("code") int gameId){
-		String vista = "game/gameDetails";
-		Game game = gameService.findGameById(gameId);
-		modelMap.addAttribute("game", game);
+	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code){
+		String vista = "games/gameDetails";
+		Optional<Game> game = gameService.findGameByCode(code);
+		if(game.isPresent()) {
+			modelMap.addAttribute("game", game.get());
+		}else {
+			modelMap.addAttribute("message", "Partida no encontrada");
+		}
 		return vista;
-	}
+	}	
 	
 	
 	/* CREACIÓN DE LA PARTIDA   */

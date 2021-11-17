@@ -199,5 +199,5 @@ INSERT INTO isles(id, card_id) VALUES (5, null);
 INSERT INTO isles(id, card_id) VALUES (6, null);
 
 
--- Creación de partidas en curso
--- insert into games(id,current_user,players_id,fecha_comienzo,fecha_final,code) values (1,1,5,'2021-11-12',null,1);
+-- Creación de partidas en curso        
+insert into games(id, code, current_player, start_hour, end_hour) values (1,'3',1,'7:30', '7:50');

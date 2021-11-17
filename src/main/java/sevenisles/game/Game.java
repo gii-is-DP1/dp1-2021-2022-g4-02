@@ -1,12 +1,17 @@
 package sevenisles.game;
 
 
-import java.time.LocalDate; 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
@@ -24,7 +29,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "games")
-public class Game extends BaseEntity{
+public class Game extends BaseEntity {
 	
 	private Integer currentPlayer;
 
@@ -40,11 +45,16 @@ public class Game extends BaseEntity{
 	private List<Card> cards;
 	
 	@NotEmpty
-	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class, mappedBy="game")
+	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class)
 	private List<Player> players;
 
-	private  LocalDate fecha_comienzo ;
-	private LocalDate fecha_final;
+
+	@Column(name="start_hour")
+	private  LocalTime startHour;
+	
+	@Column(name="end_hour")
+	private LocalTime endHour;
+	
 	private String code = RandomChain.randomChain(6);
 	
 	public void addPlayer(Player player) {
@@ -70,6 +80,13 @@ public class Game extends BaseEntity{
 		this.currentPlayer = (this.currentPlayer+1)%this.countPlayers();
 	}
 
+	@Override
+	public String toString() {
+		return "Game [currentPlayer=" + currentPlayer + ", players="
+				+ players + ", startHour=" + startHour + ", endHour=" + endHour + ", code=" + code + "]";
+	}
+	
+
 //	public Card lootIsland(Integer islandNumber) {
 //		Card card;
 //		if(islandNumber>=1 && islandNumber<=6) {
@@ -87,7 +104,7 @@ public class Game extends BaseEntity{
 	
 //	
 //	public boolean isFinished() {
-//		return this.fechaFinal != null;
+//		return this.endHour != null;
 //	}
 	 
 }

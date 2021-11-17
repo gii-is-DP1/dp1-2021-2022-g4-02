@@ -32,8 +32,6 @@ public class GameController {
 		return vista;
 	}
 	
-	
-	
 	@GetMapping(value = "/games/{code}")
 	public String gamesListById(ModelMap modelMap, @PathVariable("code") int gameId){
 		String vista = "game/gameDetails";
