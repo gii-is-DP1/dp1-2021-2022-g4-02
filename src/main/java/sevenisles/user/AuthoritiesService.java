@@ -84,7 +84,7 @@ public class AuthoritiesService {
 	
 	@Transactional
 	public void deleteAuth(Authorities auth) throws DataAccessException {
-		authoritiesRepository.delete(auth);;
+		authoritiesRepository.delete(auth);
 	}
 	
 	@Transactional
