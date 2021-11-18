@@ -1,9 +1,11 @@
 package sevenisles.game;
 
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,18 +15,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import sevenisles.card.Card;
 import sevenisles.player.Player;
+import sevenisles.player.PlayerService;
+import sevenisles.user.User;
+import sevenisles.user.UserService;
 
 
 @Controller
 public class GameController {
 	
-	private static final String VIEWS_GAMES_CREATE_FORM = "games/createGame";
+	private static final String VIEWS_GAMES_CREATE_FORM = "games/create";
 	private static final String VIEW_GAME_LOBBY = "games/lobby";
+	
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private GameService gameService;
+	
+	@Autowired
+	private PlayerService playerService;
 	
 	@GetMapping(value = "/games")
 	public String gamesList(ModelMap modelMap) {
@@ -34,7 +45,7 @@ public class GameController {
 		return vista;
 	}
 	
-	@GetMapping(value = "/games/{code}")
+	@GetMapping(value = "/games/code/{code}")
 	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code){
 		String vista = "games/gameDetails";
 		Optional<Game> game = gameService.findGameByCode(code);
@@ -50,24 +61,21 @@ public class GameController {
 	/* CREACIÓN DE LA PARTIDA   */
 	
     @GetMapping(value = "/games/create")
-    public String initCreateGameForm(Model model) {
+    public String initCreateGameForm(Map<String, Object> model) {
     	Game game = new Game();
-    	model.addAttribute(game);
-    	return VIEWS_GAMES_CREATE_FORM;
-    }
+    	System.out.println(game.getCode());
+    	if(playerService.findCurrentPlayer().isPresent()) {
+    		game.addPlayer(playerService.findCurrentPlayer().get());
+        	this.gameService.saveGame(game);
+        	return "redirect:/games/code/"+game.getCode();
+    	}else {
+    		//Crear vista que nos informe del fallo
+    		return "fallo";
+    	}
+//		model.put("game", game);
+		//return "redirect:/games/code/"+game.getCode();
 
-    @PostMapping(value = "/games/create")
-    public String processUpdateGameForm(@Valid Game game, Player player, BindingResult result) {
-    	if (result.hasErrors()) {
-    		return VIEWS_GAMES_CREATE_FORM;
-    	}
-    	else {
-    		game.addPlayer(player);
-    		this.gameService.saveGame(game);
-    		return "redirect:/games/{gameId}";
-    	}
-    }
-    
+    } 
     
     
     /*  UNIRSE A PARTIDA   */

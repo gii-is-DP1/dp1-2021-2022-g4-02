@@ -36,11 +36,9 @@ public class Game extends BaseEntity {
 //	private final IslandService islandService = new IslandService();
 //	@OneToMany(cascade = CascadeType.ALL, mappedBy = "username")
 	
-	@NotEmpty
 	@OneToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
 	private List<Island> islands;
 	
-	@NotEmpty
 	@OneToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
 	private List<Card> cards;
 	

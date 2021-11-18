@@ -33,11 +33,9 @@ public class Player extends BaseEntity{
 	
 	private Integer diceNumber;
 	
-	@NotEmpty
 	@ManyToOne(cascade = CascadeType.ALL, targetEntity = Game.class)
 	private Game game;
 	
-	@NotEmpty
 	@OneToMany(cascade = CascadeType.ALL, targetEntity = Card.class, mappedBy="player")
 	private List<Card> cards;
 

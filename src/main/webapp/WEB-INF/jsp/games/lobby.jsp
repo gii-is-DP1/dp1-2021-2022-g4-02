@@ -20,14 +20,13 @@
         </tr>
         </thead>
         <tbody>
-            <c:forEach items="${game.players}" var="player">
             <tr>
             	<td>
-                    <c:out value="${player.username}"/>
-                </td>
-                          
+                	<c:forEach items="${game.players}" var="player">
+                    	<c:out value="${player.user.username}"/>
+                    </c:forEach>
+                </td>    
             </tr>
-        </c:forEach>
         </tbody>
     </table>
 
