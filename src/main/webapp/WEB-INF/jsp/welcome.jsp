@@ -17,11 +17,11 @@
         </ul>
       
     </div>
-        <div class="col-md-12">
-        	<img src="/resources/images/logo.png"/>
-            <spring:url value="/resources/images/pets.png" htmlEscape="true" var="petsImage"/>
-            <img class="img-responsive" src="${petsImage}"/>
-            
-        </div>
+        
+        <form:form modelAttribute="game" class="form-horizontal">
+           	<div style="text-align: center">
+           	      <button class="btn btn-default" type="submit" onclick=" location.href='/games/create'">Crear Partida</button>
+           	</div>
+        </form:form>
 
 </petclinic:layout>
