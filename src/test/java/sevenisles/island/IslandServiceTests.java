@@ -60,18 +60,27 @@ public class IslandServiceTests {
 	@Test
 	@Transactional
 	public void testSaveIsland() {
+		// Comprobar que se guarda la nueva isla
 		Island newisland = new Island();
+		int count = IslandService.islandCount();
 		IslandService.saveIsland(newisland);
-		int id = newisland.getId();
+		assertEquals(count+1, IslandService.islandCount());
 		
-		Integer ci = 1;
-		Integer actual = IslandService.getCardFromIsland(id).getId();
-//		assertNotEquals(null,actual);
+		// Comprobar que el valor actual de la carta de la isla es el correcto
+		int newislandid = newisland.getId();
+		Integer cardid = 1;
+		Card card = IslandService.getCardFromIsland(newislandid);
+		if (card == null) assertEquals(card, null);
+		else {
+			int cardid2 = card.getId();
+			assertEquals(cardid2, cardid);
+		}
 		
-		Card card = CardService.findCardById(ci);
-		IslandService.fillIsland(id, card);
-		actual = IslandService.getCardFromIsland(id).getId();
-		assertEquals(actual,ci);
+		// Comprobar que el valor de la carta de la isla se actualiza correctamente
+		Card card2 = CardService.findCardById(cardid);
+		IslandService.fillIsland(newislandid, card2);
+		Integer actual = IslandService.getCardFromIsland(newislandid).getId();
+		assertEquals(actual, cardid);
 	}
 }
 	
