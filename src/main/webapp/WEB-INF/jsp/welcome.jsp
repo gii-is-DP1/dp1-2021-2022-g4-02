@@ -5,23 +5,22 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 <!-- %@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %-->
 <petclinic:layout pageName="home">
-    <h2><fmt:message key="welcome"/></h2>
     
-    <div class="row">
-        <h2> Project ${title}</h2>
-        <h2> Group ${group}</h2>
-        <ul>
-          <c:forEach items="${persons}" var="person">
-              <li> ${person.firstName}    ${person.lastName}  </li>
-          </c:forEach>
-        </ul>
-      
-    </div>
+    <h1 style="text-align: center">7Islas</h1>
+    
+    
         
         <form:form modelAttribute="game" class="form-horizontal">
-           	<div style="text-align: center">
+           	<div style="text-align: left">
            	      <button class="btn btn-default" type="submit" onclick=" location.href='/games/create'">Crear Partida</button>
            	</div>
+           	<div style="text-align: center">
+           	      <button class="btn btn-default" type="submit" onclick=" location.href='/games/create'">Buscar partidas</button>
+           	</div>
+           	<div style="text-align: right">
+           	      <button class="btn btn-default" type="submit" onclick=" location.href='/games'">Ver Partidas disponibles</button>
+           	</div>
         </form:form>
+        
 
 </petclinic:layout>

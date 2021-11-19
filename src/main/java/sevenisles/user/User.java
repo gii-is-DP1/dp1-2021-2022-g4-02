@@ -26,6 +26,7 @@ public class User extends BaseEntity implements Serializable{
 	@NotEmpty
 	@Column(unique=true)
 	String username;
+	
 	@NotEmpty
 	String password;
 	

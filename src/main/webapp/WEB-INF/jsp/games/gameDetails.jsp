@@ -11,7 +11,7 @@
     <table id="gamesTable" class="table table-striped">
         <thead>
         <tr>
-         	<th>Code</th>
+         	<th>Código</th>
             <th>Hora de comienzo</th>
             <th>Hora de fin</th>
             <th>Jugadores</th>
