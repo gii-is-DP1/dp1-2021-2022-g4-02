@@ -1,6 +1,6 @@
 package sevenisles.game;
 
-import java.time.LocalTime;
+import java.time.LocalTime; 
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import sevenisles.card.CardService;
 import sevenisles.player.Player;
@@ -99,7 +100,6 @@ public class GameController {
     	if(game.isPresent()) {
     		if(game.get().isNotFull()) {
     			Optional<Player> player = playerService.findCurrentPlayer();
-    			System.out.println(player.get()+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     			if(player.isPresent()) {
     				game.get().addPlayer(player.get());
         			this.gameService.saveGame(game.get());
@@ -146,5 +146,10 @@ public class GameController {
 		return vista;
 	}
     
+	@PostMapping(value = "/games/searchGame")
+	public String searchByCodeView(String code, ModelMap modelMap) {
+		String vista = "games/"+code+"/enter";
+		return "redirect:/"+vista;
+	}
 
 }
