@@ -1,6 +1,7 @@
 package sevenisles.island;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +27,10 @@ public class IslandService {
 		return islandRepo.findById(id).get();
 	}
 	
-//	@Transactional
-//	public void saveIsland(Island islandToUpdate) throws DataAccessException {
-//		islandRepo.save(islandToUpdate);
-// }
+	@Transactional
+	public void saveIsland(Island islandToUpdate) throws DataAccessException {
+		islandRepo.save(islandToUpdate);
+ }
 	
 	@Transactional(readOnly=true)
 	public Card getCardFromIsland (int id) {
