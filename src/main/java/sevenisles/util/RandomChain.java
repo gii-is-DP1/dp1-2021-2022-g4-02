@@ -6,7 +6,7 @@ public class RandomChain {
 		String caracteres;
         StringBuilder cadena;
         
-        caracteres = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+        caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                     + "0123456789"; 
         cadena = new StringBuilder(length); 
         for (int i = 0; i < length; i++) { 

@@ -38,7 +38,7 @@ public class Game extends BaseEntity {
 	@OneToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
 	private List<Card> cards;
 	
-	@NotEmpty
+	
 	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class)
 	private List<Player> players;
 
