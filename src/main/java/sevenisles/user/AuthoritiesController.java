@@ -210,16 +210,23 @@ public class AuthoritiesController {
 		@GetMapping(value = "admin/authorities/{id}/delete")
 		public String processDeleteAuth(@PathVariable("id") Integer id, ModelMap model) {
 			Optional<Authorities> auth =  authoritiesService.findAuthByUser(id);
-
 			if(auth.isPresent()) {
-				if(!(User.getCurrentUser().equals(auth.get().getUser().getUsername()))) {
-					authoritiesService.deleteAuth(auth.get());
-					model.addAttribute("message", "Permisos encontrados!");
-				}
+				Optional<User> user = authoritiesService.findUserById(id);
+				if(user.isPresent()) {
+					if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
+						user.get().setAuthorities(null);
+						authoritiesService.saveUser(user.get());
+						authoritiesService.deleteAuth(auth.get());
+						model.addAttribute("message", "Permisos encontrados!");
+					}
 
-				else {
-					model.addAttribute("message", "No te puedes borrar tus permisos");
+					else {
+						model.addAttribute("message", "No te puedes borrar tus permisos");
+					}
+				}else {
+					model.addAttribute("message", "Usuario no encontrado!");
 				}
+				
 			}else {
 				model.addAttribute("message", "Permisos no encontrados!");
 			}

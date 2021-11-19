@@ -23,6 +23,14 @@
                 <div class="control-group">
             		<petclinic:inputField label="Password" name="password" />  		
                 </div>
+                <h2> Choose an new user's first name </h2>
+                <div class="control-group">
+            		<petclinic:inputField label="First Name" name="firstName" />	
+                </div>                
+                 <h2> Choose an new user's last name </h2>
+                <div class="control-group">
+            		<petclinic:inputField label="Last Name" name="lastName" />  		
+                </div>
             <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>

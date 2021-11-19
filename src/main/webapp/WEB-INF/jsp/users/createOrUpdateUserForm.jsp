@@ -12,11 +12,8 @@
     </h2>
     <form:form modelAttribute="user" class="form-horizontal" id="add-user-form">
         <div class="form-group has-feedback">
-            <%--<petclinic:inputField label="First Name" name="firstName"/>
+            <petclinic:inputField label="First Name" name="firstName"/>
             <petclinic:inputField label="Last Name" name="lastName"/>
-            <petclinic:inputField label="Address" name="address"/>
-            <petclinic:inputField label="City" name="city"/>
-            <petclinic:inputField label="Telephone" name="telephone"/> --%>
             <petclinic:inputField label="Username" name="username"/>
             <petclinic:inputField label="Password" name="password"/>
         </div>

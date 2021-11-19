@@ -17,11 +17,7 @@
             <h2> Choose an new user's authority </h2>
                 <div class="control-group">
             		<petclinic:inputField label="Authority" name="authority" />	
-                </div>
-                <c:if test="${authorities['new']}"><h2> Choose the user </h2>
-                <div class="control-group">
-            		<petclinic:inputField label="User_ID" name="user" />	
-                </div></c:if>                
+                </div>              
             <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>

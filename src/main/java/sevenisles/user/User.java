@@ -30,6 +30,11 @@ public class User extends BaseEntity implements Serializable{
 	@NotEmpty
 	String password;
 	
+	@NotEmpty
+	String firstName;
+	@NotEmpty
+	String lastName;
+	
 	boolean enabled;
 	
 	@OneToOne(optional=true,cascade = CascadeType.ALL,mappedBy = "user")
