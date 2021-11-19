@@ -5,33 +5,26 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
-<petclinic:layout pageName="games">
-    <h1 align="center">Creación de Partida</h1>
+<petclinic:layout pageName="cards">
+    <h2>Card</h2>
 
-    <br></br>
-    <div align="right">
-        <p> Cógido de Partida: <c:out value="${game.code}">  </c:out> </p>
-    </div>
-    <br></br>
-    <table id="GameLobby" class="table table-striped">
+    <table id="cardsTable" class="table table-striped">
         <thead>
         <tr>
-            <th>Jugadores</th>
+        	<th>ID</th>
+            <th>Card Type</th>
         </tr>
         </thead>
         <tbody>
             <tr>
             	<td>
-                	<c:forEach items="${game.players}" var="player">
-                    	<c:out value="${player.user.username}"/>
-                    </c:forEach>
-                </td>    
+                    <c:out value="${card.id}"/>
+                </td>
+                <td>
+                    <c:out value="${card.cardType}"/>
+                </td>
+              
             </tr>
         </tbody>
     </table>
-
-    <div align="center">
-        <button type="button" align="center">Iniciar Partida</button>
-    </div>
-
 </petclinic:layout>

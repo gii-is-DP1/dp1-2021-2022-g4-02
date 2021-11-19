@@ -15,6 +15,8 @@
  */
 package sevenisles.user;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,12 +24,18 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.SecurityContextLoginModule;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.configurers.SecurityContextConfigurer;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -92,9 +100,12 @@ public class UserController {
 			User userToUpdate = this.userService.findCurrentUser().get();
 			BeanUtils.copyProperties(user, userToUpdate,"id");
 			this.userService.saveUser(userToUpdate);
-			User user2 = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			user2.setUsername(userToUpdate.getUsername());
-
+			UsernamePasswordAuthenticationToken authReq
+			 = new UsernamePasswordAuthenticationToken(userToUpdate.getUsername(), userToUpdate.getPassword());
+			 Authentication newAuth = new 
+					 UsernamePasswordAuthenticationToken(authReq.getPrincipal(), authReq.getCredentials(), authReq.getAuthorities());
+			SecurityContext sc = SecurityContextHolder.getContext();
+			sc.setAuthentication(newAuth);
 			return "redirect:/profile";
 		}
 		

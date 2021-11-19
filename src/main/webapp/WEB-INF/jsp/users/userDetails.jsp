@@ -19,12 +19,12 @@
         </thead>
         <tbody>
             <tr>
-            	<%--<td>
+            	<td>
                     <c:out value="${user.firstName}"/>
                 </td>
                 <td>
                     <c:out value="${user.lastName}"/>
-                </td> --%>
+                </td>
                 <td>
                     <c:out value="${user.username}"/>
                 </td>

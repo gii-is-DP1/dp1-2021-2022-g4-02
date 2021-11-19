@@ -47,19 +47,27 @@
                     </p>
                 </td>
                 <td>
-                 <p>
+                   <c:choose>
+                        <c:when test="${user.authorities!=null}">
+                        <p>
+                            <spring:url value="/admin/authorities/{userId}/edit" var="autheditUrl">
+                        <spring:param name="userId" value="${user.id}"/>
+                    	</spring:url>
+                    <a href="${fn:escapeXml(autheditUrl)}">Editar autoridad</a></p>
+                    <p>
                     <spring:url value="/admin/authorities/{userId}/delete" var="authUrl">
                         <spring:param name="userId" value="${user.id}"/>
                     </spring:url>
-                    <a href="${fn:escapeXml(authUrl)}">Borrar autoridad</a>
-                   </p>
-                   
-                   <p>
-                     <spring:url value="/admin/authorities/{userId}/edit" var="autheditUrl">
+                    <a href="${fn:escapeXml(authUrl)}">Borrar autoridad</a></p>
+                        </c:when>
+                        <c:otherwise><p>
+                            <spring:url value="/admin/authorities/{userId}/new" var="autheditUrl">
                         <spring:param name="userId" value="${user.id}"/>
                     </spring:url>
-                    <a href="${fn:escapeXml(autheditUrl)}">Editar autoridad</a>
-                    </p>
+                    <a href="${fn:escapeXml(autheditUrl)}">Crear autoridad</a></p>
+                        </c:otherwise>
+                    </c:choose>
+                    
                 </td>
               
             </tr>
