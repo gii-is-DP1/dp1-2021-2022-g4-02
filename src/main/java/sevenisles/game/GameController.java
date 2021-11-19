@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -26,7 +27,6 @@ public class GameController {
 	
 	private static final String VIEWS_GAMES_CREATE_FORM = "games/create";
 	private static final String VIEW_GAME_LOBBY = "games/lobby";
-	
 	
 	@Autowired
 	private UserService userService;
@@ -45,7 +45,7 @@ public class GameController {
 		return vista;
 	}
 	
-	@GetMapping(value = "/games/code/{code}")
+	@GetMapping(value = "/games/{code}")
 	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code){
 		String vista = "games/gameDetails";
 		Optional<Game> game = gameService.findGameByCode(code);
@@ -67,7 +67,7 @@ public class GameController {
     	if(playerService.findCurrentPlayer().isPresent()) {
     		game.addPlayer(playerService.findCurrentPlayer().get());
         	this.gameService.saveGame(game);
-        	return "redirect:/games/" + game.getCode()+ "/enter";
+        	return "redirect:/games/" + game.getCode();
     	}else {
     		//Crear vista que nos informe del fallo
     		return "fallo";
@@ -79,34 +79,48 @@ public class GameController {
     
     
     /*  UNIRSE A PARTIDA   */
-    @GetMapping(value = "/games/{code}/enter")
-    public String initEnterGameForm(@PathVariable("code") String code, Model model, Player player) {
-    	
-    	Optional<Game> game = this.gameService.findGameByCode(code);
-    	if(game.isPresent()) {
-    		model.addAttribute(game.get());
-    	
-    	}else {
-    		model.addAttribute("message", "El código introducido no coincide con ninguna partida creada");
-    	}
-    	return VIEW_GAME_LOBBY;
-    }
+//    @GetMapping(value = "/games/{code}/enter")
+//    public String initEnterGameForm(@PathVariable("code") String code, Model model) {
+//    	
+//    	Optional<Game> game = this.gameService.findGameByCode(code);
+//    	if(game.isPresent()) {
+//    		model.addAttribute(game.get());
+//    	
+//    	}else {
+//    		model.addAttribute("message", "El código introducido no coincide con ninguna partida creada");
+//    	}
+//    	return VIEW_GAME_LOBBY;
+//    }
 
-    @PostMapping(value = "/games/{code}/enter")
-    public String processEnterGameForm(@Valid Game game, BindingResult result,
-    		@PathVariable("gameId") int gameId, Player player) {
-    	if (result.hasErrors()) {
-    		return VIEW_GAME_LOBBY;
-    	}
-    	else {
-    		if(game.isNotFull()) {
-    			game.addPlayer(player);
-    			this.gameService.saveGame(game);
-        		return "redirect:/games/{gameId}";
-    		}else{
-    			throw new IllegalArgumentException("This game is already full.");
+    @GetMapping(value = "/games/{code}/enter")
+    public String processEnterGameForm(
+    		@PathVariable("code") String code, ModelMap model) {
+//    	if (result.hasErrors()) {
+//    		return VIEW_GAME_LOBBY;
+//    	}
+//    	else {
+    	Optional<Game> game = gameService.findGameByCode(code);
+    	if(game.isPresent()) {
+    		if(game.get().isNotFull()) {
+    			Optional<Player> player = playerService.findCurrentPlayer();
+    			System.out.println(player.get()+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    			if(player.isPresent()) {
+    				game.get().addPlayer(player.get());
+        			this.gameService.saveGame(game.get());
+        			return "redirect:/games/{code}";
+    			}else {
+    				model.put("message", "Jugador no encontrado");
+    				return "redirect:/games/{code}";
+    			}
+    	}else {
+			throw new IllegalArgumentException("This game is already full.");
+		}	
+    		}else {
+    			model.put("message", "Jugador no encontrado");
+    			return "redirect:/games/{code}";
+    			
     		}
-    	}
+//    	}
     }
     
 //    @GetMapping(value = "/games/{gameId}/edit")

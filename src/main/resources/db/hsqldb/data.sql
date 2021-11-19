@@ -2,29 +2,30 @@
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (1,'admin','admin','admin1','4dm1n',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (1,'admin',1);
 
--- One owner user, named owner1 with passwor 0wn3r
-INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (2,'admin','admin','owner1','0wn3r',TRUE);
+-- One player user
+INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (2,'prueba','prueba','player1','123',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (8,'player',2);
--- One vet user, named vet1 with passwor v3t
-INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (3,'admin','admin','vet1','v3t',TRUE);
+INSERT INTO players(id,user_id) VALUES (1,2);
+-- One player user
+INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (3,'prueba','prueba','player2','123',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (9,'player',3);
-
--- Usuario de Dámaris como Owner (dueño)
+INSERT INTO players(id,user_id) VALUES (2,3);
+-- Usuario de Dámaris
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (4,'admin','admin','damgomser','damgomser',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (2,'admin',4);
--- Usuario de Miguel como Owner (dueño)
+-- Usuario de Miguel
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (5,'admin','admin','migrivros','migrivros',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (3,'admin',5);
--- Usuario de Jose como Owner (dueño)
+-- Usuario de Jose
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (6,'admin','admin','josmarluq','josmarluq',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (4,'admin',6);
--- Usuario de Iván como Owner (dueño)
+-- Usuario de Iván
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (7,'admin','admin','ivamorgra','passw2',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (5,'admin',7);
--- Usuario de Antonio como Owner (dueño)
+-- Usuario de Antonio
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (8,'admin','admin','antlopcub','antlopcub',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (6,'admin',8);
--- Usuario de Rafa como Owner (dueño)
+-- Usuario de Rafa
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (9,'admin','admin','rafsanesp','rafsanesp',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (7,'admin',9);
 
