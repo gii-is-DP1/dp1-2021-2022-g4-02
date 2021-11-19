@@ -15,12 +15,13 @@
             <th>Hora de comienzo</th>
             <th>Hora de fin</th>
             <th>Jugadores</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         <c:forEach items="${games}" var="game">
             <tr>
-            	<td>
+            	<td >
                     <c:out value="${game.code}"/>
                 </td>
                 <td>
@@ -31,10 +32,14 @@
                 </td>
                 <td>
                 	<c:forEach items="${game.players}" var="player">
-                    	<c:out value="${player.user.username}"/>
+                    	<p><c:out value="${player.user.username}" /></p>
                     </c:forEach>
                 </td>
-              
+                <td>
+                    <div style="text-align: center">
+           	      		<button class="btn btn-default" type="submit" onclick=" location.href='/games/${game.code}/enter'">Unirse</button>
+           			</div>
+                </td>
             </tr>
         </c:forEach>
         </tbody>

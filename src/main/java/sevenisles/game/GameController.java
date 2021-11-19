@@ -143,5 +143,12 @@ public class GameController {
 //    	}
 //    }
     
+    
+	@GetMapping(value = "/games/searchGame")
+	public String searchByCodeView(ModelMap modelMap) {
+		String vista = "games/searchGame";
+		return vista;
+	}
+    
 
 }
