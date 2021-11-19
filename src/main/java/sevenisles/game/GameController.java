@@ -67,7 +67,7 @@ public class GameController {
     	if(playerService.findCurrentPlayer().isPresent()) {
     		game.addPlayer(playerService.findCurrentPlayer().get());
         	this.gameService.saveGame(game);
-        	return "redirect:/games/code/"+game.getCode();
+        	return "redirect:/games/" + game.getCode()+ "/enter";
     	}else {
     		//Crear vista que nos informe del fallo
     		return "fallo";
