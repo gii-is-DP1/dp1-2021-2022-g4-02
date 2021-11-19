@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
+import sevenisles.player.Player;
+import sevenisles.player.PlayerService;
 
 @Controller
 public class AuthoritiesController {
@@ -31,6 +33,8 @@ public class AuthoritiesController {
 	private AuthoritiesService authoritiesService;
 	@Autowired
 	private GameService gameService;
+	@Autowired
+	private PlayerService playerService;
 	
 	@GetMapping(value = "admin/users")
 	public String usersList(ModelMap modelMap) {
@@ -75,8 +79,16 @@ public class AuthoritiesController {
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
-                    this.authoritiesService.saveUser(user);                  
-                    return "redirect:/admin/users";
+			this.authoritiesService.saveUser(user);
+			Player player = new Player();
+			player.setUser(user);
+			this.playerService.savePlayer(player);
+			
+			Authorities auth = new Authorities();
+	        auth.setAuthority("player");
+	        auth.setUser(user);
+	        authoritiesService.saveAuthorities(auth);                  
+            return "redirect:/admin/users";
 		}
 	}
 
@@ -102,7 +114,7 @@ public class AuthoritiesController {
 		}else {
 			Optional<User> userToUpdate = this.authoritiesService.findUserById(id);
 			if(userToUpdate.isPresent()) {
-				BeanUtils.copyProperties(user, userToUpdate.get());
+				BeanUtils.copyProperties(user, userToUpdate.get(),"id");
 				this.authoritiesService.saveUser(userToUpdate.get());
 				model.addAttribute("message", "Usuario encontrado!");
 			}else {
@@ -134,21 +146,28 @@ public class AuthoritiesController {
 	}
 	
 	//Creación de permisos
-	@GetMapping(value = "admin/authorities/new")
-	public String initAuthCreationForm( Map<String, Object> model ) {
+	@GetMapping(value = "admin/authorities/{user}/new")
+	public String initAuthCreationForm(@PathVariable("user") Integer id, Map<String, Object> model ) {
 		Authorities auth = new Authorities();
 		model.put("authorities", auth);
 		return VIEWS_AUTH_CREATE_OR_UPDATE_FORM ;
 	}
 	
-	@PostMapping(value = "admin/authorities/new")
-	public String processAuthCreationForm(@Valid Authorities auth , BindingResult result) {		
+	@PostMapping(value = "admin/authorities/{user}/new")
+	public String processAuthCreationForm(@PathVariable("user") Integer id,@Valid Authorities auth , BindingResult result,Map<String, Object> model) {		
 		if (result.hasErrors()) {
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
-                    this.authoritiesService.saveAuthorities(auth);                  
-                    return "redirect:/admin/users";
+			Optional<User> user = authoritiesService.findUserById(id);
+			if(user.isPresent()) {
+				auth.setUser(user.get());
+				this.authoritiesService.saveAuthorities(auth); 
+			}else {
+				model.put("message", "Usuario no encontrado");
+				return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
+			}              
+            return "redirect:/admin/users";
 		}
 	}
 
@@ -176,7 +195,7 @@ public class AuthoritiesController {
 		}else {
 			Optional<Authorities> authToUpdate = this.authoritiesService.findAuthByUser(id);
 			if(authToUpdate.isPresent()) {
-				BeanUtils.copyProperties(authorities, authToUpdate.get());
+				BeanUtils.copyProperties(authorities, authToUpdate.get(),"id");
 				this.authoritiesService.saveAuthorities(authToUpdate.get());
 				model.addAttribute("message", "Permisos encontrados!");
 			}else {

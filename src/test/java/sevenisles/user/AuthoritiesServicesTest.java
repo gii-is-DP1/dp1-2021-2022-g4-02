@@ -52,8 +52,8 @@ public class AuthoritiesServicesTest {
 		AuthoritiesServices.saveAuthorities(auth);
 		newuser.setUsername("userprueba");
 		newuser.setPassword("userprueba");
-		newuser.setFirstName("user");
-		newuser.setLastName("prueba");
+//		newuser.setFirstName("user");
+//		newuser.setLastName("prueba");
 		newuser.setAuthorities(auth);
 		AuthoritiesServices.saveUser(newuser);
 	}

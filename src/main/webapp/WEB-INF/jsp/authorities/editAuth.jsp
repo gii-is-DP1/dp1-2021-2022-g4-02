@@ -14,7 +14,6 @@
     
         <form:form modelAttribute="authorities"
                    class="form-horizontal">
- 		<input type="hidden" name="id" value="${authorities.id}"/>
             <h2> Choose an new user's authority </h2>
                 <div class="control-group">
             		<petclinic:inputField label="Authority" name="authority" />	
