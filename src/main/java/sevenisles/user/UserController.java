@@ -22,7 +22,12 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.security.authentication.jaas.SecurityContextLoginModule;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.configurers.SecurityContextConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -46,8 +51,8 @@ import sevenisles.player.PlayerService;
 @Controller
 public class UserController {
 
-	private static final String VIEWS_USER_EDIT_FORM = "users/editUserForm";
-	private static final String VIEWS_USER_CREATE_FORM = "users/createOrUpdateUserForm";
+//	private static final String VIEWS_USER_EDIT_FORM = "users/editUserForm";
+	private static final String VIEWS_USER_CREATE_OR_UPDATE_FORM = "users/createOrUpdateUserForm";
 	
 	@Autowired
 	private PlayerService playerService;
@@ -62,9 +67,7 @@ public class UserController {
 	@GetMapping(value = "/profile")
 	public String userDetails(ModelMap modelMap){
 		String vista = "users/userDetails";
-		System.out.println(User.getCurrentUser());
 		Optional<User> user = userService.findCurrentUser();
-		System.out.println(user.get().getUsername()+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		if(user.isPresent()) modelMap.addAttribute("user", user.get());
 		else modelMap.addAttribute("message", "No estás logueado!");
 		return vista;
@@ -76,7 +79,7 @@ public class UserController {
 		Optional<User> user = this.userService.findCurrentUser();
 		if(user.isPresent()) model.addAttribute(user.get());
 		else model.addAttribute("message", "No estás logueado!");
-		return VIEWS_USER_EDIT_FORM;
+		return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 	}
 	
 	@PostMapping(value = "profile/edit")
@@ -84,11 +87,14 @@ public class UserController {
 			 ModelMap model) {
 		if(result.hasErrors()) {
 			model.put("user", user);
-			return VIEWS_USER_EDIT_FORM;
+			return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 		}else {
 			User userToUpdate = this.userService.findCurrentUser().get();
-			BeanUtils.copyProperties(user, userToUpdate);
+			BeanUtils.copyProperties(user, userToUpdate,"id");
 			this.userService.saveUser(userToUpdate);
+			User user2 = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			user2.setUsername(userToUpdate.getUsername());
+
 			return "redirect:/profile";
 		}
 		
@@ -98,13 +104,13 @@ public class UserController {
 	public String initCreationUserForm(Map<String, Object> model) {
 		User user = new User();
 		model.put("user", user);
-		return VIEWS_USER_CREATE_FORM;
+		return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 	}
 
 	@PostMapping(value = "/users/new")
 	public String processCreationUserForm(@Valid User user, BindingResult result) {
 		if (result.hasErrors()) {
-			return VIEWS_USER_CREATE_FORM;
+			return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 		}
 		else {
 			
