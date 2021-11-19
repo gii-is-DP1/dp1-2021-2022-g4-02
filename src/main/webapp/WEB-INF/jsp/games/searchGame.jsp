@@ -6,10 +6,14 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
-<petclinic:layout pageName="cards">
+<petclinic:layout pageName="games">
     <jsp:body>
-        <form:form modelAttribute="card" class="form-horizontal">
-           <p> :D </p>
+        <form:form modelAttribute="game" class="form-horizontal">
+          <p> Introduzca el código de la partida a la que quiera unirse: </p>
+         	<input type="text" name="code"/>
+          	<div>
+          		<button class="btn btn-default" type="submit">Buscar Partida</button>
+           	</div>
         </form:form>
     </jsp:body>
 </petclinic:layout>
