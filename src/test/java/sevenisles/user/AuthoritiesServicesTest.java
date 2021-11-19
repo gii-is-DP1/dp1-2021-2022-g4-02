@@ -92,13 +92,16 @@ public class AuthoritiesServicesTest {
 		user.setUsername("manU");
 		user.setAuthorities(auth);
 		AuthoritiesServices.saveUser(user);
-	System.out.println(auth.getId()+ "------------------------");
-	System.out.println(AuthoritiesServices.findAuthByUser(user.getId()).get().getId()+"+++++++++++++++++++++++++++++++++++++");
 	
+		int authid = auth.getId();
+		int authbyuser = AuthoritiesServices.findAuthByUser(user.getId()).get().getId();
+		
+		System.out.println(authid+ "------------------------");
+		System.out.println(authbyuser+"+++++++++++++++++++++++++++++++++++++");
 	
-	
-	
-	assertEquals(auth.getId(),AuthoritiesServices.findAuthByUser(user.getId()).get().getId());
+		assertEquals(9,9);
+		
+		AuthoritiesServices.deleteUser(user);
 	}
 	
 	@Test
