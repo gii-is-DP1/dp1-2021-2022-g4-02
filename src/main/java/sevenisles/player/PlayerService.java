@@ -26,8 +26,8 @@ public class PlayerService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Player findPlayerById(int id) throws IllegalArgumentException { 
-		return playerRepository.findById(id).get();
+	public Optional<Player> findPlayerById(int id) throws IllegalArgumentException { 
+		return playerRepository.findById(id);
 	}
 	
 	@Transactional

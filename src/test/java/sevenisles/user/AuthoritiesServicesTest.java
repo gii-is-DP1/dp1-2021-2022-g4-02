@@ -52,8 +52,8 @@ public class AuthoritiesServicesTest {
 		AuthoritiesServices.saveAuthorities(auth);
 		newuser.setUsername("userprueba");
 		newuser.setPassword("userprueba");
-//		newuser.setFirstName("user");
-//		newuser.setLastName("prueba");
+		newuser.setFirstName("user");
+		newuser.setLastName("prueba");
 		newuser.setAuthorities(auth);
 		AuthoritiesServices.saveUser(newuser);
 	}
@@ -79,10 +79,34 @@ public class AuthoritiesServicesTest {
 	}
 	
 	@Test
+	public void TestSaveAuthorities() {
+		Authorities auth = new Authorities();
+		User user = new User();
+		auth.setAuthority("player");
+		auth.setUser(user);
+		AuthoritiesServices.saveAuthorities(auth);
+		
+		user.setFirstName("Manuel");
+		user.setLastName("Gallego");
+		user.setPassword("manuelgal");
+		user.setUsername("manU");
+		user.setAuthorities(auth);
+		AuthoritiesServices.saveUser(user);
+	System.out.println(auth.getId()+ "------------------------");
+	System.out.println(AuthoritiesServices.findAuthByUser(user.getId()).get().getId()+"+++++++++++++++++++++++++++++++++++++");
+	
+	
+	
+	
+	assertEquals(auth.getId(),AuthoritiesServices.findAuthByUser(user.getId()).get().getId());
+	}
+	
+	@Test
 	@AfterEach
 	public void testDeleteUser() {
 		AuthoritiesServices.deleteUser(newuser);
 		int count = AuthoritiesServices.userCount();
 		assertEquals(9,count);
 	}
+
 }

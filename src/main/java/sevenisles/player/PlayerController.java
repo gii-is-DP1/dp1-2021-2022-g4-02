@@ -1,7 +1,9 @@
 package sevenisles.player;
 
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +28,11 @@ public class PlayerController {
 	@GetMapping(value = "/players/{playerId}")
 	public String playersListById(ModelMap modelMap, @PathVariable("playerId") int playerId){
 		String vista = "player/playerDetails";
-		Player player = playerService.findPlayerById(playerId);
+		
+		Optional<Player> player = playerService.findPlayerById(playerId);
+		if(player.isPresent())
 		modelMap.addAttribute("player", player);
+		else modelMap.addAttribute("message", "Jugador no encontrado");
 		return vista;
 	}
 
