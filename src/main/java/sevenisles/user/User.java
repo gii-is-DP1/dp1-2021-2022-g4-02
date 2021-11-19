@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.Getter;
 import lombok.Setter;
 import sevenisles.model.BaseEntity;
-import sevenisles.model.Person;
 import sevenisles.player.Player;
 
 @Getter

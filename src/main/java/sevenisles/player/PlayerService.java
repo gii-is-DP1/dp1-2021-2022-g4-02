@@ -8,14 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import sevenisles.user.User;
-import sevenisles.user.UserRepository;
 
 @Service
 public class PlayerService {
 	@Autowired
 	private PlayerRepository playerRepository;
-	@Autowired
-	private UserRepository userRepository;
+
 	
 	@Transactional(readOnly = true)
 	public Integer player() {
