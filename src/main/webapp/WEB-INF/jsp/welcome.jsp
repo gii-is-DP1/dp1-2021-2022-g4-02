@@ -20,7 +20,7 @@
 				onclick=" location.href='/games/searchGame'">Buscar partidas</button>
 
 			<button class="btn btn-default" type="submit"
-				onclick=" location.href='/games'">Ver partidas disponibles</button>
+				onclick=" location.href='/games/availableGames'">Ver partidas disponibles</button>
 		</div>
 	</form:form>
 

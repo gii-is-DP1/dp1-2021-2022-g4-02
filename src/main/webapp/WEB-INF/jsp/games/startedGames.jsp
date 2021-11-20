@@ -6,35 +6,38 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
 <petclinic:layout pageName="games">
-    <h2>Detalles de la partida</h2>
+    <h2>Partidas comenzadas</h2>
 
     <table id="gamesTable" class="table table-striped">
         <thead>
         <tr>
-         	<th>Código</th>
+          	<th>Código</th>
             <th>Hora de comienzo</th>
-            <th>Hora de fin</th>
             <th>Jugadores</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
+        <c:forEach items="${games}" var="game">
             <tr>
+            	<td >
+                    <c:out value="${game.code}"/>
+                </td>
+                <td>
+                    <c:out value="${game.startHour}"/>
+                </td>
+                <td>
+                	<c:forEach items="${game.players}" var="player">
+                    	<p><c:out value="${player.user.username}" /></p>
+                    </c:forEach>
+                </td>
 				<td>
-					<c:out value="${game.code}" />
+					<div style="text-align: center">
+						<button class="btn btn-default" type="submit">Espectar</button>
+					</div>
 				</td>
-				<td>
-					<c:out value="${game.startHour}" />
-				</td>
-				<td>
-					<c:out value="${game.endHour}" />
-				</td>
-				<td>
-					<c:forEach items="${game.players}" var="player">
-						<p><c:out value="${player.user.username}" /></p>
-					</c:forEach>
-				</td>
-
-			</tr>
+				</tr>
+        </c:forEach>
         </tbody>
     </table>
 </petclinic:layout>

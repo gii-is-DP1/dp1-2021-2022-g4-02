@@ -17,6 +17,12 @@ public interface GameRepository extends CrudRepository<Game, Integer>{
 	
 	@Query("SELECT game FROM Game game WHERE game.code = ?1")
 	Optional<Game> findByCode(String code);
+
+	@Query("SELECT game FROM Game game WHERE game.startHour IS NULL")
+	List<Game> findNotStartedGames();
+
+	@Query("SELECT game FROM Game game WHERE game.startHour IS NOT NULL AND game.endHour IS NULL")
+	List<Game> findStartedGames();
 	
 	/*@Query("SELECT player.id FROM Game g1 NATURAL JOIN games_players g2 WHERE g2 = ?1")
 	List<Integer> findPlayersIdByGameId(Integer id);*/

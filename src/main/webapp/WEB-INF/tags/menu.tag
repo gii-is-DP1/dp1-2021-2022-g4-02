@@ -40,7 +40,7 @@
 					<span>Buscar Partida</span>
 				</petclinic:menuItem>
 
-				<petclinic:menuItem active="${name eq 'games3'}" url="/games"
+				<petclinic:menuItem active="${name eq 'games3'}" url="/games/availableGames"
 					title="Ver partidas disponibles">
 					<span class="glyphicon" aria-hidden="true"></span>
 					<span>Partidas Disponibles</span>
