@@ -71,16 +71,30 @@
 												<span class="glyphicon glyphicon-user icon-size"></span>
 											</p>
 										</div>
-										<div class="col-lg-8">
+					
+										<div class="col-lg-4">
+											<p class="text-left">
+												<strong><sec:authentication property="name" /></strong>
+											</p>
+											<p class="text-left">
+												<a href="<c:url value="/profile/edit" />"
+													class="btn btn-primary btn-block btn-sm">Editar perfil</a>
+											</p>
+										</div>
+									
+									</div>
+									<div class="row">
+										<div class="col-lg-4">
 											<p class="text-left">
 												<strong><sec:authentication property="name" /></strong>
 											</p>
 											<p class="text-left">
 												<a href="<c:url value="/logout" />"
-													class="btn btn-primary btn-block btn-sm">Logout</a>
+													class="btn btn-primary btn-block btn-sm">Cerrar sesión</a>
 											</p>
 										</div>
 									</div>
+									
 								</div>
 							</li>
 							<li class="divider"></li>
