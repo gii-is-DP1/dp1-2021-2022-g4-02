@@ -7,45 +7,60 @@
 <%@ attribute name="name" required="true" rtexprvalue="true"
 	description="Name of the active menu: home, owners, vets or error"%>
 
+
 <nav class="navbar navbar-default" role="navigation">
-	<div class="container">
-		<div class="navbar-header">
-			<a class="navbar-brand"
-				href="<spring:url value="/" htmlEscape="true" />"><span></span></a>
-			<button type="button" class="navbar-toggle" data-toggle="collapse"
-				data-target="#main-navbar">
-				<span class="sr-only"><os-p>Toggle navigation</os-p></span> <span
-					class="icon-bar"></span> <span class="icon-bar"></span> <span
-					class="icon-bar"></span>
-			</button>
-		</div>
 		<div class="navbar-collapse collapse" id="main-navbar">
 			<ul class="nav navbar-nav">
-
-				<petclinic:menuItem active="${name eq 'home'}" url="/"
-					title="home page">
-					<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-					<span>Home</span>
-				</petclinic:menuItem>
-
-				<petclinic:menuItem active="${name eq 'games1'}" url="/games/create"
-					title="create new game">
-					<span aria-hidden="true"></span>
-					<span>Crear Partida</span>
-				</petclinic:menuItem>
-
-				<petclinic:menuItem active="${name eq 'games2'}" url="/games/searchGame"
-					title="Buscar partidas">
-					<span class="glyphicon" aria-hidden="true"></span>
-					<span>Buscar Partida</span>
-				</petclinic:menuItem>
-
-				<petclinic:menuItem active="${name eq 'games3'}" url="/games/availableGames"
-					title="Ver partidas disponibles">
-					<span class="glyphicon" aria-hidden="true"></span>
-					<span>Partidas Disponibles</span>
-				</petclinic:menuItem>
-
+				<c:choose>
+				
+					<c:when test="${user.authorities.authority == 'admin'}">
+						<petclinic:menuItem active="${name eq 'users'}" url="/admin/users"
+								title="Ver usuarios">
+								<span class="glyphicon" aria-hidden="true"></span>
+								<span>Usuarios</span>
+						</petclinic:menuItem>
+							
+						<petclinic:menuItem active="${name eq 'gamesList'}" url="/games"
+								title="Ver partidas">
+								<span class="glyphicon" aria-hidden="true"></span>
+								<span>Partidas</span>
+						</petclinic:menuItem>         
+	                </c:when>
+	               
+	                <c:otherwise><p>
+	                
+	                        <petclinic:menuItem active="${name eq 'home'}" url="/"
+							title="home page">
+							<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+							<span>Home</span>
+						</petclinic:menuItem>
+		
+						<petclinic:menuItem active="${name eq 'create'}" url="/games/create"
+							title="create new game">
+							<span aria-hidden="true"></span>
+							<span>Crear Partida</span>
+						</petclinic:menuItem>
+		
+						<petclinic:menuItem active="${name eq 'searchGame'}" url="/games/searchGame"
+							title="Buscar partidas">
+							<span class="glyphicon" aria-hidden="true"></span>
+							<span>Buscar Partida</span>
+						</petclinic:menuItem>
+		
+						<petclinic:menuItem active="${name eq 'availableGames'}" url="/games/availableGames"
+							title="Ver partidas disponibles">
+							<span class="glyphicon" aria-hidden="true"></span>
+							<span>Partidas Disponibles</span>
+						</petclinic:menuItem>
+						
+						<petclinic:menuItem active="${name eq 'rules'}" url="/rules"
+							title="Ver reglas del juego">
+							<span class="glyphicon" aria-hidden="true"></span>
+							<span>Reglas</span>
+						</petclinic:menuItem>
+	                </c:otherwise>
+	                
+				 </c:choose>			
 			</ul>
 
 
@@ -53,8 +68,8 @@
 
 			<ul class="nav navbar-nav navbar-right">
 				<sec:authorize access="!isAuthenticated()">
-					<li><a href="<c:url value="/login" />">Login</a></li>
-					<li><a href="<c:url value="/users/new" />">Register</a></li>
+					<li><a href="<c:url value="/login" />">Iniciar sesión</a></li>
+					<li><a href="<c:url value="/users/new" />">Registrarse</a></li>
 				</sec:authorize>
 				<sec:authorize access="isAuthenticated()">
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
@@ -67,15 +82,14 @@
 								<div class="navbar-login">
 									<div class="row">
 										<div class="col-lg-4">
-											<p class="text-center">
-												<span class="glyphicon glyphicon-user icon-size"></span>
-											</p>
+											
 										</div>
 					
 										<div class="col-lg-12">
-											<p class="text-left">
+											<p class="text-center">
 												<strong><sec:authentication property="name" /></strong>
 											</p>
+											
 											<p class="text-left">
 												<a href="<c:url value="/profile" />"
 													class="btn btn-primary btn-block btn-sm">Ver perfil</a>
