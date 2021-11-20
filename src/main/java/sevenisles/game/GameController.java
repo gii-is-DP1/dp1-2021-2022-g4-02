@@ -39,106 +39,99 @@ public class GameController {
 		return vista;
 	}
 	
+	@GetMapping(value = "/games/availableGames")
+	public String availableGamesList(ModelMap modelMap) {
+		String vista = "games/availableGames";
+		Iterable<Game> games = gameService.findNotStartedGames();
+		modelMap.addAttribute("games", games);
+		return vista;
+	}
+	
+	@GetMapping(value = "/games/startedGames")
+	public String startedGamesList(ModelMap modelMap) {
+		String vista = "games/startedGames";
+		Iterable<Game> games = gameService.findStartedGames();
+		modelMap.addAttribute("games", games);
+		return vista;
+	}
+	
 	@GetMapping(value = "/games/{code}")
 	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code){
 		String vista = "games/gameDetails";
+		String vistaError = "games/gameErrorScreen";
 		Optional<Game> game = gameService.findGameByCode(code);
 		if(game.isPresent()) {
 			modelMap.addAttribute("game", game.get());
+			return vista;
 		}else {
 			modelMap.addAttribute("message", "Partida no encontrada");
+			return vistaError;
 		}
-		return vista;
 	}	
 	
 	
 	/* CREACIÓN DE LA PARTIDA   */
 	
     @GetMapping(value = "/games/create")
-    public String initCreateGameForm(Map<String, Object> model) {
+    public String initCreateGameForm(ModelMap modelMap) {
     	Game game = new Game();
-    	System.out.println(game.getCode());
     	if(playerService.findCurrentPlayer().isPresent()) {
-    		game.addPlayer(playerService.findCurrentPlayer().get());
-    		game.setStartHour(LocalTime.now());
-    		game.setCards(cardService.llenarMazo());
-        	this.gameService.saveGame(game);
-        	
-        	return "redirect:/games/" + game.getCode();
+    		Player player = playerService.findCurrentPlayer().get();
+    		if(player.getGame()==null) {
+	    		game.addPlayer(player);
+	    		player.setGame(game);
+	    		game.setStartHour(LocalTime.now());
+	    		game.setCards(cardService.llenarMazo());
+	        	this.gameService.saveGame(game);
+	        	return "redirect:/games/" + game.getCode();
+    		}else{
+				modelMap.put("message", "Ya estás dentro de una partida.");
+				return "games/gameErrorScreen";
+    		}
     	}else {
     		//Crear vista que nos informe del fallo
-    		return "fallo";
+    		modelMap.addAttribute("message", "Necesitas estar logueado como jugador para crear una partida.");
+			return "games/gameErrorScreen";
     	}
 //		model.put("game", game);
 		//return "redirect:/games/code/"+game.getCode();
 
     } 
-    
-    
-    /*  UNIRSE A PARTIDA   */
-//    @GetMapping(value = "/games/{code}/enter")
-//    public String initEnterGameForm(@PathVariable("code") String code, Model model) {
-//    	
-//    	Optional<Game> game = this.gameService.findGameByCode(code);
-//    	if(game.isPresent()) {
-//    		model.addAttribute(game.get());
-//    	
-//    	}else {
-//    		model.addAttribute("message", "El código introducido no coincide con ninguna partida creada");
-//    	}
-//    	return VIEW_GAME_LOBBY;
-//    }
 
     @GetMapping(value = "/games/{code}/enter")
     public String processEnterGameForm(
     		@PathVariable("code") String code, ModelMap model) {
-//    	if (result.hasErrors()) {
-//    		return VIEW_GAME_LOBBY;
-//    	}
-//    	else {
-    	Optional<Game> game = gameService.findGameByCode(code);
-    	if(game.isPresent()) {
-    		if(game.get().isNotFull()) {
-    			Optional<Player> player = playerService.findCurrentPlayer();
-    			if(player.isPresent()) {
-    				game.get().addPlayer(player.get());
-        			this.gameService.saveGame(game.get());
-        			return "redirect:/games/{code}";
+    	Optional<Game> optGame = gameService.findGameByCode(code);
+    	if(optGame.isPresent()) {
+    		Game game = optGame.get();
+    		if(optGame.get().isNotFull()) {
+    			Optional<Player> optPlayer = playerService.findCurrentPlayer();
+    			if(optPlayer.isPresent()) {
+    				Player player = optPlayer.get();
+    				if(player.getGame()==null) {
+    					player.setGame(game);
+	    				game.addPlayer(player);
+	        			this.gameService.saveGame(game);
+	        			return "redirect:/games/{code}";
+    				}else {
+        				model.put("message", "Ya estás dentro de una partida.");
+        				return "games/gameErrorScreen";
+    				}
     			}else {
-    				model.put("message", "Jugador no encontrado");
-    				return "redirect:/games/{code}";
+    				model.put("message", "Necesitas iniciar sesión antes de unirte a una partida.");
+    				return "games/gameErrorScreen";
     			}
-    	}else {
-			throw new IllegalArgumentException("This game is already full.");
-		}	
-    		}else {
-    			model.put("message", "Jugador no encontrado");
-    			return "redirect:/games/{code}";
-    			
-    		}
-//    	}
+	    	}else {
+				//throw new IllegalArgumentException("This game is already full.");
+				model.put("message", "Lo sentimos, esta partida ya está llena");
+				return "games/gameErrorScreen";
+			}	
+		}else {
+			model.put("message", "Lo sentimos, pero dicha partida no existe.");
+			return "games/gameErrorScreen";
+			
+		}
     }
-    
-//    @GetMapping(value = "/games/{gameId}/edit")
-//    public String initUpdateGameForm(@PathVariable("gameId") int gameId, Model model) {
-//    	Game game = this.gameService.findGameById(gameId);
-//    	model.addAttribute(game);
-//    	return VIEWS_GAMES_UPDATE_FORM;
-//    }
-//
-//    @PostMapping(value = "/games/{gameId}/edit")
-//    public String processUpdateGameForm(@Valid Game game, BindingResult result,
-//    		@PathVariable("gameId") int gameId) {
-//    	if (result.hasErrors()) {
-//    		return VIEWS_GAMES_UPDATE_FORM;
-//    	}
-//    	else {
-//    		game.setId(gameId);
-//    		this.gameService.saveGame(game);
-//    		return "redirect:/games/{gameId}";
-//    	}
-//    }
-    
     
 	@GetMapping(value = "/games/searchGame")
 	public String searchByCodeView(ModelMap modelMap) {

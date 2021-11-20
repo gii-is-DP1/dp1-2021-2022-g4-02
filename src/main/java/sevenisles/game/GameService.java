@@ -43,8 +43,19 @@ public class GameService {
 		return gameRepository.findUnfinishedGames();
 	}
 	
+	@Transactional(readOnly = true)
+	public List<Game> findNotStartedGames(){ 
+		return gameRepository.findNotStartedGames();
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Game> findStartedGames(){ 
+		return gameRepository.findStartedGames();
+	}
+	
 	@Transactional
 	public void saveGame(Game gameToUpdate) throws DataAccessException {
 		gameRepository.save(gameToUpdate);
 	}
+
 }
