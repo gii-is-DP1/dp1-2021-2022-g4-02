@@ -144,5 +144,11 @@ public class GameController {
 		String vista = "games/"+code+"/enter";
 		return "redirect:/"+vista;
 	}
+	
+	@GetMapping(value = "/rules")
+	public String rulesView(ModelMap modelMap) {
+		String vista = "games/gameRules";
+		return vista;
+	}
 
 }

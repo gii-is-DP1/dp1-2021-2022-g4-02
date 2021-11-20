@@ -6,16 +6,16 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
 <petclinic:layout pageName="users">
-    <h2>Users' List</h2>
+    <h2>Lista de usuarios</h2>
 
     <table id="usersTable" class="table table-striped">
         <thead>
         <tr>
         	<th>ID</th>
-            <th>UserName</th>
-            <th>Authority</th>
-            <th> User Actions </th>
-            <th> Authorities Actions </th>
+            <th>Nombre de usuario</th>
+            <th>Autoridad</th>
+            <th> Acciones de usuario </th>
+            <th> Acciones de autoridad </th>
         </tr>
         </thead>
         <tbody>
