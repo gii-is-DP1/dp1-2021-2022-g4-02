@@ -96,8 +96,6 @@ public class AuthoritiesServicesTest {
 		int authid = auth.getId();
 		int authbyuser = AuthoritiesServices.findAuthByUser(user.getId()).get().getId();
 		
-		System.out.println(authid+ "------------------------");
-		System.out.println(authbyuser+"+++++++++++++++++++++++++++++++++++++");
 	
 		assertEquals(9,9);
 		
