@@ -16,7 +16,7 @@ public class PlayerService {
 
 	
 	@Transactional(readOnly = true)
-	public Integer player() {
+	public Integer playerCount() {
 		return (int) playerRepository.count();
 	}
 	
@@ -33,6 +33,11 @@ public class PlayerService {
 	@Transactional
 	public void savePlayer(Player playerToUpdate) throws DataAccessException {
 		playerRepository.save(playerToUpdate);
+	}
+	
+	@Transactional
+	public void deletePlayer(Integer id) {
+		playerRepository.deleteById(id);
 	}
 	
 	@Transactional(readOnly = true)

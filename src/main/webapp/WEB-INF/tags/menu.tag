@@ -11,9 +11,8 @@
 <nav class="navbar navbar-default" role="navigation">
 		<div class="navbar-collapse collapse" id="main-navbar">
 			<ul class="nav navbar-nav">
-				<c:choose>
 				
-					<c:when test="${user.authorities.authority == 'admin'}">
+					<sec:authorize access="hasRole('admin')">
 						<petclinic:menuItem active="${name eq 'users'}" url="/admin/users"
 								title="Ver usuarios">
 								<span class="glyphicon" aria-hidden="true"></span>
@@ -24,12 +23,11 @@
 								title="Ver partidas">
 								<span class="glyphicon" aria-hidden="true"></span>
 								<span>Partidas</span>
-						</petclinic:menuItem>         
-	                </c:when>
-	               
-	                <c:otherwise><p>
-	                
-	                        <petclinic:menuItem active="${name eq 'home'}" url="/"
+						</petclinic:menuItem>  
+					</sec:authorize>
+				
+					<sec:authorize access="!hasRole('admin')">
+	               		<petclinic:menuItem active="${name eq 'home'}" url="/"
 							title="home page">
 							<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
 							<span>Home</span>
@@ -58,9 +56,7 @@
 							<span class="glyphicon" aria-hidden="true"></span>
 							<span>Reglas</span>
 						</petclinic:menuItem>
-	                </c:otherwise>
-	                
-				 </c:choose>			
+	                </sec:authorize>
 			</ul>
 
 

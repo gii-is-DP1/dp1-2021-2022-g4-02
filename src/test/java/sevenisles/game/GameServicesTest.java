@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
-import sevenisles.user.UserService;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -30,6 +29,12 @@ public class GameServicesTest {
 	@Autowired
 	private PlayerService playerService;
 	
+	
+	@Test
+	public void testCountWithInitialData() {
+        int count = gameService.gameCount();
+        assertEquals(2,count);
+    }
 	
 	
 	@Test
@@ -63,17 +68,17 @@ public class GameServicesTest {
 	
 	@Test
 	public void testFindUnfinishedGames() {
-		List<Game> gamesunfinished = gameService.findUnfinishedGames();
-		for(Integer i=0;i<gamesunfinished.size();i++) {
-			assertEquals(gamesunfinished.get(i).getEndHour(),null);
+		List<Game> unfinishedGames = gameService.findUnfinishedGames();
+		for(Integer i=0;i<unfinishedGames.size();i++) {
+			assertEquals(unfinishedGames.get(i).getEndHour(),null);
 		}
 	}
 	
 	@Test
 	public void testFindFinishedGames() {
-		List<Game> gamesfinished = gameService.findFinishedGames();
-		for(Integer i=0;i<gamesfinished.size();i++) {
-		assertNotEquals(gamesfinished.get(i).getEndHour(),null);
+		List<Game> finishedGames = gameService.findFinishedGames();
+		for(Integer i=0;i<finishedGames.size();i++) {
+			assertNotEquals(finishedGames.get(i).getEndHour(),null);
 		}
 	}
 	
@@ -85,4 +90,22 @@ public class GameServicesTest {
 		assertEquals(count+1,gameService.gameCount());
 	}
 	
+	@Test
+	public void testFindStartedGames() {
+		List<Game> startedGames = gameService.findStartedGames();
+		for(Integer i=0;i<startedGames.size();i++) {
+			assertNotEquals(startedGames.get(i).getStartHour(),null);
+			assertEquals(startedGames.get(i).getEndHour(),null);
+		}
+	}
+	
+	
+	@Test
+	public void testFindNotStartedGames() {
+		List<Game> notStartedGames = gameService.findNotStartedGames();
+		for(Integer i=0;i<notStartedGames.size();i++) {
+			assertEquals(notStartedGames.get(i).getStartHour(),null);
+			assertEquals(notStartedGames.get(i).getEndHour(),null);
+		}
+	}
 }
