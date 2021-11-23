@@ -19,6 +19,7 @@
         </tr>
         </thead>
         <tbody>
+        
         <c:forEach items="${users}" var="user">
             <tr>
             	<td>
@@ -71,7 +72,8 @@
                 </td>
               
             </tr>
-        </c:forEach>
+        	</c:forEach>
+
         </tbody>
     </table>
     

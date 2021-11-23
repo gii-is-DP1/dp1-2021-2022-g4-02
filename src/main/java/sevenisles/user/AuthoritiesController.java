@@ -8,6 +8,11 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -38,10 +43,26 @@ public class AuthoritiesController {
 	@GetMapping(value = "admin/users")
 	public String usersList(ModelMap modelMap) {
 		String vista = "authorities/usersList";
-		Iterable<User> users = authoritiesService.userFindAll();
+		Iterable<User> users = authoritiesService.findAllOrderByUsername();
 		modelMap.addAttribute("users", users);
 		return vista;
 	}
+	/* -----------------------PRUEBA CONTROLADOR PAGINACIÓN ----------------------------------------------*/
+	/*
+	@GetMapping(value = "admin/page/users")
+	public String usersListPagination(ModelMap modelMap) {
+		String vista = "authorities/usersList";
+		
+		//Pageable pageable = PageRequest.of(0,5, Sort.by(Order.asc("username")));
+		
+		//Page<User> paginas = authoritiesService.findByUsername(pageable);
+		
+		//List<User> users = paginas.toList();
+		modelMap.addAttribute("users", users);
+		//modelMap.addAttribute("paginas" , paginas)
+		return vista;
+	}
+	*/
 	/* Listado de partidas jugadas */
 	@GetMapping(value = "/games/finished")
 	public String finishedGamesList(ModelMap modelMap) {

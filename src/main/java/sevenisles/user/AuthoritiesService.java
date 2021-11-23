@@ -16,10 +16,13 @@
 package sevenisles.user;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +61,17 @@ public class AuthoritiesService {
     public Iterable<User> userFindAll() {
         return userService.userFindAll();
     }
+	
+	@Transactional(readOnly = true)
+	public Page<User> findByUsername(Pageable pageable){
+		return userService.findByUsername(pageable);
+	}
+	
+	
+	@Transactional(readOnly = true)
+	public List<User> findAllOrderByUsername(){
+		return userService.findAllOrderByUsername();
+	}
 	
 	@Transactional(readOnly = true)
 	public Integer userCount() {
