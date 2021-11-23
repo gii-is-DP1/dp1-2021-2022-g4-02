@@ -29,17 +29,31 @@ public class AuthoritiesServicesTest {
 	
 	
 	@Test
-	public void testCountWithInitialData() {
+	public void testCountUserWithInitialData() {
         int count = AuthoritiesServices.userCount();
         assertEquals(10,count);
     }
 	
 	@Test
-	public void testFindAll() {
+	public void testCountAuthWithInitialData() {
+        int count = AuthoritiesServices.authCount();
+        assertEquals(10,count);
+    }
+	
+	@Test
+	public void testFindAllUser() {
 		Integer count = AuthoritiesServices.userCount();
 		Iterator<User> users = AuthoritiesServices.userFindAll().iterator();
 		List<User> userslist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(users, Spliterator.ORDERED), false).collect(Collectors.toList());
 		assertEquals(count,userslist.size());
+	}
+	
+	@Test
+	public void testFindAllAuth() {
+		Integer count = AuthoritiesServices.authCount();
+		Iterator<Authorities> auth = AuthoritiesServices.authFindAll().iterator();
+		List<Authorities> authlist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(auth, Spliterator.ORDERED), false).collect(Collectors.toList());
+		assertEquals(count,authlist.size());
 	}
 	
 	
@@ -56,6 +70,11 @@ public class AuthoritiesServicesTest {
 		newuser.setLastName("prueba");
 		newuser.setAuthorities(auth);
 		AuthoritiesServices.saveUser(newuser);
+	}
+	
+	@AfterEach
+	public void finish() {
+		AuthoritiesServices.deleteUser(newuser);
 	}
 	
 	@Test
@@ -80,6 +99,7 @@ public class AuthoritiesServicesTest {
 	
 	@Test
 	public void TestSaveAuthorities() {
+		int countinicial= AuthoritiesServices.authCount();
 		Authorities auth = new Authorities();
 		User user = new User();
 		auth.setAuthority("player");
@@ -92,22 +112,18 @@ public class AuthoritiesServicesTest {
 		user.setUsername("manU");
 		user.setAuthorities(auth);
 		AuthoritiesServices.saveUser(user);
-	
-		int authid = auth.getId();
-		int authbyuser = AuthoritiesServices.findAuthByUser(user.getId()).get().getId();
-		
-	
-		assertEquals(9,9);
+		int countfinal= AuthoritiesServices.authCount();
+		assertEquals(countfinal,countinicial+1);
 		
 		AuthoritiesServices.deleteUser(user);
 	}
 	
 	@Test
-	@AfterEach
 	public void testDeleteUser() {
+		int countinicial = AuthoritiesServices.userCount();
 		AuthoritiesServices.deleteUser(newuser);
 		int count = AuthoritiesServices.userCount();
-		assertEquals(9,count);
+		assertEquals(count,countinicial-1);
 	}
 
 }
