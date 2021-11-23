@@ -63,6 +63,11 @@ public class AuthoritiesService {
     }
 	
 	@Transactional(readOnly = true)
+    public Iterable<Authorities> authFindAll() {
+        return authoritiesRepository.findAll();
+    }
+	
+	@Transactional(readOnly = true)
 	public Page<User> findByUsername(Pageable pageable){
 		return userService.findByUsername(pageable);
 	}
@@ -76,6 +81,11 @@ public class AuthoritiesService {
 	@Transactional(readOnly = true)
 	public Integer userCount() {
 		return (int) userService.userCount();
+	}
+	
+	@Transactional(readOnly = true)
+	public Integer authCount() {
+		return (int) authoritiesRepository.count();
 	}
 	
 	
