@@ -43,9 +43,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/rules/**").permitAll()
 				.antMatchers("/cards/**").permitAll()
 				.antMatchers("/games/**").permitAll()
-				.antMatchers("/authorities").hasAnyAuthority("admin")
-				.antMatchers("/admin").hasAnyAuthority("admin")
-				.antMatchers("/admin/**").hasAnyAuthority("admin")
+				.antMatchers("/admin").hasAuthority("admin")
+				.antMatchers("/admin/**").hasAuthority("admin")
 				.anyRequest().denyAll()
 				.and()
 				 	.formLogin()
@@ -72,8 +71,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	        + "where username = ?")
 	      .authoritiesByUsernameQuery(
 	       "select username, authority "
-	        + "from authorities natural join users "
-	        + "where username = ?")	      	      
+	        + "from authorities a join users u"
+	        + " where u.id = a.user_id and username = ?")	      	      
 	      .passwordEncoder(passwordEncoder());	
 	}
 	
