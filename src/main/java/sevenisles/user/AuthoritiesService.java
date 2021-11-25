@@ -101,11 +101,6 @@ public class AuthoritiesService {
 		return auth;
 	}
 	
-	@Transactional(readOnly = true)
-	public Optional<Authorities> findAuthByUserr(User user) throws IllegalArgumentException {
-		Optional<Authorities> auth = authoritiesRepository.findAuthByUserr(user);
-		return auth;
-	}
 	
 	@Transactional
 	public void deleteUser(User user) throws DataAccessException {
@@ -117,17 +112,5 @@ public class AuthoritiesService {
 		authoritiesRepository.delete(auth);
 	}
 	
-	@Transactional
-	public void saveAuthorities(Integer id, String role) throws DataAccessException {
-		Authorities authority = new Authorities();
-		Optional<User> user = userService.findUser(id);
-		if(user.isPresent()) {
-			authority.setUser(user.get());
-			authority.setAuthority(role);
-			//user.get().getAuthorities().add(authority);
-			authoritiesRepository.save(authority);
-		}else
-			throw new DataAccessException("User '"+user.get().getUsername()+"' not found!") {};
-	}
 	
 }
