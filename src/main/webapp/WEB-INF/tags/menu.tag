@@ -11,8 +11,14 @@
 <nav class="navbar navbar-default" role="navigation">
 		<div class="navbar-collapse collapse" id="main-navbar">
 			<ul class="nav navbar-nav">
+			
+				    <petclinic:menuItem active="${name eq 'home'}" url="/"
+						title="home page">
+						<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+						<span>Home</span>
+					</petclinic:menuItem>
 				
-					<sec:authorize access="hasRole('admin')">
+					<sec:authorize access="hasAuthority('admin')">
 						<petclinic:menuItem active="${name eq 'users'}" url="/admin/users"
 								title="Ver usuarios">
 								<span class="glyphicon" aria-hidden="true"></span>
@@ -26,12 +32,8 @@
 						</petclinic:menuItem>  
 					</sec:authorize>
 				
-					<sec:authorize access="!hasRole('admin')">
-	               		<petclinic:menuItem active="${name eq 'home'}" url="/"
-							title="home page">
-							<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-							<span>Home</span>
-						</petclinic:menuItem>
+					<sec:authorize access="!hasAuthority('admin')">
+
 		
 						<petclinic:menuItem active="${name eq 'create'}" url="/games/create"
 							title="create new game">

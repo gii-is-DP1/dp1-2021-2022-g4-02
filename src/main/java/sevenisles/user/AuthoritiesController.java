@@ -13,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -43,6 +45,7 @@ public class AuthoritiesController {
 	@GetMapping(value = "admin/users")
 	public String usersList(ModelMap modelMap) {
 		String vista = "authorities/usersList";
+		System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		Iterable<User> users = authoritiesService.findAllOrderByUsername();
 		modelMap.addAttribute("users", users);
 		return vista;
@@ -183,6 +186,8 @@ public class AuthoritiesController {
 			if(user.isPresent()) {
 				auth.setUser(user.get());
 				this.authoritiesService.saveAuthorities(auth); 
+				user.get().setAuthorities(auth);
+				this.authoritiesService.saveUser(user.get());
 			}else {
 				model.put("message", "Usuario no encontrado");
 				return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
@@ -196,8 +201,12 @@ public class AuthoritiesController {
 	public String initAuthUpdateForm(@PathVariable("user") Integer id, Model model ) {	
 		Optional<Authorities> authorities = this.authoritiesService.findAuthByUser(id);
 		if(authorities.isPresent()) {
-			model.addAttribute(authorities.get());
-			model.addAttribute("message", "Permisos encontrados!");
+			if(!(User.getCurrentUser().equals(authoritiesService.findUserById(id).get().getUsername()))){
+				model.addAttribute(authorities.get());
+				model.addAttribute("message", "Permisos encontrados!");
+			}else {
+				model.addAttribute("message", "No puedes editar tus permisos");
+			}
 		}else {
 			model.addAttribute("message", "Permisos no encontrados!");
 		}
@@ -214,10 +223,10 @@ public class AuthoritiesController {
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}else {
 			Optional<Authorities> authToUpdate = this.authoritiesService.findAuthByUser(id);
-			if(authToUpdate.isPresent()) {
-				BeanUtils.copyProperties(authorities, authToUpdate.get(),"id");
-				this.authoritiesService.saveAuthorities(authToUpdate.get());
-				model.addAttribute("message", "Permisos encontrados!");
+			if(authToUpdate.isPresent()) {			
+					BeanUtils.copyProperties(authorities, authToUpdate.get(),"id");
+					this.authoritiesService.saveAuthorities(authToUpdate.get());
+					model.addAttribute("message", "Permisos encontrados!");				
 			}else {
 				model.addAttribute("message", "Permisos no encontrados!");
 			}
