@@ -14,8 +14,8 @@
 			
 				    <petclinic:menuItem active="${name eq 'home'}" url="/"
 						title="home page">
-						<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-						<span>Home</span>
+						   <img src="/resources/images/favicon.png" width="18" height="18" class="d-inline-block align-top" alt="">
+						   <span style='margin-left:0.5em; display:inline-block;'>&nbsp;7Isles</span>
 					</petclinic:menuItem>
 				
 					<sec:authorize access="hasAuthority('admin')">
