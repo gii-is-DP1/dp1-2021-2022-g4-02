@@ -15,7 +15,5 @@ public interface AuthoritiesRepository extends  CrudRepository<Authorities, Inte
 	@Query("SELECT auth FROM Authorities auth WHERE auth.user.id=:id")
 	Optional<Authorities> findAuthByUser(Integer id);
 	
-	@Query("SELECT auth FROM Authorities auth where auth.user = :user")
-	Optional<Authorities> findAuthByUserr(User user);
 	
 }

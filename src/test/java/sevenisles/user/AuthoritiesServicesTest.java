@@ -37,7 +37,9 @@ public class AuthoritiesServicesTest {
 	@Test
 	public void testCountAuthWithInitialData() {
         int count = AuthoritiesServices.authCount();
-        assertEquals(10,count);
+		Iterator<Authorities> auth = AuthoritiesServices.authFindAll().iterator();
+        List<Authorities> authlist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(auth, Spliterator.ORDERED), false).collect(Collectors.toList());
+		assertEquals(count,authlist.size());
     }
 	
 	@Test
@@ -98,6 +100,27 @@ public class AuthoritiesServicesTest {
 	}
 	
 	@Test
+	public void TestSaveUser() {
+		int countinicial= AuthoritiesServices.userCount();
+		Authorities auth = new Authorities();
+		User user = new User();
+		auth.setAuthority("player");
+		auth.setUser(user);
+		AuthoritiesServices.saveAuthorities(auth);
+		
+		user.setFirstName("Manuel");
+		user.setLastName("Gallego");
+		user.setPassword("manuelgal");
+		user.setUsername("manU");
+		user.setAuthorities(auth);
+		AuthoritiesServices.saveUser(user);
+		int countfinal= AuthoritiesServices.userCount();
+		assertEquals(countfinal,countinicial+1);
+		
+		AuthoritiesServices.deleteUser(user);
+	}
+	
+	@Test
 	public void TestSaveAuthorities() {
 		int countinicial= AuthoritiesServices.authCount();
 		Authorities auth = new Authorities();
@@ -128,28 +151,15 @@ public class AuthoritiesServicesTest {
 	
 	
 	@Test
-	public void testCountAuth() {
-		int cuenta = AuthoritiesServices.authCount();
-		Iterator<Authorities> auth = AuthoritiesServices.authFindAll().iterator();
-		List<Authorities> authlist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(auth, Spliterator.ORDERED), false).collect(Collectors.toList());
-		
-		assertEquals(cuenta,authlist.size());
-		
-		
-	}
-	
-	
-	@Test
 	public void testDeleteAuth() {
-		int cuentaDelete = 0;
-		int cuenta = AuthoritiesServices.authCount();
-		User user = AuthoritiesServices.findUserById(2).get();
-		Optional<Authorities> auth = AuthoritiesServices.findAuthByUserr(user);
-		
+		int cuentaInicial = AuthoritiesServices.authCount();
+		Optional<Authorities> auth = AuthoritiesServices.findAuthByUser(newuser.getId());
+		if(auth.isPresent()) {
+			newuser.setAuthorities(null);
+			AuthoritiesServices.saveUser(newuser);
 			AuthoritiesServices.deleteAuth(auth.get());
-			 cuentaDelete =  AuthoritiesServices.authCount();
-			
-		
-		assertEquals(cuenta,cuentaDelete+1);
+		}
+		int cuentaFinal = AuthoritiesServices.authCount();
+		assertEquals(cuentaFinal,cuentaInicial-1);
 	}
 }
