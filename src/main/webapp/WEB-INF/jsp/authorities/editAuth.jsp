@@ -9,23 +9,26 @@
 <petclinic:layout pageName="auths">
     <jsp:body>
     	<h2>
-            <c:if test="${authorities['new']}">New </c:if> Authority
+            <c:if test="${authorities['new']}">Nuevos </c:if> Permisos
         </h2>
     
         <form:form modelAttribute="authorities"
                    class="form-horizontal">
-            <h2> Choose an new user's authority </h2>
+            <h2> Elige los nuevos permisos </h2>
                 <div class="control-group">
-            		<petclinic:inputField label="Authority" name="authority" />	
+            		<select name="authority">
+						<option value="admin">Admin</option>
+    					<option value="player">Jugador</option>
+					</select>	
                 </div>              
             <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <c:choose>
                         <c:when test="${authorities['new']}">
-                            <button class="btn btn-default" type="submit">Add Authority</button>
+                            <button class="btn btn-default" type="submit">Añadir permisos</button>
                         </c:when>
                         <c:otherwise>
-                            <button class="btn btn-default" type="submit">Update Authority</button>
+                            <button class="btn btn-default" type="submit">Editar permisos</button>
                         </c:otherwise>
                     </c:choose>
             </div>

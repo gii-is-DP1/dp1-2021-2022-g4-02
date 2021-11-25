@@ -33,6 +33,7 @@ public class AuthoritiesController {
 	
 	private static final String VIEWS_USERS_CREATE_OR_UPDATE_FORM = "authorities/editUser";
 	private static final String VIEWS_AUTH_CREATE_OR_UPDATE_FORM = "authorities/editAuth";
+	private static final String VIEWS_ERROR = "error";
 	
 	@Autowired
 	private AuthoritiesService authoritiesService;
@@ -125,6 +126,7 @@ public class AuthoritiesController {
 			model.addAttribute("message", "Usuario encontrado!");
 		}else {
 			model.addAttribute("message", "Usuario no encontrado!");
+			return VIEWS_ERROR;
 		}
 		return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 	}
@@ -136,26 +138,21 @@ public class AuthoritiesController {
 			model.put("user", user);
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}else {
-			Optional<User> userToUpdate = this.userService.findUserById(id);
-			if(userToUpdate.isPresent()) {
-				if(User.getCurrentUser().equals(userToUpdate.get().getUsername())) {
-					BeanUtils.copyProperties(user, userToUpdate.get(),"id");
-					this.userService.saveUser(userToUpdate.get());
-					Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-					Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-					UsernamePasswordAuthenticationToken authReq
-					 = new UsernamePasswordAuthenticationToken(userToUpdate.get().getUsername(), userToUpdate.get().getPassword(), authorities);
-					Authentication newAuth = new 
-							 UsernamePasswordAuthenticationToken(authReq.getPrincipal(), authReq.getCredentials(), authReq.getAuthorities());					
-					SecurityContext sc = SecurityContextHolder.getContext();
-					sc.setAuthentication(newAuth);
-				}else {
-					BeanUtils.copyProperties(user, userToUpdate.get(),"id");
-					this.userService.saveUser(userToUpdate.get());
-				}
-				model.addAttribute("message", "Usuario encontrado!");
+			User userToUpdate = this.userService.findUserById(id).get();
+			if(User.getCurrentUser().equals(userToUpdate.getUsername())) {
+				BeanUtils.copyProperties(user, userToUpdate,"id");
+				this.userService.saveUser(userToUpdate);
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+				Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+				UsernamePasswordAuthenticationToken authReq
+				 = new UsernamePasswordAuthenticationToken(userToUpdate.getUsername(), userToUpdate.getPassword(), authorities);
+				Authentication newAuth = new 
+						 UsernamePasswordAuthenticationToken(authReq.getPrincipal(), authReq.getCredentials(), authReq.getAuthorities());					
+				SecurityContext sc = SecurityContextHolder.getContext();
+				sc.setAuthentication(newAuth);
 			}else {
-				model.addAttribute("message", "Usuario no encontrado!");
+				BeanUtils.copyProperties(user, userToUpdate,"id");
+				this.userService.saveUser(userToUpdate);
 			}
 			return "redirect:/admin/users";
 		}
@@ -173,6 +170,7 @@ public class AuthoritiesController {
 			}
 			else {
 				model.addAttribute("message", "No te puedes borrar a ti mismo");
+				return VIEWS_ERROR;
 			}
 		}else {
 			model.addAttribute("message", "Usuario no encontrado!");
@@ -216,12 +214,13 @@ public class AuthoritiesController {
 		if(authorities.isPresent()) {
 			if(!(User.getCurrentUser().equals(userService.findUserById(id).get().getUsername()))){
 				model.addAttribute(authorities.get());
-				model.addAttribute("message", "Permisos encontrados!");
 			}else {
 				model.addAttribute("message", "No puedes editar tus permisos");
+				return VIEWS_ERROR;
 			}
 		}else {
 			model.addAttribute("message", "Permisos no encontrados!");
+			return VIEWS_ERROR;
 		}
 		
 		
@@ -235,14 +234,10 @@ public class AuthoritiesController {
 			model.put("authorities", authorities);
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}else {
-			Optional<Authorities> authToUpdate = this.authoritiesService.findAuthByUser(id);
-			if(authToUpdate.isPresent()) {			
-					BeanUtils.copyProperties(authorities, authToUpdate.get(),"id");
-					this.authoritiesService.saveAuthorities(authToUpdate.get());
-					model.addAttribute("message", "Permisos encontrados!");				
-			}else {
-				model.addAttribute("message", "Permisos no encontrados!");
-			}
+			Authorities authToUpdate = this.authoritiesService.findAuthByUser(id).get();			
+			BeanUtils.copyProperties(authorities, authToUpdate,"id");
+			this.authoritiesService.saveAuthorities(authToUpdate);
+			model.addAttribute("message", "Permisos encontrados!");	
 			
 			return "redirect:/admin/users";
 		}		
@@ -264,13 +259,16 @@ public class AuthoritiesController {
 
 					else {
 						model.addAttribute("message", "No te puedes borrar tus permisos");
+						return VIEWS_ERROR;
 					}
 				}else {
 					model.addAttribute("message", "Usuario no encontrado!");
+					return VIEWS_ERROR;
 				}
 				
 			}else {
 				model.addAttribute("message", "Permisos no encontrados!");
+				return VIEWS_ERROR;
 			}
 			
 			 return "redirect:/admin/users";
