@@ -1,5 +1,6 @@
 package sevenisles.user;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -8,11 +9,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -38,6 +37,8 @@ public class AuthoritiesController {
 	@Autowired
 	private AuthoritiesService authoritiesService;
 	@Autowired
+	private UserService userService;
+	@Autowired
 	private GameService gameService;
 	@Autowired
 	private PlayerService playerService;
@@ -46,7 +47,7 @@ public class AuthoritiesController {
 	public String usersList(ModelMap modelMap) {
 		String vista = "authorities/usersList";
 		System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-		Iterable<User> users = authoritiesService.findAllOrderByUsername();
+		Iterable<User> users = userService.findAllOrderByUsername();
 		modelMap.addAttribute("users", users);
 		return vista;
 	}
@@ -102,7 +103,7 @@ public class AuthoritiesController {
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
-			this.authoritiesService.saveUser(user);
+			this.userService.saveUser(user);
 			Player player = new Player();
 			player.setUser(user);
 			this.playerService.savePlayer(player);
@@ -118,7 +119,7 @@ public class AuthoritiesController {
 	/* Edición de un usuario */
 	@GetMapping(value = "admin/{id}/edit")
 	public String initUpdateForm(@PathVariable("id") Integer id, Model model ) {	
-		Optional<User> user = this.authoritiesService.findUserById(id);
+		Optional<User> user = this.userService.findUserById(id);
 		if(user.isPresent()) {
 			model.addAttribute(user.get());
 			model.addAttribute("message", "Usuario encontrado!");
@@ -135,15 +136,27 @@ public class AuthoritiesController {
 			model.put("user", user);
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}else {
-			Optional<User> userToUpdate = this.authoritiesService.findUserById(id);
+			Optional<User> userToUpdate = this.userService.findUserById(id);
 			if(userToUpdate.isPresent()) {
-				BeanUtils.copyProperties(user, userToUpdate.get(),"id");
-				this.authoritiesService.saveUser(userToUpdate.get());
+				if(User.getCurrentUser().equals(userToUpdate.get().getUsername())) {
+					BeanUtils.copyProperties(user, userToUpdate.get(),"id");
+					this.userService.saveUser(userToUpdate.get());
+					Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+					Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+					UsernamePasswordAuthenticationToken authReq
+					 = new UsernamePasswordAuthenticationToken(userToUpdate.get().getUsername(), userToUpdate.get().getPassword(), authorities);
+					Authentication newAuth = new 
+							 UsernamePasswordAuthenticationToken(authReq.getPrincipal(), authReq.getCredentials(), authReq.getAuthorities());					
+					SecurityContext sc = SecurityContextHolder.getContext();
+					sc.setAuthentication(newAuth);
+				}else {
+					BeanUtils.copyProperties(user, userToUpdate.get(),"id");
+					this.userService.saveUser(userToUpdate.get());
+				}
 				model.addAttribute("message", "Usuario encontrado!");
 			}else {
 				model.addAttribute("message", "Usuario no encontrado!");
 			}
-			
 			return "redirect:/admin/users";
 		}
 		
@@ -152,10 +165,10 @@ public class AuthoritiesController {
 	//Borrado de usuario
 	@GetMapping(value = "admin/users/{id}/delete")
 	public String processDeleteUser(@PathVariable("id") Integer id, ModelMap model) {
-		Optional<User> user =  authoritiesService.findUserById(id);
+		Optional<User> user =  userService.findUserById(id);
 		if(user.isPresent()) {
 			if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
-				authoritiesService.deleteUser(user.get());
+				userService.deleteUser(user.get());
 				model.addAttribute("message", "Permisos encontrados!");
 			}
 			else {
@@ -182,12 +195,12 @@ public class AuthoritiesController {
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
-			Optional<User> user = authoritiesService.findUserById(id);
+			Optional<User> user = userService.findUserById(id);
 			if(user.isPresent()) {
 				auth.setUser(user.get());
 				this.authoritiesService.saveAuthorities(auth); 
 				user.get().setAuthorities(auth);
-				this.authoritiesService.saveUser(user.get());
+				this.userService.saveUser(user.get());
 			}else {
 				model.put("message", "Usuario no encontrado");
 				return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
@@ -201,7 +214,7 @@ public class AuthoritiesController {
 	public String initAuthUpdateForm(@PathVariable("user") Integer id, Model model ) {	
 		Optional<Authorities> authorities = this.authoritiesService.findAuthByUser(id);
 		if(authorities.isPresent()) {
-			if(!(User.getCurrentUser().equals(authoritiesService.findUserById(id).get().getUsername()))){
+			if(!(User.getCurrentUser().equals(userService.findUserById(id).get().getUsername()))){
 				model.addAttribute(authorities.get());
 				model.addAttribute("message", "Permisos encontrados!");
 			}else {
@@ -240,11 +253,11 @@ public class AuthoritiesController {
 		public String processDeleteAuth(@PathVariable("id") Integer id, ModelMap model) {
 			Optional<Authorities> auth =  authoritiesService.findAuthByUser(id);
 			if(auth.isPresent()) {
-				Optional<User> user = authoritiesService.findUserById(id);
+				Optional<User> user = userService.findUserById(id);
 				if(user.isPresent()) {
 					if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
 						user.get().setAuthorities(null);
-						authoritiesService.saveUser(user.get());
+						userService.saveUser(user.get());
 						authoritiesService.deleteAuth(auth.get());
 						model.addAttribute("message", "Permisos encontrados!");
 					}
