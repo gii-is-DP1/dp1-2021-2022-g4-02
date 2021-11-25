@@ -125,5 +125,31 @@ public class AuthoritiesServicesTest {
 		int count = AuthoritiesServices.userCount();
 		assertEquals(count,countinicial-1);
 	}
-
+	
+	
+	@Test
+	public void testCountAuth() {
+		int cuenta = AuthoritiesServices.authCount();
+		Iterator<Authorities> auth = AuthoritiesServices.authFindAll().iterator();
+		List<Authorities> authlist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(auth, Spliterator.ORDERED), false).collect(Collectors.toList());
+		
+		assertEquals(cuenta,authlist.size());
+		
+		
+	}
+	
+	
+	@Test
+	public void testDeleteAuth() {
+		int cuentaDelete = 0;
+		int cuenta = AuthoritiesServices.authCount();
+		User user = AuthoritiesServices.findUserById(2).get();
+		Optional<Authorities> auth = AuthoritiesServices.findAuthByUserr(user);
+		
+			AuthoritiesServices.deleteAuth(auth.get());
+			 cuentaDelete =  AuthoritiesServices.authCount();
+			
+		
+		assertEquals(cuenta,cuentaDelete+1);
+	}
 }
