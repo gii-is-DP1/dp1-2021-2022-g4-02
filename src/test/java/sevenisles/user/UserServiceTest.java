@@ -2,9 +2,9 @@ package sevenisles.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -18,9 +18,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
-
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
-public class AuthoritiesServicesTest {
+public class UserServiceTest {
 	
 	@Autowired
 	private AuthoritiesService authoritiesServices;
@@ -50,36 +49,40 @@ public class AuthoritiesServicesTest {
 	}
 	
 	@Test
-	public void testCountAuthWithInitialData() {
-        int count = authoritiesServices.authCount();
-		Iterator<Authorities> auth = authoritiesServices.authFindAll().iterator();
-        List<Authorities> authlist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(auth, Spliterator.ORDERED), false).collect(Collectors.toList());
-		assertEquals(count,authlist.size());
+	public void testCountUserWithInitialData() {
+        int count = userServices.userCount();
+        assertEquals(10,count);
     }
 	
 	@Test
-	public void testFindAllAuth() {
-		Integer count = authoritiesServices.authCount();
-		Iterator<Authorities> auth = authoritiesServices.authFindAll().iterator();
-		List<Authorities> authlist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(auth, Spliterator.ORDERED), false).collect(Collectors.toList());
-		assertEquals(count,authlist.size());
+	public void testFindAllUser() {
+		Integer count = userServices.userCount();
+		Iterator<User> users = userServices.userFindAll().iterator();
+		List<User> userslist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(users, Spliterator.ORDERED), false).collect(Collectors.toList());
+		assertEquals(count,userslist.size());
 	}
 	
 	@Test
-	public void testFindAuthByUser() {
-		
-		/* Creación de un nuevo usuario a través del BeforeEach con una autoridad nueva y accedemos a él mediante dicho permiso */
-		int id = newuser.getId();
-		Optional<Authorities> auth = authoritiesServices.findAuthByUser(id);
-		/* La autoridad debe ser player */
-			
-		auth.ifPresent(name -> assertEquals("player",auth.get().getAuthority()));
-		
+	public void testFindAllOrderByUsername() {
+		Iterator<User> users = userServices.userFindAll().iterator();
+		List<User> userslist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(users, Spliterator.ORDERED), false).collect(Collectors.toList());
+		userslist.sort(Comparator.naturalOrder());
+		List<User> list2 = userServices.findAllOrderByUsername();
+		assertEquals(list2,userslist);
+	}
+
+	@Test
+	public void testFindUserById() {
+		/* Sabemos que el id= 1 es el del administrador, con username = admin1*/
+		int id = 1;
+		User user = userServices.findUserById(id).get();
+		assertEquals("admin1",user.getUsername());
 	}
 	
+	
 	@Test
-	public void TestSaveAuthorities() {
-		int countinicial= authoritiesServices.authCount();
+	public void TestSaveUser() {
+		int countinicial= userServices.userCount();
 		Authorities auth = new Authorities();
 		User user = new User();
 		auth.setAuthority("player");
@@ -92,22 +95,20 @@ public class AuthoritiesServicesTest {
 		user.setUsername("manU");
 		user.setAuthorities(auth);
 		userServices.saveUser(user);
-		int countfinal= authoritiesServices.authCount();
+		int countfinal= userServices.userCount();
 		assertEquals(countfinal,countinicial+1);
 		
 		userServices.deleteUser(user);
 	}
-
+	
 	@Test
-	public void testDeleteAuth() {
-		int cuentaInicial = authoritiesServices.authCount();
-		Optional<Authorities> auth = authoritiesServices.findAuthByUser(newuser.getId());
-		if(auth.isPresent()) {
-			newuser.setAuthorities(null);
-			userServices.saveUser(newuser);
-			authoritiesServices.deleteAuth(auth.get());
-		}
-		int cuentaFinal = authoritiesServices.authCount();
-		assertEquals(cuentaFinal,cuentaInicial-1);
+	public void testDeleteUser() {
+		int countinicial = userServices.userCount();
+		userServices.deleteUser(newuser);
+		int count = userServices.userCount();
+		assertEquals(count,countinicial-1);
 	}
+	
+	
+
 }

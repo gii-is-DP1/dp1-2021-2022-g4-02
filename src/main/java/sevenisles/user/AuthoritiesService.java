@@ -16,13 +16,10 @@
 package sevenisles.user;
 
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,12 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthoritiesService {
 
 	private AuthoritiesRepository authoritiesRepository;
-	private UserService userService;
 
 	@Autowired
 	public AuthoritiesService(AuthoritiesRepository authoritiesRepository,UserService userService) {
 		this.authoritiesRepository = authoritiesRepository;
-		this.userService = userService;
 	}
 
 	@Transactional
@@ -50,17 +45,7 @@ public class AuthoritiesService {
 		authoritiesRepository.save(authorities);
 	}
 	
-	/* Guardado del usuario */
-	@Transactional
-	public void saveUser(User user) {
-		
-		userService.saveUser(user);
-	}
-	
-	@Transactional(readOnly = true)
-    public Iterable<User> userFindAll() {
-        return userService.userFindAll();
-    }
+
 	
 	@Transactional(readOnly = true)
     public Iterable<Authorities> authFindAll() {
@@ -68,43 +53,14 @@ public class AuthoritiesService {
     }
 	
 	@Transactional(readOnly = true)
-	public Page<User> findByUsername(Pageable pageable){
-		return userService.findByUsername(pageable);
-	}
-	
-	
-	@Transactional(readOnly = true)
-	public List<User> findAllOrderByUsername(){
-		return userService.findAllOrderByUsername();
-	}
-	
-	@Transactional(readOnly = true)
-	public Integer userCount() {
-		return (int) userService.userCount();
-	}
-	
-	@Transactional(readOnly = true)
 	public Integer authCount() {
 		return (int) authoritiesRepository.count();
 	}
-	
-	
-	@Transactional(readOnly = true)
-	public Optional<User> findUserById(Integer id) throws IllegalArgumentException {
-		Optional<User> user = userService.findUser(id);
-		return user;
-	}
-	
+		
 	@Transactional(readOnly = true)
 	public Optional<Authorities> findAuthByUser(Integer userId) throws IllegalArgumentException {
 		Optional<Authorities> auth = authoritiesRepository.findAuthByUser(userId);
 		return auth;
-	}
-	
-	
-	@Transactional
-	public void deleteUser(User user) throws DataAccessException {
-		userService.deleteUser(user);
 	}
 	
 	@Transactional

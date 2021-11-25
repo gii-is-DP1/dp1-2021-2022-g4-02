@@ -17,11 +17,12 @@ import lombok.Setter;
 import sevenisles.model.BaseEntity;
 import sevenisles.player.Player;
 
+@SuppressWarnings("serial")
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity implements Serializable{
+public class User extends BaseEntity implements Serializable, Comparable<User>{
 	
 	@NotEmpty
 	@Column(unique=true)
@@ -45,6 +46,11 @@ public class User extends BaseEntity implements Serializable{
 	
 	public static String getCurrentUser() {
 		return SecurityContextHolder.getContext().getAuthentication().getName();
+	}
+
+	@Override
+	public int compareTo(User o) {
+		return this.username.compareTo(o.getUsername());	
 	}
 	
 

@@ -80,7 +80,7 @@ public class UserService {
 	
 	
 	@Transactional(readOnly = true)
-	public Optional<User> findUser(Integer id) {
+	public Optional<User> findUserById(Integer id) {
 		return userRepository.findById(id);
 	}
 	

@@ -6,6 +6,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import lombok.Getter;
 import lombok.Setter;
 
