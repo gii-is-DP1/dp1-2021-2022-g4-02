@@ -101,6 +101,12 @@ public class AuthoritiesService {
 		return auth;
 	}
 	
+	@Transactional(readOnly = true)
+	public Optional<Authorities> findAuthByUserr(User user) throws IllegalArgumentException {
+		Optional<Authorities> auth = authoritiesRepository.findAuthByUserr(user);
+		return auth;
+	}
+	
 	@Transactional
 	public void deleteUser(User user) throws DataAccessException {
 		userService.deleteUser(user);
