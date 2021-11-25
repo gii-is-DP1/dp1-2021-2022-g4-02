@@ -49,8 +49,8 @@ import sevenisles.player.PlayerService;
 @Controller
 public class UserController {
 
-//	private static final String VIEWS_USER_EDIT_FORM = "users/editUserForm";
 	private static final String VIEWS_USER_CREATE_OR_UPDATE_FORM = "users/createOrUpdateUserForm";
+//	private static final String VIEWS_ERROR = "error";
 	
 	@Autowired
 	private PlayerService playerService;
@@ -67,7 +67,6 @@ public class UserController {
 		String vista = "users/userDetails";
 		Optional<User> user = userService.findCurrentUser();
 		if(user.isPresent()) modelMap.addAttribute("user", user.get());
-		else modelMap.addAttribute("message", "No estás logueado!");
 		return vista;
 	}
 	

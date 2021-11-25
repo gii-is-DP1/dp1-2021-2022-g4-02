@@ -76,8 +76,7 @@
 
         </tbody>
     </table>
-    
-    <spring:url value="/admin/users/new" var="usernewUrl"> </spring:url>
-    <a href="${fn:escapeXml(usernewUrl)}">Crear usuario</a>
+    <spring:url value="/admin/users/new" var="usernewUrl"></spring:url>
+    <a href="${fn:escapeXml(usernewUrl)}"><button> Crear usuario</button></a>
     
 </petclinic:layout>
