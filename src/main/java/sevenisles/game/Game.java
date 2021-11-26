@@ -2,26 +2,25 @@ package sevenisles.game;
 
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-
-import sevenisles.model.BaseEntity;
-import sevenisles.card.Card;
-import sevenisles.island.Island;
-import sevenisles.player.Player;
-import sevenisles.status.Status;
-import sevenisles.util.RandomChain;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.Setter;
+import sevenisles.IslandStatus.IslandStatus;
+import sevenisles.card.Card;
+import sevenisles.island.Island;
+import sevenisles.model.BaseEntity;
+import sevenisles.status.Status;
+import sevenisles.util.RandomChain;
 
 @Getter
 @Setter
@@ -31,21 +30,22 @@ public class Game extends BaseEntity {
 	
 	private Integer currentPlayer;
 
-//	private final IslandService islandService = new IslandService();
-//	@OneToMany(cascade = CascadeType.ALL, mappedBy = "username")
 	
-	@OneToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
+	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
+	@JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "islands_id" }) })
 	private List<Island> islands;
 	
 	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
+	@JoinTable(name="deck", uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "cards_id" }) })
 	private List<Card> cards;
-	
-	
-//	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class)
-//	private List<Player> players;
-	
+		
 	@OneToMany(cascade= CascadeType.ALL, targetEntity = Status.class)
+	@JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "status_id" }) })
 	private List<Status> status;
+	
+	@OneToMany(cascade= CascadeType.ALL, targetEntity = IslandStatus.class)
+	@JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "island_status_id" }) })
+	private List<IslandStatus> islandStatus;
 
 
 	@Column(name="start_hour")
@@ -55,10 +55,6 @@ public class Game extends BaseEntity {
 	private LocalTime endHour;
 	
 	private String code = RandomChain.randomChain(6);
-		
-//	public void nextPlayer() {
-//		this.currentPlayer = (this.currentPlayer+1)%this.countPlayers();
-//	}
 
 	@Override
 	public String toString() {
@@ -81,9 +77,5 @@ public class Game extends BaseEntity {
 //		return card;
 //	}
 	
-//	
-//	public boolean isFinished() {
-//		return this.endHour != null;
-//	}
 	 
 }

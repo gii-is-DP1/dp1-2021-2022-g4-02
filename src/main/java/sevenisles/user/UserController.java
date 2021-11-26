@@ -110,7 +110,7 @@ public class UserController {
 		}
 		else {
 			
-			this.userService.saveUser(user);
+			
 			Player player = new Player();
 			player.setUser(user);
 			this.playerService.savePlayer(player);
@@ -119,6 +119,9 @@ public class UserController {
 	        auth.setAuthority("player");
 	        auth.setUser(user);
 	        authoritiesService.saveAuthorities(auth);
+	        
+	        user.setAuthorities(auth);
+	        this.userService.saveUser(user);
 	        
 	        ManualLogin.login(user);
 			

@@ -70,6 +70,17 @@ public class StatusService {
 		game.setStatus(ls);
  	}
 	
+	@Transactional
+	public void addStatus(Status status, Player player) {
+		List<Status> ls = new ArrayList<Status>();
+		if(player.getStatus()!=null) {
+			ls.addAll(player.getStatus());
+		}
+		ls.add(status);
+		player.setStatus(ls);
+		playerService.savePlayer(player);
+ 	}
+	
 	@Transactional(readOnly = true)
 	public Iterable<Status> playerFindAll() {
 		return statusRepo.findAll();
