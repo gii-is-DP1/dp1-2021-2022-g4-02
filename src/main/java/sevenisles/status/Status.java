@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -24,15 +25,16 @@ import sevenisles.player.Player;
 @Table(name= "status")
 public class Status extends BaseEntity{
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Game.class)
 	private Game game;
 	
 	@OneToOne
+	@JoinColumn(name = "player_id", referencedColumnName = "id")
 	private Player player;
 	
 	private Integer score;
 	
-	@OneToMany(cascade = CascadeType.ALL, targetEntity = Card.class, mappedBy="player")
+	@OneToMany(cascade = CascadeType.ALL, targetEntity = Card.class)
 	private List<Card> cards;
 	
 	private Integer diceNumber;

@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
@@ -36,7 +37,7 @@ public class Game extends BaseEntity {
 	@OneToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
 	private List<Island> islands;
 	
-	@OneToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
+	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
 	private List<Card> cards;
 	
 	
@@ -54,26 +55,7 @@ public class Game extends BaseEntity {
 	private LocalTime endHour;
 	
 	private String code = RandomChain.randomChain(6);
-	
-//	public void addPlayer(Player player) {
-//		if(this.players == null) {
-//			this.players = new ArrayList<>();
-//		}
-//		players.add(player);
-//	}
-//	
-//	public int countPlayers() {
-//		return players.size();
-//	}
-	
-//	public boolean isNotFull() {
-//		return this.countPlayers()<4;
-//	}
-//	
-//	public boolean isReadyToStart() {
-//		return this.countPlayers()>=2 && this.countPlayers()<=4;
-//	}
-//	
+		
 //	public void nextPlayer() {
 //		this.currentPlayer = (this.currentPlayer+1)%this.countPlayers();
 //	}
