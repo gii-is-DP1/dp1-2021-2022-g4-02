@@ -18,6 +18,7 @@ import lombok.Setter;
 import sevenisles.card.Card;
 import sevenisles.game.Game;
 import sevenisles.model.BaseEntity;
+import sevenisles.status.Status;
 import sevenisles.user.User;
 
 @Getter
@@ -30,18 +31,20 @@ public class Player extends BaseEntity{
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 	
-	@OneToMany(cascade = CascadeType.ALL, targetEntity = Card.class, mappedBy="player")
-	private List<Card> cards;
+	@OneToOne
+	private Status status;
+//	@OneToMany(cascade = CascadeType.ALL, targetEntity = Card.class, mappedBy="player")
+//	private List<Card> cards;
 	
-	private Integer diceNumber;
+//	private Integer diceNumber;
 	
-	@ManyToOne(cascade = CascadeType.ALL, targetEntity = Game.class)
-	private Game game;
+//	@ManyToOne(cascade = CascadeType.ALL, targetEntity = Game.class)
+//	private Game game;
 
 
-	public Integer throwDice() {
-		this.diceNumber = ThreadLocalRandom.current().nextInt(1, 7);
-		return diceNumber;
-	}
+//	public Integer throwDice() {
+//		this.diceNumber = ThreadLocalRandom.current().nextInt(1, 7);
+//		return diceNumber;
+//	}
 	
 }

@@ -54,26 +54,7 @@ public class Game extends BaseEntity {
 	private LocalTime endHour;
 	
 	private String code = RandomChain.randomChain(6);
-	
-//	public void addPlayer(Player player) {
-//		if(this.players == null) {
-//			this.players = new ArrayList<>();
-//		}
-//		players.add(player);
-//	}
-//	
-//	public int countPlayers() {
-//		return players.size();
-//	}
-	
-//	public boolean isNotFull() {
-//		return this.countPlayers()<4;
-//	}
-//	
-//	public boolean isReadyToStart() {
-//		return this.countPlayers()>=2 && this.countPlayers()<=4;
-//	}
-//	
+		
 //	public void nextPlayer() {
 //		this.currentPlayer = (this.currentPlayer+1)%this.countPlayers();
 //	}

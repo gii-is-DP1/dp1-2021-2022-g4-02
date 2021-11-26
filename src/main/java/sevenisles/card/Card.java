@@ -10,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import sevenisles.model.BaseEntity;
 import sevenisles.island.Island;
 import sevenisles.player.Player;
-
+import sevenisles.status.Status;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +25,6 @@ public class Card extends BaseEntity{
 	@OneToOne(mappedBy = "card")
 	private Island island;
 	
-	@ManyToOne(optional=true, targetEntity = Player.class)
-	private Player player;
+	@ManyToOne(optional=true, targetEntity = Status.class)
+	private Status status;
 }

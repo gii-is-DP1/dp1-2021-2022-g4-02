@@ -164,14 +164,7 @@ public class AuthoritiesController {
 			if(User.getCurrentUser().equals(userToUpdate.getUsername())) {
 				BeanUtils.copyProperties(user, userToUpdate,"id");
 				this.userService.saveUser(userToUpdate);
-				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-				UsernamePasswordAuthenticationToken authReq
-				 = new UsernamePasswordAuthenticationToken(userToUpdate.getUsername(), userToUpdate.getPassword(), authorities);
-				Authentication newAuth = new 
-						 UsernamePasswordAuthenticationToken(authReq.getPrincipal(), authReq.getCredentials(), authReq.getAuthorities());					
-				SecurityContext sc = SecurityContextHolder.getContext();
-				sc.setAuthentication(newAuth);
+				userService.manualLogin(userToUpdate);
 			}else {
 				BeanUtils.copyProperties(user, userToUpdate,"id");
 				this.userService.saveUser(userToUpdate);
