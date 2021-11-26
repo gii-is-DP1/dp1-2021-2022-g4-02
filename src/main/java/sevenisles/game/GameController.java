@@ -2,6 +2,7 @@ package sevenisles.game;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class GameController {
 	@GetMapping(value = "/games/availableGames")
 	public String availableGamesList(ModelMap modelMap) {
 		String vista = "games/availableGames";
-		Iterable<Game> games = gameService.findNotStartedGames();
+		Iterable<Game> games = gameService.findAvailableGames();
 		modelMap.addAttribute("games", games);
 		return vista;
 	}
@@ -65,7 +66,7 @@ public class GameController {
 	@GetMapping(value = "/games/{code}")
 	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code){
 		String vista = "games/gameDetails";
-		String vistaError = "games/gameErrorScreen";
+		String vistaError = "error";
 		Optional<Game> game = gameService.findGameByCode(code);
 		if(game.isPresent()) {
 			modelMap.addAttribute("game", game.get());
@@ -84,23 +85,19 @@ public class GameController {
     	Game game = new Game();
     	if(playerService.findCurrentPlayer().isPresent()) {
     		Player player = playerService.findCurrentPlayer().get();
-//    		if(statusService.findStatusByGameAndPlayer(game.getId(), player.getId()).isEmpty()) {
+    		if(!statusService.isInAnotherGame(player)) {
 //	    		game.setStartHour(LocalTime.now());
 	    		game.setCards(cardService.llenarMazo());
-	    		game.setCurrentPlayer(1);
-	        	this.gameService.saveGame(game);
+	    		game.setCurrentPlayer(1);	        	
         		Status status = new Status();
         		statusService.addPlayer(status, game, player);
-        		List<Status> ls = new ArrayList<Status>();
-        		ls.add(status);
-        		game.setStatus(ls);
+        		statusService.addStatus(status, game);
         		this.gameService.saveGame(game);
-//	        	this.statusService.saveStatus(status);
 	        	return "redirect:/games/" + game.getCode();
-//    		}else{
-//				modelMap.put("message", "Ya estás dentro de una partida.");
-//				return "error";
-//    		}
+    		}else{
+				modelMap.put("message", "Ya estás dentro de una partida.");
+				return "error";
+    		}
     	}else {
     		//Crear vista que nos informe del fallo
     		modelMap.addAttribute("message", "Necesitas estar logueado como jugador para crear una partida.");
@@ -121,28 +118,28 @@ public class GameController {
     			Optional<Player> optPlayer = playerService.findCurrentPlayer();
     			if(optPlayer.isPresent()) {
     				Player player = optPlayer.get();
-    				if(statusService.findStatusByGameAndPlayer(game.getId(), player.getId()).isEmpty()) {
+    				if(!statusService.isInAnotherGame(player)) {
     					Status status = new Status();
     					statusService.addPlayer(status, game, player);
+    					statusService.addStatus(status, game);
 	        			this.gameService.saveGame(game);
-	        			this.statusService.saveStatus(status);
 	        			return "redirect:/games/{code}";
     				}else {
         				model.put("message", "Ya estás dentro de una partida.");
-        				return "games/gameErrorScreen";
+        				return "error";
     				}
     			}else {
     				model.put("message", "Necesitas iniciar sesión antes de unirte a una partida.");
-    				return "games/gameErrorScreen";
+    				return "error";
     			}
 	    	}else {
 				//throw new IllegalArgumentException("This game is already full.");
 				model.put("message", "Lo sentimos, esta partida ya está llena");
-				return "games/gameErrorScreen";
+				return "error";
 			}	
 		}else {
 			model.put("message", "Lo sentimos, pero dicha partida no existe.");
-			return "games/gameErrorScreen";
+			return "error";
 			
 		}
     }

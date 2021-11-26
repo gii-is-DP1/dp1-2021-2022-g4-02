@@ -1,5 +1,6 @@
 package sevenisles.status;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,12 +41,34 @@ public class StatusService {
 		return countPlayers(gameId)>=2 && countPlayers(gameId)<=4;
 	}
 	
+	@Transactional 
+	public boolean isInAnotherGame(Player player){
+		Optional<List<Status>> status = statusRepo.findStatusOfPlayer(player.getId());
+		System.out.println(statusRepo.findStatusOfPlayer(player.getId()));
+		if(status.isPresent()) {
+			List<Status> ls = status.get();
+			return ls.stream()
+					.filter(g->g.getGame().getEndHour()==null || g.getGame().getStartHour()==null)
+					.findAny().isPresent();
+		}else return false;
+	}
+	
 	@Transactional
 	public void addPlayer(Status status, Game game, Player player) {
 		status.setGame(game);
 		status.setPlayer(player);
 		saveStatus(status);
 	}
+	
+	@Transactional
+	public void addStatus(Status status, Game game) {
+		List<Status> ls = new ArrayList<Status>();
+		if(game.getStatus()!=null) {
+			ls.addAll(game.getStatus());
+		}
+		ls.add(status);
+		game.setStatus(ls);
+ 	}
 	
 	@Transactional(readOnly = true)
 	public Iterable<Status> playerFindAll() {

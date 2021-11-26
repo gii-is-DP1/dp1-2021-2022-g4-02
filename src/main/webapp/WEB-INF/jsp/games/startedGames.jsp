@@ -27,8 +27,8 @@
                     <c:out value="${game.startHour}"/>
                 </td>
                 <td>
-                	<c:forEach items="${game.players}" var="player">
-                    	<p><c:out value="${player.user.username}" /></p>
+                	<c:forEach items="${game.status}" var="status">
+                    	<p><c:out value="${status.player.user.username}" /></p>
                     </c:forEach>
                 </td>
 				<td>

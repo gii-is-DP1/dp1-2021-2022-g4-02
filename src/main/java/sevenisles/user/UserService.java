@@ -96,15 +96,4 @@ public class UserService {
 		return userRepository.findCurrentUser(User.getCurrentUser());
 	}
 	
-	@Transactional(readOnly = true)
-	public void manualLogin (User user) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		UsernamePasswordAuthenticationToken authReq
-		 = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), authorities);
-		 Authentication newAuth = new 
-				 UsernamePasswordAuthenticationToken(authReq.getPrincipal(), authReq.getCredentials(), authReq.getAuthorities());
-		SecurityContext sc = SecurityContextHolder.getContext();
-		sc.setAuthentication(newAuth);
-	}
 }

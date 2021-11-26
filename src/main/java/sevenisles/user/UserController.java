@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.util.ManualLogin;
 
 
 /**
@@ -89,7 +90,7 @@ public class UserController {
 			User userToUpdate = this.userService.findCurrentUser().get();
 			BeanUtils.copyProperties(user, userToUpdate,"id");
 			this.userService.saveUser(userToUpdate);
-			userService.manualLogin(userToUpdate);
+			ManualLogin.login(userToUpdate);
 			return "redirect:/profile";
 		}
 		
@@ -118,6 +119,8 @@ public class UserController {
 	        auth.setAuthority("player");
 	        auth.setUser(user);
 	        authoritiesService.saveAuthorities(auth);
+	        
+	        ManualLogin.login(user);
 			
 			return "redirect:/";
 		}
