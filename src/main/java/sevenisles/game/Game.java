@@ -16,6 +16,7 @@ import sevenisles.model.BaseEntity;
 import sevenisles.card.Card;
 import sevenisles.island.Island;
 import sevenisles.player.Player;
+import sevenisles.status.Status;
 import sevenisles.util.RandomChain;
 
 import lombok.Getter;
@@ -39,8 +40,11 @@ public class Game extends BaseEntity {
 	private List<Card> cards;
 	
 	
-	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class)
-	private List<Player> players;
+//	@OneToMany(cascade = CascadeType.ALL,targetEntity = Player.class)
+//	private List<Player> players;
+	
+	@OneToMany(cascade= CascadeType.ALL, targetEntity = Status.class)
+	private List<Status> status;
 
 
 	@Column(name="start_hour")
@@ -51,33 +55,32 @@ public class Game extends BaseEntity {
 	
 	private String code = RandomChain.randomChain(6);
 	
-	public void addPlayer(Player player) {
-		if(this.players == null) {
-			this.players = new ArrayList<>();
-		}
-		players.add(player);
-	}
+//	public void addPlayer(Player player) {
+//		if(this.players == null) {
+//			this.players = new ArrayList<>();
+//		}
+//		players.add(player);
+//	}
+//	
+//	public int countPlayers() {
+//		return players.size();
+//	}
 	
-	public int countPlayers() {
-		return players.size();
-	}
-	
-	public boolean isNotFull() {
-		return this.countPlayers()<4;
-	}
-	
-	public boolean isReadyToStart() {
-		return this.countPlayers()>=2 && this.countPlayers()<=4;
-	}
-	
-	public void nextPlayer() {
-		this.currentPlayer = (this.currentPlayer+1)%this.countPlayers();
-	}
+//	public boolean isNotFull() {
+//		return this.countPlayers()<4;
+//	}
+//	
+//	public boolean isReadyToStart() {
+//		return this.countPlayers()>=2 && this.countPlayers()<=4;
+//	}
+//	
+//	public void nextPlayer() {
+//		this.currentPlayer = (this.currentPlayer+1)%this.countPlayers();
+//	}
 
 	@Override
 	public String toString() {
-		return "Game [currentPlayer=" + currentPlayer + ", players="
-				+ players + ", startHour=" + startHour + ", endHour=" + endHour + ", code=" + code + "]";
+		return "Game [currentPlayer=" + currentPlayer + " startHour=" + startHour + ", endHour=" + endHour + ", code=" + code + "]";
 	}
 	
 

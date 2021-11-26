@@ -89,15 +89,7 @@ public class UserController {
 			User userToUpdate = this.userService.findCurrentUser().get();
 			BeanUtils.copyProperties(user, userToUpdate,"id");
 			this.userService.saveUser(userToUpdate);
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-			UsernamePasswordAuthenticationToken authReq
-			 = new UsernamePasswordAuthenticationToken(userToUpdate.getUsername(), userToUpdate.getPassword(), authorities);
-			 Authentication newAuth = new 
-					 UsernamePasswordAuthenticationToken(authReq.getPrincipal(), authReq.getCredentials(), authReq.getAuthorities());
-			SecurityContext sc = SecurityContextHolder.getContext();
-			sc.setAuthentication(newAuth);
-			System.out.println(SecurityContextHolder.getContext().getAuthentication());
+			userService.manualLogin(userToUpdate);
 			return "redirect:/profile";
 		}
 		

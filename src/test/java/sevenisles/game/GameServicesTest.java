@@ -54,17 +54,17 @@ public class GameServicesTest {
 		assertEquals(id,game.getId());
 	}
 	
-	@Test
-	public void testFindGameByCode() {
-		Game game = new Game();
-		Player player = playerService.findPlayerById(1).get();
-		game.addPlayer(player);
-		game.setStartHour(LocalTime.now());
-		game.setCode("GTHYUIL");
-		gameService.saveGame(game);
-		assertEquals(game.getId(),gameService.findGameByCode("GTHYUIL").get().getId());
-
-	}
+//	@Test
+//	public void testFindGameByCode() {
+//		Game game = new Game();
+//		Player player = playerService.findPlayerById(1).get();
+//		game.addPlayer(player);
+//		game.setStartHour(LocalTime.now());
+//		game.setCode("GTHYUIL");
+//		gameService.saveGame(game);
+//		assertEquals(game.getId(),gameService.findGameByCode("GTHYUIL").get().getId());
+//
+//	}
 	
 	@Test
 	public void testFindUnfinishedGames() {

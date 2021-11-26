@@ -16,6 +16,7 @@
 package sevenisles.user;
 
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,5 +94,17 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public Optional<User> findCurrentUser() throws DataAccessException {
 		return userRepository.findCurrentUser(User.getCurrentUser());
+	}
+	
+	@Transactional(readOnly = true)
+	public void manualLogin (User user) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		UsernamePasswordAuthenticationToken authReq
+		 = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), authorities);
+		 Authentication newAuth = new 
+				 UsernamePasswordAuthenticationToken(authReq.getPrincipal(), authReq.getCredentials(), authReq.getAuthorities());
+		SecurityContext sc = SecurityContextHolder.getContext();
+		sc.setAuthentication(newAuth);
 	}
 }
