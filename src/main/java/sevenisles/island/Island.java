@@ -1,16 +1,20 @@
 package sevenisles.island;
 
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
 import sevenisles.model.BaseEntity;
+import sevenisles.IslandStatus.IslandStatus;
 import sevenisles.card.Card;
-
+import sevenisles.game.Game;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,8 +24,9 @@ import lombok.Setter;
 @Table(name = "isles")
 public class Island extends BaseEntity{
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "card_id", referencedColumnName = "id")
-	private Card card;
+	@OneToOne(optional=true,cascade = CascadeType.ALL,mappedBy = "card")
+	private IslandStatus islandStatus;
 	
+	@ManyToMany(targetEntity = Game.class,mappedBy="islands")
+	private List<Game> game;
 }

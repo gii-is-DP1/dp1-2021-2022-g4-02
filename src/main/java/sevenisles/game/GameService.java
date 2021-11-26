@@ -9,6 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sevenisles.card.Card;
 import sevenisles.status.StatusService;
 
 @Service
@@ -69,5 +70,28 @@ public class GameService {
 	public void saveGame(Game gameToUpdate) throws DataAccessException {
 		gameRepository.save(gameToUpdate);
 	}
+	
+	@Transactional
+	public void nextPlayer(Integer gameId) {
+		Optional<Game> gameopt = gameRepository.findById(gameId);
+		if(gameopt.isPresent()) {
+			Game game = gameopt.get();
+			Integer next = (game.getCurrentPlayer()+1)%statusService.countPlayers(gameId);
+			game.setCurrentPlayer(next);
+		}
+	}
+	
+	@Transactional
+	public void deleteCard(Integer gameId, Integer cardId) {
+		Optional<Game> gameopt = gameRepository.findById(gameId);
+		if(gameopt.isPresent()) {
+			Game game = gameopt.get();
+			List<Card> ls = game.getCards();
+//			ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList());
+			game.setCards(ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList()));
+		}
+	}
+	
+	
 
 }

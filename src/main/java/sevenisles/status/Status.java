@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,13 +32,13 @@ public class Status extends BaseEntity{
 	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Game.class)
 	private Game game;
 	
-	@OneToOne
-	@JoinColumn(name = "player_id", referencedColumnName = "id")
+	@ManyToOne(targetEntity = Player.class)
 	private Player player;
 	
 	private Integer score;
-	
-	@OneToMany(cascade = CascadeType.ALL, targetEntity = Card.class)
+
+	@ManyToMany(cascade = CascadeType.ALL, targetEntity = Card.class)
+	@JoinTable(name="hand",uniqueConstraints = { @UniqueConstraint(columnNames = { "cards_id", "status_id" }) })
 	private List<Card> cards;
 	
 	private Integer diceNumber;

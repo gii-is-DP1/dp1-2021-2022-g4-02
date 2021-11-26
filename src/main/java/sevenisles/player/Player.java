@@ -31,8 +31,8 @@ public class Player extends BaseEntity{
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 	
-	@OneToOne
-	private Status status;
+	@OneToMany(cascade = CascadeType.ALL,targetEntity=Status.class)
+	private List<Status> status;
 //	@OneToMany(cascade = CascadeType.ALL, targetEntity = Card.class, mappedBy="player")
 //	private List<Card> cards;
 	

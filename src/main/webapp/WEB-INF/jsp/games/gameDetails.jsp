@@ -37,4 +37,9 @@
 			</tr>
         </tbody>
     </table>
+    <c:if test="${game.startHour==null}">
+    	<spring:url value="/games/${game.code}/start" var="startgameUrl"></spring:url>
+    	<a href="${fn:escapeXml(startgameUrl)}"><button> Empezar Partida</button></a>
+    
+    </c:if>
 </petclinic:layout>

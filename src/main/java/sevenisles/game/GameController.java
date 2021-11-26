@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import sevenisles.card.CardService;
+import sevenisles.island.IslandService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
@@ -38,6 +40,9 @@ public class GameController {
 	
 	@Autowired
 	private StatusService statusService;
+	
+	@Autowired
+	private IslandService islandService;
 	
 	@GetMapping(value = "/games")
 	public String gamesList(ModelMap modelMap) {
@@ -81,17 +86,15 @@ public class GameController {
 	/* CREACIÓN DE LA PARTIDA   */
 	
     @GetMapping(value = "/games/create")
-    public String initCreateGameForm(ModelMap modelMap) {
+    public String createGame(ModelMap modelMap) {
     	Game game = new Game();
     	if(playerService.findCurrentPlayer().isPresent()) {
     		Player player = playerService.findCurrentPlayer().get();
-    		if(!statusService.isInAnotherGame(player)) {
-//	    		game.setStartHour(LocalTime.now());
-	    		game.setCards(cardService.llenarMazo());
-	    		game.setCurrentPlayer(1);	        	
+    		if(!statusService.isInAnotherGame(player)) {	        	
         		Status status = new Status();
         		statusService.addPlayer(status, game, player);
         		statusService.addStatus(status, game);
+        		statusService.addStatus(status, player);
         		this.gameService.saveGame(game);
 	        	return "redirect:/games/" + game.getCode();
     		}else{
@@ -109,7 +112,7 @@ public class GameController {
     } 
 
     @GetMapping(value = "/games/{code}/enter")
-    public String processEnterGameForm(
+    public String enterGame(
     		@PathVariable("code") String code, ModelMap model) {
     	Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
@@ -122,6 +125,8 @@ public class GameController {
     					Status status = new Status();
     					statusService.addPlayer(status, game, player);
     					statusService.addStatus(status, game);
+    					statusService.addStatus(status, player);
+    					game.setCards(cardService.llenarMazo());
 	        			this.gameService.saveGame(game);
 	        			return "redirect:/games/{code}";
     				}else {
@@ -142,6 +147,30 @@ public class GameController {
 			return "error";
 			
 		}
+    }
+    
+    @GetMapping(value = "/games/{code}/start")
+    public String startGame(
+    		@PathVariable("code") String code, ModelMap model) {
+    	Optional<Game> optGame = gameService.findGameByCode(code);
+    	if(optGame.isPresent()) {
+    		Game game = optGame.get();
+    		if(statusService.isReadyToStart(game.getId())) {
+    			game.setStartHour(LocalTime.now());
+        		cardService.repartoInicial(game);
+        		game.setCurrentPlayer(ThreadLocalRandom.current().nextInt(0, 4));
+        		islandService.asignarIslas(game);
+        		gameService.saveGame(game);
+        		model.addAttribute("game",game);
+        		return "games/board";
+    		}else {
+    			model.put("message", "Necesitas al menos 2 jugadores para empezar.");
+    			return "error";
+    		}	
+    	}else {
+    		model.put("message", "Partida no encontrada");
+			return "error";
+    	}
     }
     
 	@GetMapping(value = "/games/searchGame")
