@@ -4,11 +4,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +28,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
@@ -53,21 +61,35 @@ public class AuthoritiesController {
 		return vista;
 	}
 	/* -----------------------PRUEBA CONTROLADOR PAGINACIÓN ----------------------------------------------*/
-	/*
+	
 	@GetMapping(value = "admin/page/users")
-	public String usersListPagination(ModelMap modelMap) {
+	public String usersListPagination(@RequestParam Map<String,Object> page, ModelMap modelMap) {
 		String vista = "authorities/usersList";
 		
-		//Pageable pageable = PageRequest.of(0,5, Sort.by(Order.asc("username")));
+		if(page.get("page") != null) {
+			int pageactual = Integer.valueOf(page.get("page").toString())-1;
+			
+			
+			PageRequest request = PageRequest.of(pageactual,5);
+					
+			//Pageable pageable = PageRequest.of(0,5, Sort.by(Order.asc("username")));
+			
+			Page<User> users = userService.findByUsernamePageable(request);
+			
+			int pages = users.getTotalPages();
+			
+			List<Integer> npages = IntStream.rangeClosed(1,pages).boxed().collect(Collectors.toList());
+			modelMap.addAttribute("paginas", npages);
+			
+			modelMap.addAttribute("users" , users.getContent());
+			
+		}
 		
-		//Page<User> paginas = authoritiesService.findByUsername(pageable);
 		
-		//List<User> users = paginas.toList();
-		modelMap.addAttribute("users", users);
-		//modelMap.addAttribute("paginas" , paginas)
+		
 		return vista;
 	}
-	*/
+	
 	/* Listado de partidas jugadas */
 	@GetMapping(value = "/games/finished")
 	public String finishedGamesList(ModelMap modelMap) {

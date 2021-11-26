@@ -55,7 +55,7 @@ public class UserService {
 	
 	
 	@Transactional(readOnly = true)
-	public Page<User> findByUsername(Pageable pageable){
+	public Page<User> findByUsernamePageable(Pageable pageable){
 		return userRepository.findByUsername(pageable);
 	}
 	@Transactional(readOnly = true)

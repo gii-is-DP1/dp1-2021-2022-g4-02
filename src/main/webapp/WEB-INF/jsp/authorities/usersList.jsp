@@ -78,5 +78,29 @@
     </table>
     <spring:url value="/admin/users/new" var="usernewUrl"></spring:url>
     <a href="${fn:escapeXml(usernewUrl)}"><button> Crear usuario</button></a>
+    <div class="row">
+    	<div class="col-md-2">
+    	</div>
+    	<div class="col-md-8">
+    		<nav aria-label="Pagination">
+  				<ul class="pagination-justify-content-center">
+    				<c:forEach items="${pages}" var="page">
+    					<li class="page-item"> 
+    						<a class="page-link" href="admin/page/users?page=${page}">
+    						<c:out value="${page}"> </c:out>
+    						</a>
+    					</li>
+    				
+    				</c:forEach>
+    	
+    			</ul>
+    		</nav>	
+    	</div>
+    	<div class="col-md-2">
+    	</div>
     
+    </div>
 </petclinic:layout>
+
+
+
