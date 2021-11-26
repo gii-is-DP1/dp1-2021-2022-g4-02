@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
@@ -36,7 +37,7 @@ public class Game extends BaseEntity {
 	@OneToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
 	private List<Island> islands;
 	
-	@OneToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
+	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
 	private List<Card> cards;
 	
 	

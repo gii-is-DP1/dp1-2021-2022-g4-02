@@ -44,6 +44,7 @@ public class StatusService {
 	public void addPlayer(Status status, Game game, Player player) {
 		status.setGame(game);
 		status.setPlayer(player);
+		saveStatus(status);
 	}
 	
 	@Transactional(readOnly = true)

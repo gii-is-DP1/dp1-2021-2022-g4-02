@@ -1,6 +1,8 @@
 package sevenisles.game;
 
-import java.time.LocalTime; 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -89,7 +91,11 @@ public class GameController {
 	        	this.gameService.saveGame(game);
         		Status status = new Status();
         		statusService.addPlayer(status, game, player);
-	        	this.statusService.saveStatus(status);
+        		List<Status> ls = new ArrayList<Status>();
+        		ls.add(status);
+        		game.setStatus(ls);
+        		this.gameService.saveGame(game);
+//	        	this.statusService.saveStatus(status);
 	        	return "redirect:/games/" + game.getCode();
 //    		}else{
 //				modelMap.put("message", "Ya estás dentro de una partida.");
