@@ -122,12 +122,7 @@ public class GameController {
     			if(optPlayer.isPresent()) {
     				Player player = optPlayer.get();
     				if(!statusService.isInAnotherGame(player)) {
-    					Status status = new Status();
-    					statusService.addPlayer(status, game, player);
-    					statusService.addStatus(status, game);
-    					statusService.addStatus(status, player);
-    					game.setCards(cardService.llenarMazo());
-	        			this.gameService.saveGame(game);
+    					gameService.createGame(game, player);
 	        			return "redirect:/games/{code}";
     				}else {
         				model.put("message", "Ya estás dentro de una partida.");
@@ -156,11 +151,7 @@ public class GameController {
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
     		if(statusService.isReadyToStart(game.getId())) {
-    			game.setStartHour(LocalTime.now());
-        		cardService.repartoInicial(game);
-        		game.setCurrentPlayer(ThreadLocalRandom.current().nextInt(0, 4));
-        		islandService.asignarIslas(game);
-        		gameService.saveGame(game);
+    			gameService.startGame(game);
         		model.addAttribute("game",game);
         		return "games/board";
     		}else {

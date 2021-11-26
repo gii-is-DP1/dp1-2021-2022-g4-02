@@ -31,9 +31,9 @@ public class Game extends BaseEntity {
 	private Integer currentPlayer;
 
 	
-	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
-	@JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "islands_id" }) })
-	private List<Island> islands;
+//	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Island.class)
+//	@JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "islands_id" }) })
+//	private List<Island> islands;
 	
 	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
 	@JoinTable(name="deck", uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "cards_id" }) })

@@ -14,22 +14,22 @@
     </div>
     <br></br>
     <table id="Game" class="table table-striped">
-        <thead>
+        <thead>Islas
         <tr>
-            <th>Islas</th>
+            
             <th>Número de isla</th>
             <th>Carta asociada</th>
             <!-- <th>Acción</th>-->
         </tr>
         </thead>
         <tbody>
-            <c:forEach items="${game.island}" var="island">
+            <c:forEach items="${game.islandStatus}" var="islandstatus">
             <tr>
             	<td>
-                    <c:out value="${island.id}"/>
+                    <c:out value="${islandstatus.island.id}"/>
                 </td>
                 <td>
-                    <c:out value="${island.card}"/>
+                    <c:out value="${islandstatus.card.id}"/>
                 </td> 
             </tr>
         </c:forEach>
@@ -38,7 +38,7 @@
 
     <div align="center">
         <button type="button" align="center">Lanzar dado</button>
-        <p>Resultado de la tirada: <c:out value="${game.diceNumber}"></c:out></p>
+        <%-- <p>Resultado de la tirada: <c:out value="${game.status.diceNumber}"></c:out></p>--%>
     </div>
     
     <p>Introduzca la isla que quiere saquear:</p>
@@ -58,13 +58,14 @@
         </tr>
         </thead>
         <tbody>
-            <c:forEach items="${game.players}" var="player">
+            <c:forEach items="${game.status}" var="status">
             <tr>
             	<td>
-                    <c:out value="${player.username}"/>
+                    <c:out value="${status.player.user.username}"/>
                 </td>
                 <td>
-                    <c:out value="${player.cards}"/>
+                	<c:forEach items="${status.cards}" var="card">
+                   	 	<p><c:out value="${card.id}"/></p></c:forEach>
                 </td> 
             </tr>
         </c:forEach>
