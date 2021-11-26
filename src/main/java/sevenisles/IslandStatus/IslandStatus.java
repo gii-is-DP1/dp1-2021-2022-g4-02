@@ -9,7 +9,6 @@ import sevenisles.card.Card;
 import sevenisles.game.Game;
 import sevenisles.island.Island;
 import sevenisles.model.BaseEntity;
-import sevenisles.player.Player;
 
 @Entity
 public class IslandStatus extends BaseEntity{
