@@ -17,7 +17,7 @@ public interface UserRepository extends  CrudRepository<User, Integer>{
 	@Query("SELECT u FROM User u WHERE u.username = ?1")
 	Optional<User> findCurrentUser(String currentUsername) throws DataAccessException;
 	
-	@Query("SELECT u FROM User u")
+	@Query("SELECT u FROM User u ORDER BY u.username ASC")
 	Page<User> findByUsername(Pageable pageable)  throws DataAccessException;
 	
 	
