@@ -34,6 +34,7 @@ import sevenisles.game.Game;
 import sevenisles.game.GameService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.util.ManualLogin;
 
 @Controller
 public class AuthoritiesController {
@@ -164,7 +165,7 @@ public class AuthoritiesController {
 			if(User.getCurrentUser().equals(userToUpdate.getUsername())) {
 				BeanUtils.copyProperties(user, userToUpdate,"id");
 				this.userService.saveUser(userToUpdate);
-				userService.manualLogin(userToUpdate);
+				ManualLogin.login(userToUpdate);
 			}else {
 				BeanUtils.copyProperties(user, userToUpdate,"id");
 				this.userService.saveUser(userToUpdate);
