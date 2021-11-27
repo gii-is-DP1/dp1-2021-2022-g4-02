@@ -36,13 +36,14 @@ public class IslandServiceTests {
 	
 	Island newisland = new Island();
 	
+/*
 	@BeforeEach
 	public void init() throws IslandNotFoundException {
 		IslandService.saveIsland(newisland);
 		Card card = CardService.findCardById(1);
 		IslandService.fillIsland(newisland.getId(), card);
 	}
-	
+	*/
 	@Test
 	public void testCountWithInitialData() {
 		int count = IslandService.islandCount();
@@ -76,7 +77,7 @@ public class IslandServiceTests {
 			throw new IslandNotFoundException();
 		}
 	}
-	
+	/*
 	@Test
 	@Transactional
 	public void testGetCardFromIslandAndSaveIsland() throws IslandNotFoundException {
@@ -127,7 +128,7 @@ public class IslandServiceTests {
 		assertNotEquals(currentcard, newcard);
 		assertEquals(tempcard, newcard);
 	}
-	
+	*/
 	@AfterEach
 	public void finish() {
 		IslandService.deleteIsland(newisland);
