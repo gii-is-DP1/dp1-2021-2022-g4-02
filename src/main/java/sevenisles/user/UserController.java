@@ -112,12 +112,16 @@ public class UserController {
 			
 			
 			Player player = new Player();
+			this.userService.saveUser(user);
 			player.setUser(user);
 			this.playerService.savePlayer(player);
 			
 			Authorities auth = new Authorities();
 	        auth.setAuthority("player");
+	        
+	        this.userService.saveUser(user);
 	        auth.setUser(user);
+	        
 	        authoritiesService.saveAuthorities(auth);
 	        
 	        user.setAuthorities(auth);
