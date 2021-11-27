@@ -21,6 +21,7 @@ import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
+import sevenisles.util.ThrowDice;
 
 
 @Controller
@@ -163,6 +164,34 @@ public class GameController {
 			return "error";
     	}
     }
+    
+    
+    @GetMapping(value = "/games/{code}/turn")
+    public String GameInCurse(
+    		@PathVariable("code") String code, ModelMap model){
+    	Optional<Game> optGame = gameService.findGameByCode(code);
+    	if(optGame.isPresent()) {
+    		Game game = optGame.get();
+    		Integer number = ThrowDice.throwDice(6);
+    		
+    		List<Status> status = game.getStatus();
+    		Status newstatus = new Status();
+    		newstatus = status.get(status.size()-1);
+    		newstatus.setDiceNumber(number);
+    		status.add(newstatus);
+    		
+    		game.setStatus(status);
+    		
+    		model.addAttribute("game",game);
+    		model.addAttribute("number",number );	
+    		return "games/board";
+    		}else {
+        		model.put("message", "Error al arrojar el dado");
+    			return "error";
+        	}
+    	
+    } 
+    
     
 	@GetMapping(value = "/games/searchGame")
 	public String searchByCodeView(ModelMap modelMap) {

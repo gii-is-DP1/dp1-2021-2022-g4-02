@@ -13,9 +13,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
 import sevenisles.model.BaseEntity;
-import sevenisles.IslandStatus.IslandStatus;
 import sevenisles.game.Game;
 import sevenisles.island.Island;
+import sevenisles.islandStatus.IslandStatus;
 import sevenisles.status.Status;
 import lombok.Getter;
 import lombok.Setter;

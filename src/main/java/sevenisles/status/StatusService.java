@@ -110,5 +110,5 @@ public class StatusService {
 	public void deleteStatus(Status status) {
 		statusRepo.delete(status);
 	}
-
+	
 }

@@ -37,8 +37,8 @@
     </table>
 
     <div align="center">
-        <button type="button" align="center">Lanzar dado</button>
-        <%-- <p>Resultado de la tirada: <c:out value="${game.status.diceNumber}"></c:out></p>--%>
+    <button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/turn'"> Lanzar dado</button>
+       <c:if test="${number != null}"> <p>Resultado de la tirada: <c:out value="${number}"></c:out></p> </c:if>
     </div>
     
     <p>Introduzca la isla que quiere saquear:</p>

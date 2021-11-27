@@ -1,4 +1,4 @@
-package sevenisles.IslandStatus;
+package sevenisles.islandStatus;
 
 import java.util.List;
 import java.util.Optional;

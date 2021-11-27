@@ -12,9 +12,9 @@ import javax.persistence.Table;
 
 
 import sevenisles.model.BaseEntity;
-import sevenisles.IslandStatus.IslandStatus;
 import sevenisles.card.Card;
 import sevenisles.game.Game;
+import sevenisles.islandStatus.IslandStatus;
 import lombok.Getter;
 import lombok.Setter;
 
