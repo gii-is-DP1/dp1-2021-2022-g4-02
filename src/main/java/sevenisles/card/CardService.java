@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -12,6 +13,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sevenisles.IslandStatus.IslandStatus;
+import sevenisles.IslandStatus.IslandStatusService;
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
 import sevenisles.status.Status;
@@ -27,6 +30,9 @@ public class CardService {
 	
 	@Autowired
 	private StatusService statusService;
+	
+	@Autowired
+	private IslandStatusService islandStatusService;
 	
 	@Transactional(readOnly = true)
 	public Integer cardCount() {
@@ -56,6 +62,7 @@ public class CardService {
     }
 	
 	public void repartoInicial(Game game) {
+		//Reparto inicial a jugadores
 		List<Status> status = game.getStatus();
 		List<Card> doblones = this.cardRepository.findDoubloons();	
 		for(int i=0;i<status.size();i++) {
@@ -70,5 +77,18 @@ public class CardService {
 			s.setCards(hand);
 			statusService.saveStatus(s);
 		}
+		//Reparto inicial a islas
+		List<Card> deck = game.getCards();
+		List<IslandStatus> lis = game.getIslandStatus();
+		List<IslandStatus> l2 = new ArrayList<IslandStatus>();
+		for(int i =0;i<lis.size();i++) {
+			IslandStatus istatus = lis.get(i);
+			Card card = deck.get(ThreadLocalRandom.current().nextInt(0, deck.size()));
+			istatus.setCard(card);
+			islandStatusService.saveIslandStatus(istatus);
+			l2.add(istatus);
+			gameService.deleteCard(game, card);
+		}
+		game.setIslandStatus(l2);
 	}
 }

@@ -27,6 +27,6 @@ public class Island extends BaseEntity{
 	@OneToOne(optional=true,cascade = CascadeType.ALL,mappedBy = "card")
 	private IslandStatus islandStatus;
 	
-	@ManyToMany(targetEntity = Game.class,mappedBy="islands")
-	private List<Game> game;
+//	@ManyToMany(targetEntity = Game.class,mappedBy="islands")
+//	private List<Game> game;
 }

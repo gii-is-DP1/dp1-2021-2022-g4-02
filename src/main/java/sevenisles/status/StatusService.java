@@ -82,7 +82,7 @@ public class StatusService {
  	}
 	
 	@Transactional(readOnly = true)
-	public Iterable<Status> playerFindAll() {
+	public Iterable<Status> statusrFindAll() {
 		return statusRepo.findAll();
 	}
 	
