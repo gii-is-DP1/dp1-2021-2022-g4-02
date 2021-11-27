@@ -15,9 +15,9 @@ import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.Setter;
-import sevenisles.IslandStatus.IslandStatus;
 import sevenisles.card.Card;
 import sevenisles.island.Island;
+import sevenisles.islandStatus.IslandStatus;
 import sevenisles.model.BaseEntity;
 import sevenisles.status.Status;
 import sevenisles.util.RandomChain;

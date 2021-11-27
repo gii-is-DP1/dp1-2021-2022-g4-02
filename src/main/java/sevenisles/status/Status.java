@@ -42,12 +42,12 @@ public class Status extends BaseEntity{
 	private List<Card> cards;
 	
 	private Integer diceNumber;
-	
+/*
 	public Integer throwDice() {
 		this.diceNumber = ThreadLocalRandom.current().nextInt(1, 7);
 		return diceNumber;
 	}
-	
+	*/
 	
 	
 }

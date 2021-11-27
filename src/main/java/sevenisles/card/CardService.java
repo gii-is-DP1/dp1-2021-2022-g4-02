@@ -13,10 +13,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import sevenisles.IslandStatus.IslandStatus;
-import sevenisles.IslandStatus.IslandStatusService;
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
+import sevenisles.islandStatus.IslandStatus;
+import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
 
