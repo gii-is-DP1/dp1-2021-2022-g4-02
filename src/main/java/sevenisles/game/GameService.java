@@ -124,8 +124,18 @@ public class GameService {
 		game.setStartHour(LocalTime.now());
 		islandService.rellenoInicialIslas(game);
 		cardService.repartoInicial(game);
-		game.setCurrentPlayer(ThreadLocalRandom.current().nextInt(0, 4));		
+		Integer playersnumber = statusService.countPlayers(game.getId());
+		game.setCurrentPlayer(ThreadLocalRandom.current().nextInt(0, playersnumber-1));
+		game.setInitialPlayer(game.getCurrentPlayer());
+		maxTurns(game);
 		saveGame(game);
+	}
+	
+	private void maxTurns (Game game) {
+		Integer playerNumber = statusService.countPlayers(game.getId());
+		Integer cardNumber = cardService.cardCount();
+		Integer maxTurns = (cardNumber-(playerNumber*3))/playerNumber;
+		game.setMaxTurns(maxTurns);
 	}
 	
 	

@@ -1,17 +1,14 @@
 package sevenisles.game;
 
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -21,6 +18,7 @@ import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
+import sevenisles.user.UserService;
 import sevenisles.util.ThrowDice;
 
 
@@ -38,6 +36,9 @@ public class GameController {
 	
 	@Autowired
 	private PlayerService playerService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private StatusService statusService;
@@ -144,6 +145,7 @@ public class GameController {
 			
 		}
     }
+    //Hay que crear vista del tablero, para volver si sales de la partida
     
     @GetMapping(value = "/games/{code}/start")
     public String startGame(
@@ -165,9 +167,22 @@ public class GameController {
     	}
     }
     
+//    //Esto estaría en todas las vistas
+//    @ModelAttribute
+    public void getPlayerTurnUsername(Game game, ModelMap model){
+    	Integer pn = game.getCurrentPlayer();
+    	Status status = game.getStatus().get(pn);
+    	Integer playerUserId = status.getPlayer().getUser().getId();
+    	Integer loggedUserId = userService.findCurrentUser().get().getId();
+    	model.addAttribute("playerUserId", playerUserId);
+    	model.addAttribute("loggedUserId", loggedUserId);
+    	System.out.println(playerUserId);
+    	System.out.println(loggedUserId);
+    }
     
-    @GetMapping(value = "/games/{code}/turn")
-    public String GameInCurse(
+    
+    @GetMapping(value = "/games/{code}/dice")
+    public String playerThrowDice(
     		@PathVariable("code") String code, ModelMap model){
     	Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
@@ -175,18 +190,18 @@ public class GameController {
     		Integer number = ThrowDice.throwDice(6);
     		
     		List<Status> status = game.getStatus();
-    		Status newstatus = new Status();
-    		newstatus = status.get(status.size()-1);
-    		newstatus.setDiceNumber(number);
-    		status.add(newstatus);
-    		
+    		Status playerstatus = status.get(game.getCurrentPlayer());
+    		playerstatus.setDiceNumber(number);
+    		status.set(game.getCurrentPlayer(), playerstatus);
+    		statusService.saveStatus(playerstatus);
     		game.setStatus(status);
-    		
+    		gameService.saveGame(game);
+    		getPlayerTurnUsername(game, model);
     		model.addAttribute("game",game);
     		model.addAttribute("number",number );	
     		return "games/board";
     		}else {
-        		model.put("message", "Error al arrojar el dado");
+        		model.put("message", "Partida no encontrada");
     			return "error";
         	}
     	
