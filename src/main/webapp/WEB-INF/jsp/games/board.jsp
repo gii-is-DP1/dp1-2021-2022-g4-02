@@ -35,12 +35,12 @@
         </c:forEach>
         </tbody>
     </table>
-
-    <div align="center">
-    <button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/turn'"> Lanzar dado</button>
+	<c:if test="${loggedUserId==playerUserId}">
+    	<div align="center">
+    	<button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/dice'"> Lanzar dado</button>
        <c:if test="${number != null}"> <p>Resultado de la tirada: <c:out value="${number}"></c:out></p> </c:if>
-    </div>
-    
+    	</div>
+    </c:if>
     <p>Introduzca la isla que quiere saquear:</p>
     
     <div align="center">
