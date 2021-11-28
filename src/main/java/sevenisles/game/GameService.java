@@ -10,13 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.island.IslandService;
 import sevenisles.player.Player;
+import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
+import sevenisles.user.UserService;
+import sevenisles.util.ThrowDice;
 
 @Service
 public class GameService {
@@ -25,6 +29,12 @@ public class GameService {
 	
 	@Autowired
 	private StatusService statusService;
+	
+	@Autowired
+	private PlayerService playerService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private CardService cardService;
@@ -110,6 +120,15 @@ public class GameService {
 	}
 	
 	@Transactional
+	public Boolean loggedUserBelongsToGame(Game game) {
+		Optional<Player> loggedPlayer = playerService.findCurrentPlayer();
+		if(loggedPlayer.isPresent()) {
+			Optional<Status> ls = statusService.findStatusByGameAndPlayer(game.getId(), loggedPlayer.get().getId());
+			if(ls.isPresent()) return true;
+		}return false;
+	}
+	
+	@Transactional
 	public void createGame(Game game, Player player) {
 		Status status = new Status();
 		statusService.addPlayer(status, game, player);
@@ -117,6 +136,28 @@ public class GameService {
 		statusService.addStatus(status, player);
 		game.setCards(cardService.llenarMazo());
 		saveGame(game);
+	}
+	
+	@Transactional
+	public void enterGame(Game game, Player player) {
+		Status status = new Status();
+		statusService.addPlayer(status, game, player);
+		statusService.addStatus(status, game);
+		statusService.addStatus(status, player);
+		saveGame(game);
+	}
+	
+	@Transactional
+	public void utilAttributes(Game game, ModelMap model){
+		Integer pn = game.getCurrentPlayer();
+		Status status = game.getStatus().get(pn);
+		Integer playerUserId = status.getPlayer().getUser().getId();
+		Integer loggedUserId = userService.findCurrentUser().get().getId();
+		model.addAttribute("currentPlayerStatus", status);
+		model.addAttribute("playerUserId", playerUserId);
+		model.addAttribute("loggedUserId", loggedUserId);
+		System.out.println(playerUserId);
+		System.out.println(loggedUserId);
 	}
 	
 	@Transactional
@@ -134,8 +175,20 @@ public class GameService {
 	private void maxTurns (Game game) {
 		Integer playerNumber = statusService.countPlayers(game.getId());
 		Integer cardNumber = cardService.cardCount();
-		Integer maxTurns = (cardNumber-(playerNumber*3))/playerNumber;
+		Integer maxTurns = (cardNumber-(playerNumber*3)-islandService.islandCount())/playerNumber;
 		game.setMaxTurns(maxTurns);
+	}
+	
+	@Transactional
+	public void playerThrowDice(Game game) {
+		Integer number = ThrowDice.throwDice(6);
+		List<Status> status = game.getStatus();
+		Status playerstatus = status.get(game.getCurrentPlayer());
+		playerstatus.setDiceNumber(number);
+		status.set(game.getCurrentPlayer(), playerstatus);
+		statusService.saveStatus(playerstatus);
+		game.setStatus(status);
+		saveGame(game);
 	}
 	
 	

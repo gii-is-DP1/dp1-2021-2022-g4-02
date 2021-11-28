@@ -13,6 +13,7 @@
         <p>Cógido de Partida: <c:out value="${game.code}"></c:out></p>
     </div>
     <br></br>
+    <p>Turno de: <c:out value="${currentPlayerStatus.player.user.username}"></c:out></p>
     <table id="Game" class="table table-striped">
         <thead>Islas
         <tr>
@@ -37,18 +38,21 @@
     </table>
 	<c:if test="${loggedUserId==playerUserId}">
     	<div align="center">
-    	<button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/dice'"> Lanzar dado</button>
-       <c:if test="${number != null}"> <p>Resultado de la tirada: <c:out value="${number}"></c:out></p> </c:if>
+    		<button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/dice'"> Lanzar dado</button>       
+    		</c:if>
+    		<c:if test="${currentPlayerStatus.diceNumber != null}"> <p>Resultado de la tirada: <c:out value="${currentPlayerStatus.diceNumber}"></c:out></p>
+    		</c:if> 		
+    	</div>
+    	 
+    <c:if test="${loggedUserId==playerUserId}">
+    	<p>Introduzca la isla que quiere saquear:</p>
+    	<div align="center">   	
+    		<form>
+        		<input type="text" align="center" placeholder="Número de isla"></input>
+        		<button type="submit" align="center">Saquear isla</button>
+    		</form>
     	</div>
     </c:if>
-    <p>Introduzca la isla que quiere saquear:</p>
-    
-    <div align="center">
-    <form>
-        <input type="text" align="center" placeholder="Número de isla"></input>
-        <button type="submit" align="center">Saquear isla</button>
-    </form>
-    </div>
     
     <table id="GameInventory" class="table table-striped">
         <thead>
