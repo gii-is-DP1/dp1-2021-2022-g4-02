@@ -57,7 +57,7 @@
             				<option value="${islandStatus.island.id}">Isla ${islandStatus.island.id}</option>
           				</c:forEach>
        				 </select>
-        			<button type="button" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/robIsland/${islandId.selected}'"> Saquear Isla</button>
+        			<button type="button" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/robIsland/'+islandId.value"> Saquear Isla</button>
     			</form>
     		</div>
     	</c:if>	
