@@ -1,5 +1,6 @@
 package sevenisles.game;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import sevenisles.card.Card;
+import sevenisles.islandStatus.IslandStatus;
+import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.status.Status;
 import sevenisles.status.StatusService;
 
 
@@ -33,8 +38,8 @@ public class GameController {
 	@Autowired
 	private StatusService statusService;
 	
-//	@Autowired
-//	private IslandService islandService;
+	@Autowired
+	private IslandStatusService islandStatusService;
 	
 	@GetMapping(value = "/games")
 	public String gamesList(ModelMap modelMap) {
@@ -58,6 +63,26 @@ public class GameController {
 		Iterable<Game> games = gameService.findStartedGames();
 		modelMap.addAttribute("games", games);
 		return vista;
+	}
+	
+	@GetMapping(value = "/games/startedGame")
+	public String startedGame(ModelMap modelMap) {
+		String vista = "games/startedGame";
+		Optional<List<Status>> opt = statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId());
+		if(opt.isPresent()) {
+			List<Status> statuses = opt.get();
+			Optional<Status> status = statuses.stream().filter(s->s.getScore()==null).findFirst();
+			if(status.isPresent()) {
+				modelMap.addAttribute("game", status.get().getGame());
+				return vista;
+			}else{
+				modelMap.addAttribute("message", "No tienes ninguna partida empezada.");
+				return "error";
+			}
+		}else{
+			modelMap.addAttribute("message", "No has jugado ninguna partida.");
+			return "error";
+		}
 	}
 	
 	@GetMapping(value = "/games/{code}")
@@ -176,16 +201,28 @@ public class GameController {
     	}
     }
     
-    
+    //Lanzar dado
     @GetMapping(value = "/games/{code}/dice")
     public String playerThrowDice(
     		@PathVariable("code") String code, ModelMap model){
     	Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
-    		if(gameService.loggedUserBelongsToGame(game)) {   			
-        		gameService.playerThrowDice(game);	
-        		return "redirect:/games/{code}/board";
+    		if(gameService.loggedUserBelongsToGame(game)) {
+    			Integer pn = game.getCurrentPlayer();
+    			Status status = game.getStatus().get(pn);
+    			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+    				if(status.getDiceNumber()==null) {
+        				gameService.playerThrowDice(game);	
+                		return "redirect:/games/{code}/board";
+        			}else {
+            			model.put("message", "Ya has tirado el dado este turno.");
+            			return "error";
+            		}
+    			}else {
+        			model.put("message", "No es tu turno.");
+        			return "error";
+        		}    				       		
     		}else {
     			model.put("message", "No perteneces a esta partida.");
     			return "error";
@@ -194,7 +231,79 @@ public class GameController {
         	model.put("message", "Partida no encontrada");
     		return "error";
         }	
-    } 
+    }
+    
+    //Saquear isla
+    @GetMapping(value = "/games/{code}/robIsland/{islandId}")
+    public String robIsland(
+    		@PathVariable("code") String code, @PathVariable("islandId") Integer islandId, ModelMap model){
+    	Optional<Game> optGame = gameService.findGameByCode(code);
+    	if(optGame.isPresent()) {
+    		Game game = optGame.get();
+    		if(gameService.loggedUserBelongsToGame(game)) {
+    			Integer pn = game.getCurrentPlayer();
+    			Status status = game.getStatus().get(pn);
+    			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+    				Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
+    				if(opt.isPresent()) {
+    					IslandStatus is = opt.get();
+    					if(is.getCard()!=null) {
+    						Integer cardNumber = status.getCards().size();
+    						if(Math.abs(status.getDiceNumber()-islandId)<=cardNumber) {
+    							gameService.robIsland(game, is, status);
+    							return "redirect:/games/{code}/board";
+    						}else {
+    							model.put("message", "No tienes suficientes cartas para pagar el saqueo de esta isla");
+        	        			return "error";
+    						}		
+    					}else {
+    						model.put("message", "No puedes saquear una isla vacía");
+    	        			return "error";
+    					}			
+    				}else {
+            			model.put("message", "No hay isla.");
+            			return "error";
+            		} 	
+    			}else {
+        			model.put("message", "No es tu turno.");
+        			return "error";
+        		}    				       		
+    		}else {
+    			model.put("message", "No perteneces a esta partida.");
+    			return "error";
+    		}	
+    	}else {
+        	model.put("message", "Partida no encontrada");
+    		return "error";
+        }	
+    }
+    
+    //Pasar turno
+    @GetMapping(value = "/games/{code}/turn")
+    public String nextTurn(
+    		@PathVariable("code") String code, ModelMap model){
+    	Optional<Game> optGame = gameService.findGameByCode(code);
+    	if(optGame.isPresent()) {
+    		Game game = optGame.get();
+    		if(gameService.loggedUserBelongsToGame(game)) {
+    			Integer pn = game.getCurrentPlayer();
+    			Status status = game.getStatus().get(pn);
+    			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+    				gameService.nextTurn(game);
+    				return "redirect:/games/{code}/board";
+    			}else {
+        			model.put("message", "No es tu turno.");
+        			return "error";
+        		}    				       		
+    		}else {
+    			model.put("message", "No perteneces a esta partida.");
+    			return "error";
+    		}	
+    	}else {
+        	model.put("message", "Partida no encontrada");
+    		return "error";
+        }	
+    }
     
     
 	@GetMapping(value = "/games/searchGame")

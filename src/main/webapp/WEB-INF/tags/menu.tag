@@ -53,6 +53,12 @@
 							<span>Partidas Disponibles</span>
 						</petclinic:menuItem>
 						
+						<petclinic:menuItem active="${name eq 'startedGame'}" url="/games/startedGame"
+							title="Volver al tablero de la partida empezada">
+							<span class="glyphicon" aria-hidden="true"></span>
+							<span>Partida Empezada</span>
+						</petclinic:menuItem>
+						
 						<petclinic:menuItem active="${name eq 'rules'}" url="/rules"
 							title="Ver reglas del juego">
 							<span class="glyphicon" aria-hidden="true"></span>

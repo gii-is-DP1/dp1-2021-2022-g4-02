@@ -13,7 +13,7 @@
         <p>Cógido de Partida: <c:out value="${game.code}"></c:out></p>
     </div>
     <br></br>
-    <p>Turno de: <c:out value="${currentPlayerStatus.player.user.username}"></c:out></p>
+    <p>Turno Nº <c:out value="${game.currentTurn}"></c:out>. Turno de: <c:out value="${currentPlayerStatus.player.user.username}"></c:out></p>
     <table id="Game" class="table table-striped">
         <thead>Islas
         <tr>
@@ -36,22 +36,31 @@
         </c:forEach>
         </tbody>
     </table>
-	<c:if test="${loggedUserId==playerUserId}">
-    	<div align="center">
-    		<button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/dice'"> Lanzar dado</button>       
-    		</c:if>
-    		<c:if test="${currentPlayerStatus.diceNumber != null}"> <p>Resultado de la tirada: <c:out value="${currentPlayerStatus.diceNumber}"></c:out></p>
-    		</c:if> 		
-    	</div>
+	
+    <div align="center">
+    	<c:if test="${loggedUserId==playerUserId}">
+    		<c:if test="${currentPlayerStatus.diceNumber == null}"><button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/dice'"> Lanzar dado</button>
+    		</c:if>       
+    	</c:if>
+    	<c:if test="${currentPlayerStatus.diceNumber != null}"> <p>Resultado de la tirada: <c:out value="${currentPlayerStatus.diceNumber}"></c:out></p>
+    	<p><button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/turn'"> Pasar turno</button> </p>
+    	</c:if> 		
+    </div>
     	 
     <c:if test="${loggedUserId==playerUserId}">
-    	<p>Introduzca la isla que quiere saquear:</p>
-    	<div align="center">   	
-    		<form>
-        		<input type="text" align="center" placeholder="Número de isla"></input>
-        		<button type="submit" align="center">Saquear isla</button>
-    		</form>
-    	</div>
+    	<c:if test="${currentPlayerStatus.diceNumber != null}">
+    		<p>Introduzca la isla que quiere saquear:</p>
+    		<div align="center">   	
+    			<form>
+        			<select name="islandId">
+          				<c:forEach var="islandStatus" items="${game.islandStatus}">
+            				<option value="${islandStatus.island.id}">Isla ${islandStatus.island.id}</option>
+          				</c:forEach>
+       				 </select>
+        			<button type="button" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/robIsland/${islandId.selected}'"> Saquear Isla</button>
+    			</form>
+    		</div>
+    	</c:if>	
     </c:if>
     
     <table id="GameInventory" class="table table-striped">
