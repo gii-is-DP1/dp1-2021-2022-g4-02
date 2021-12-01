@@ -15,6 +15,8 @@ import org.springframework.ui.ModelMap;
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.island.IslandService;
+import sevenisles.islandStatus.IslandStatus;
+import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
@@ -41,6 +43,9 @@ public class GameService {
 	
 	@Autowired
 	private IslandService islandService;
+	
+	@Autowired
+	private IslandStatusService islandStatusService;
 	
 	@Transactional(readOnly = true)
 	public Integer gameCount() {
@@ -94,13 +99,9 @@ public class GameService {
 	}
 	
 	@Transactional
-	public void nextPlayer(Integer gameId) {
-		Optional<Game> gameopt = gameRepository.findById(gameId);
-		if(gameopt.isPresent()) {
-			Game game = gameopt.get();
-			Integer next = (game.getCurrentPlayer()+1)%statusService.countPlayers(gameId);
-			game.setCurrentPlayer(next);
-		}
+	public void nextPlayer(Game game) {
+		Integer next = (game.getCurrentPlayer()+1)%statusService.countPlayers(game);
+		game.setCurrentPlayer(next);
 	}
 	
 	@Transactional
@@ -163,10 +164,11 @@ public class GameService {
 	@Transactional
 	public void startGame(Game game) {
 		game.setStartHour(LocalTime.now());
+		game.setCurrentTurn(1);
 		islandService.rellenoInicialIslas(game);
 		cardService.repartoInicial(game);
 		Integer playersnumber = statusService.countPlayers(game.getId());
-		game.setCurrentPlayer(ThreadLocalRandom.current().nextInt(0, playersnumber-1));
+		game.setCurrentPlayer(ThreadLocalRandom.current().nextInt(0, playersnumber));
 		game.setInitialPlayer(game.getCurrentPlayer());
 		maxTurns(game);
 		saveGame(game);
@@ -185,10 +187,34 @@ public class GameService {
 		List<Status> status = game.getStatus();
 		Status playerstatus = status.get(game.getCurrentPlayer());
 		playerstatus.setDiceNumber(number);
-		status.set(game.getCurrentPlayer(), playerstatus);
+		//status.set(game.getCurrentPlayer(), playerstatus);
 		statusService.saveStatus(playerstatus);
-		game.setStatus(status);
+		//game.setStatus(status);
+		//saveGame(game);
+	}
+	
+	@Transactional
+	public void nextTurn(Game game) {
+		List<Status> status = game.getStatus();
+		Status playerstatus = status.get(game.getCurrentPlayer());
+		playerstatus.setDiceNumber(null);
+//		status.set(game.getCurrentPlayer(), playerstatus);
+		statusService.saveStatus(playerstatus);
+//		game.setStatus(status);
+		nextPlayer(game);
+		if(game.getCurrentPlayer()==game.getInitialPlayer()) {
+			game.setCurrentTurn(game.getCurrentTurn()+1);
+		}
 		saveGame(game);
+	}
+	
+	@Transactional
+	public void robIsland(Game game, IslandStatus is, Status status) {
+			Card card = is.getCard();
+			status.getCards().add(card);
+			statusService.saveStatus(status);
+			is.setCard(null);
+			islandStatusService.saveIslandStatus(is);
 	}
 	
 	

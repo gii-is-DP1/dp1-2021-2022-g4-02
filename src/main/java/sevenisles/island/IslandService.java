@@ -51,44 +51,6 @@ public class IslandService {
 		islandRepo.delete(islandToDelete);
 	}
 	
-//	@Transactional(readOnly=true)
-//	public Card getCardFromIsland (int id)  throws IslandNotFoundException{
-//		Optional<Island> island = findIslandById(id);
-//		if(island.isPresent()) {
-//			Card card = island.get().getCard();
-//			return card;
-//		}
-//		else {
-//			throw new IslandNotFoundException();
-//		}
-//	}
-//	
-//	@Transactional
-//	public void emptyIsland(int id) throws IslandNotFoundException{
-//		Optional<Island> island = findIslandById(id);
-//		if(island.isPresent()) {
-//			island.get().setCard(null);
-//		} else {
-//			throw new IslandNotFoundException();
-//		}
-//	}
-//	
-//	@Transactional
-//	public void fillIsland(int id, Card card) throws IslandNotFoundException {
-//		Optional<Island> island = findIslandById(id);
-//		if(island.isPresent()) {
-//			island.get().setCard(card);
-//		} else {
-//			throw new IslandNotFoundException();
-//		}
-//	}
-	
-//	@Transactional(readOnly = true)
-//	public void asignarIslas(Game game) {
-//		Iterator<Island> it = islandRepo.findAll().iterator();
-//		List<Island> ls = StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false).collect(Collectors.toList());
-//		game.setIslands(ls);
-//	}
 	@Transactional
 	public void rellenoInicialIslas(Game game) {
 		Iterator<Island> it = islandFindAll().iterator();

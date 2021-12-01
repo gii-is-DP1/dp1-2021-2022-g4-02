@@ -32,6 +32,11 @@ public class StatusService {
 	}
 	
 	@Transactional
+	public Integer countPlayers(Game game) {
+		return this.statusRepo.countPlayers(game.getId());
+	}
+	
+	@Transactional
 	public boolean isNotFull(Integer gameId) {
 		return countPlayers(gameId)<4;
 	}
@@ -94,6 +99,11 @@ public class StatusService {
 	@Transactional(readOnly = true)
 	public Optional<Status> findStatusByGameAndPlayer(int gameId, int playerId) throws IllegalArgumentException { 
 		return statusRepo.findStatusByGameAndPlayer(gameId, playerId);
+	}
+	
+	@Transactional(readOnly = true)
+	public Optional<List<Status>> findStatusOfPlayer(int playerId) throws IllegalArgumentException { 
+		return statusRepo.findStatusOfPlayer(playerId);
 	}
 	
 	@Transactional
