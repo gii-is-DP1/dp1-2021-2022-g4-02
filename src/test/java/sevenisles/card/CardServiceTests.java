@@ -44,7 +44,7 @@ public class CardServiceTests {
 			comp=cards.next();
 			if(comp.getId()==id) break;
 		}
-		Card res = CardService.findCardById(id);
+		Card res = CardService.findCardById(id).get();
 		assertEquals(comp, res);
 	}
 	
@@ -53,13 +53,13 @@ public class CardServiceTests {
 	public void testSaveCard() {
 		int id = 22;
 		CardType ct= CardType.RUM;
-		CardType actual = CardService.findCardById(id).getCardType();
+		CardType actual = CardService.findCardById(id).get().getCardType();
 		assertNotEquals(ct,actual);
-		Card card = CardService.findCardById(id);
+		Card card = CardService.findCardById(id).get();
 		card.setCardType(ct);
 		assertEquals(ct,card.getCardType());
 		CardService.saveCard(card);
-		card = CardService.findCardById(id);
+		card = CardService.findCardById(id).get();
 		assertEquals(ct,card.getCardType());
 	}
 }

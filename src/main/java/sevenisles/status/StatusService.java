@@ -124,7 +124,7 @@ public class StatusService {
 	}
 	
 	@Transactional
-	public void deleteCard(Game game, Integer cardId) {
+	public void deleteCardFromHand(Game game, Integer cardId) {
 		Optional<Player> playeropt = playerService.findCurrentPlayer();
 		if(playeropt.isPresent()) {
 			Optional<Status> statusopt = findStatusByGameAndPlayer(game.getId(), playeropt.get().getId());
@@ -132,24 +132,23 @@ public class StatusService {
 				Status status = statusopt.get();
 				List<Card> ls = status.getCards();
 				status.setCards(ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList()));
+				Integer diff = status.getCardsToPay()-1;
+				status.setCardsToPay(diff);
 				saveStatus(status);
 			}		
 		}
 	}
 	
 	@Transactional
-	public void deleteCard(Game game, Card card) {
-		Optional<Player> playeropt = playerService.findCurrentPlayer();
-		if(playeropt.isPresent()) {
-			Optional<Status> statusopt = findStatusByGameAndPlayer(game.getId(), playeropt.get().getId());
-			if(statusopt.isPresent()) {
-				Status status = statusopt.get();
-				List<Card> ls = status.getCards();
-				status.setCards(ls.stream().filter(c->c.getId()!=card.getId()).collect(Collectors.toList()));
-				saveStatus(status);
-			}
-				
-		}
+	public void deleteCardFromHand(Game game, Card card) {
+		deleteCardFromHand(game,card.getId());
+	}
+	
+	@Transactional
+	public Boolean cardInHand(Status status, Card card) {
+		List<Card> hand = status.getCards();
+		Optional<Card> cardopt = hand.stream().filter(c->c.getId()==card.getId()).findAny();
+		return cardopt.isPresent();
 	}
 	
 }

@@ -2,6 +2,7 @@ package sevenisles.card;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.ThreadLocalRandom;
@@ -45,8 +46,8 @@ public class CardService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Card findCardById(int id) throws IllegalArgumentException { 
-		return cardRepository.findById(id).get();
+	public Optional<Card> findCardById(int id) throws IllegalArgumentException { 
+		return cardRepository.findById(id);
 	}
 	
 	@Transactional
@@ -70,7 +71,7 @@ public class CardService {
 			for(int j=0;j<3;j++) {
 				Card card = doblones.get(j);
 				hand.add(card);
-				gameService.deleteCard(game.getId(), card.getId());
+				gameService.deleteCardFromDeck(game.getId(), card.getId());
 			}
 			doblones = doblones.subList(3, doblones.size());
 			Status s = status.get(i);
@@ -78,16 +79,16 @@ public class CardService {
 			statusService.saveStatus(s);
 		}
 		//Reparto inicial a islas
-		List<Card> deck = game.getCards();
 		List<IslandStatus> lis = game.getIslandStatus();
 		List<IslandStatus> l2 = new ArrayList<IslandStatus>();
 		for(int i =0;i<lis.size();i++) {
+			List<Card> deck = game.getCards();
 			IslandStatus istatus = lis.get(i);
 			Card card = deck.get((int)(deck.size()* Math.random()));
 			istatus.setCard(card);
 			islandStatusService.saveIslandStatus(istatus);
 			l2.add(istatus);
-			gameService.deleteCard(game, card);
+			gameService.deleteCardFromDeck(game, card);
 		}
 		game.setIslandStatus(l2);
 	}
@@ -97,6 +98,7 @@ public class CardService {
 		Card card = deck.get((int)(deck.size()* Math.random()));
 		is.setCard(card);
 		islandStatusService.saveIslandStatus(is);
+		gameService.deleteCardFromDeck(game, card);
 	}
 
 }
