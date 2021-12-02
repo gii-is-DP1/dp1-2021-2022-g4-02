@@ -37,7 +37,7 @@ public class Status extends BaseEntity{
 	
 	private Integer diceNumber;
 	private Integer chosenIsland;
-	private Integer cardsToPay;
+	private Integer numberOfCardsToPay;
 	
 	
 }

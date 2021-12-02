@@ -52,7 +52,7 @@ public class IslandService {
 	}
 	
 	@Transactional
-	public void rellenoInicialIslas(Game game) {
+	public void asignacionInicialIslas(Game game) {
 		Iterator<Island> it = islandFindAll().iterator();
 		List<Island> li = StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,Spliterator.ORDERED), false).collect(Collectors.toList());
 		List<IslandStatus> ls = new ArrayList<IslandStatus>();

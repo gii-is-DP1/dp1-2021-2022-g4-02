@@ -113,8 +113,3 @@ INSERT INTO isles(id) VALUES (3);
 INSERT INTO isles(id) VALUES (4);
 INSERT INTO isles(id) VALUES (5);
 INSERT INTO isles(id) VALUES (6);
-
-
--- Creación de partidas en curso        
-insert into games(id, code, current_player, start_hour, end_hour) values (1,'3',1,'7:30', '7:50');
-insert into games(id, code, current_player, start_hour, end_hour) values (2,'4',1, null, null);

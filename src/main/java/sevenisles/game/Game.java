@@ -31,7 +31,7 @@ public class Game extends BaseEntity {
 	private Integer currentPlayer;
 	private Integer initialPlayer;
 	private Integer maxTurns;
-	private Integer currentTurn;
+	private Integer currentRound;
 	private Integer finishedTurn=0;
 	
 	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
