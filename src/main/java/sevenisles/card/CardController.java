@@ -1,5 +1,7 @@
 package sevenisles.card;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +33,28 @@ public class CardController {
 	@GetMapping(value = "/cards/{cardId}")
 	public String cardsListById(ModelMap modelMap, @PathVariable("cardId") int cardId){
 		String vista = "cards/cardDetails";
-		Card card = cardService.findCardById(cardId);
-		modelMap.addAttribute("card", card);
-		return vista;
+		Optional<Card> card = cardService.findCardById(cardId);
+		if(card.isPresent()) {
+			modelMap.addAttribute("card", card);
+			return vista;
+		}else {
+			modelMap.addAttribute("message", "Carta no encontrada");
+			return "error";
+		}
+		
 	}
 	
     @GetMapping(value = "/cards/{cardId}/edit")
     public String initUpdateCardForm(@PathVariable("cardId") int cardId, Model model) {
-    	Card card = this.cardService.findCardById(cardId);
-    	model.addAttribute(card);
-    	return VIEWS_CARDS_CREATE_OR_UPDATE_FORM;
+    	Optional<Card> card = cardService.findCardById(cardId);
+		if(card.isPresent()) {
+			model.addAttribute(card);
+	    	return VIEWS_CARDS_CREATE_OR_UPDATE_FORM;
+		}else {
+			model.addAttribute("message", "Carta no encontrada");
+			return "error";
+		}
+    	
     }
 
     @PostMapping(value = "/cards/{cardId}/edit")

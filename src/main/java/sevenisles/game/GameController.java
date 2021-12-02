@@ -251,27 +251,46 @@ public class GameController {
     			Integer pn = game.getCurrentPlayer();
     			Status status = game.getStatus().get(pn);
     			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
-    				if(game.getFinishedTurn()==1) {
-    					Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
-        				if(opt.isPresent()) {
-        					IslandStatus is = opt.get();
-        					if(is.getCard()!=null) {
-        						Integer cardNumber = status.getCards().size();
-        						Integer difference = Math.abs(status.getDiceNumber()-islandId);
-        						if(difference<=cardNumber) {
-        							return "redirect:/games/{code}/robIsland/{islandId}/payCard/"+difference;
-        						}else {
-        							model.put("message", "No tienes suficientes cartas para pagar el saqueo de esta isla");
-            	        			return "error";
-        						}		
+    				if(game.getFinishedTurn()==0) {
+    					if(status.getDiceNumber()!=null) {
+    						Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
+        					if(status.getChosenIsland()==null || status.getChosenIsland()==islandId) {
+        						if(opt.isPresent()) {
+                					IslandStatus is = opt.get();
+                					if(is.getCard()!=null) {
+                						if(status.getCardsToPay()==null) {
+                							Integer cardNumber = status.getCards().size();
+                    						Integer difference = Math.abs(status.getDiceNumber()-islandId);
+                    						if(difference<=cardNumber) {
+                    							status.setChosenIsland(islandId);
+                        						status.setCardsToPay(difference);
+                        						statusService.saveStatus(status);
+                    							return "redirect:/games/{code}/robIsland/{islandId}/payCard";
+                    						}else {
+                    							model.put("message", "No tienes suficientes cartas para pagar el saqueo de esta isla");
+                        	        			return "error";
+                    						}
+                						}else {
+                							return "redirect:/games/{code}/robIsland/{islandId}/payCard";
+                						}
+                								
+                					}else {
+                						model.put("message", "No puedes saquear una isla vacía");
+                	        			return "error";
+                					}			
+                				}else {
+                        			model.put("message", "No hay isla.");
+                        			return "error";
+                        		}
         					}else {
-        						model.put("message", "No puedes saquear una isla vacía");
-        	        			return "error";
-        					}			
-        				}else {
-                			model.put("message", "No hay isla.");
+            					model.put("message", "Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
+                    			return "error";
+            				}
+    					}else {
+        					model.put("message", "Primero tienes que tirar el dado.");
                 			return "error";
-                		}
+        				}
+	
     				}else {
     					model.put("message", "Ya has saqueado una isla.");
             			return "error";
@@ -291,9 +310,8 @@ public class GameController {
     }
     
     //Pagar carta
-	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard/{difference}")
-	public String initPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId,
-			@PathVariable("difference") Integer difference, ModelMap model) {	
+	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard")
+	public String initPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId, ModelMap model) {	
 		Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
@@ -301,20 +319,30 @@ public class GameController {
 				Integer pn = game.getCurrentPlayer();
     			Status status = game.getStatus().get(pn);
     			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
-    				if(difference==0) {
-    					IslandStatus is = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId).get();
-    					gameService.robIsland(game, is, status);
-    					game.setFinishedTurn(1);
-    					gameService.saveGame(game);
-    					return "redirect:../../../board";
+    				if(status.getChosenIsland()!=null) {
+    					if(status.getChosenIsland()==islandId) {
+        					if(status.getCardsToPay()==0) {
+        						IslandStatus is = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId).get();
+        						gameService.robIsland(game, is, status);
+        						game.setFinishedTurn(1);
+        						gameService.saveGame(game);
+        						status.setCardsToPay(null);
+        						statusService.saveStatus(status);
+        						return "redirect:../../board";
+        					}else {
+        						model.addAttribute("game", game);
+        						model.addAttribute("status", status);
+        						gameService.utilAttributes(game, model);
+        						return "games/payCard";
+        					}
+        				}else {
+        					model.put("message", "Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
+                			return "error";
+        				}
     				}else {
-    					model.addAttribute("game", game);
-        				model.addAttribute("status", status);
-        				model.addAttribute("diff", difference);
-        				gameService.utilAttributes(game, model);
-        				return "games/payCard";
+    					model.put("message", "Primero debes elegir una isla que saquear.");
+            			return "error";
     				}
-	
     			}else {
         			model.put("message", "No es tu turno.");
         			return "error";
@@ -331,16 +359,27 @@ public class GameController {
 		}	
 	}
 	
-	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard/{difference}/{cardId}")
-	public String processPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId, @PathVariable("difference") Integer difference,
+	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard/{cardId}")
+	public String processPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId,
 			@PathVariable("cardId") Integer cardId, ModelMap model) {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		Card card = cardService.findCardById(cardId);
-		Game game = gameService.findGameByCode(code).get();
-		statusService.deleteCard(game, card);
-		Integer diff = difference-1;
-		model.addAttribute("diff",diff);
-		return "redirect:../"+diff;
+		Optional<Card> cardopt = cardService.findCardById(cardId);
+		if(cardopt.isPresent()) {
+			Card card = cardopt.get();
+			Game game = gameService.findGameByCode(code).get();
+			Status status = game.getStatus().get(game.getCurrentPlayer());
+			if(statusService.cardInHand(status,card)) {
+				statusService.deleteCardFromHand(game, card);
+				return "redirect:";
+			}else {
+				model.put("message", "No posees esa carta. Elige otra");
+				return "error";
+			}
+			
+		}else {
+			model.put("message", "Carta no encontrada.");
+			return "error";
+		}
+		
 	
 	}
     
@@ -355,8 +394,14 @@ public class GameController {
     			Integer pn = game.getCurrentPlayer();
     			Status status = game.getStatus().get(pn);
     			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
-    				gameService.nextTurn(game);
-    				return "redirect:/games/{code}/board";
+    				if(game.getFinishedTurn()==1) {
+    					gameService.nextTurn(game);
+        				return "redirect:/games/{code}/board";
+        			}else {
+            			model.put("message", "No has acabado el turno.");
+            			return "error";
+            		} 
+    				
     			}else {
         			model.put("message", "No es tu turno.");
         			return "error";

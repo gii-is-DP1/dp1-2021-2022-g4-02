@@ -15,8 +15,8 @@
     <br></br>
     <p>Turno Nº <c:out value="${game.currentTurn}"></c:out></p>
 	<br></br>
-	<c:if test="${diff==1}"> <p>Te queda por pagar <c:out value="${diff}"> </c:out> carta.</p></c:if>
-    <c:if test="${diff>1}"> <p>Te quedan por pagar <c:out value="${diff}"> </c:out> cartas.</p></c:if>
+	<c:if test="${status.cardsToPay==1}"> <p>Te queda por pagar <c:out value="${status.cardsToPay}"> </c:out> carta.</p></c:if>
+    <c:if test="${status.cardsToPay>1}"> <p>Te quedan por pagar <c:out value="${status.cardsToPay}"> </c:out> cartas.</p></c:if>
     	 
     <c:if test="${loggedUserId==playerUserId}">
     		<p>Elige la carta con la que quieres pagar:</p>
@@ -27,7 +27,7 @@
             				<option value="${card.id}">Carta ${card.id}</option>
           				</c:forEach>
        				 </select>
-        			<button type="button" class="btn btn-primary" onclick="window.location.href='/games/${code}/robIsland/${islandId}/payCard/${difference}/'+cardId.value">Pagar con esta carta</button>
+        			<button type="button" class="btn btn-primary" onclick="window.location.href='/games/${code}/robIsland/${islandId}/payCard/'+cardId.value">Pagar con esta carta</button>
     			</form>
     		</div>
     </c:if>	

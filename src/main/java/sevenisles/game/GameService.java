@@ -105,7 +105,7 @@ public class GameService {
 	}
 	
 	@Transactional
-	public void deleteCard(Integer gameId, Integer cardId) {
+	public void deleteCardFromDeck(Integer gameId, Integer cardId) {
 		Optional<Game> gameopt = gameRepository.findById(gameId);
 		if(gameopt.isPresent()) {
 			Game game = gameopt.get();
@@ -115,7 +115,7 @@ public class GameService {
 	}
 	
 	@Transactional
-	public void deleteCard(Game game, Card card) {
+	public void deleteCardFromDeck(Game game, Card card) {
 		List<Card> ls = game.getCards();
 		game.setCards(ls.stream().filter(c->c.getId()!=card.getId()).collect(Collectors.toList()));
 	}
@@ -198,6 +198,7 @@ public class GameService {
 		List<Status> status = game.getStatus();
 		Status playerstatus = status.get(game.getCurrentPlayer());
 		playerstatus.setDiceNumber(null);
+		playerstatus.setChosenIsland(null);
 //		status.set(game.getCurrentPlayer(), playerstatus);
 		statusService.saveStatus(playerstatus);
 //		game.setStatus(status);
