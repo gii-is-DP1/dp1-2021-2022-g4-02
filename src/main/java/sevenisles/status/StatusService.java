@@ -3,12 +3,14 @@ package sevenisles.status;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sevenisles.card.Card;
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
 import sevenisles.player.Player;
@@ -119,6 +121,35 @@ public class StatusService {
 	@Transactional
 	public void deleteStatus(Status status) {
 		statusRepo.delete(status);
+	}
+	
+	@Transactional
+	public void deleteCard(Game game, Integer cardId) {
+		Optional<Player> playeropt = playerService.findCurrentPlayer();
+		if(playeropt.isPresent()) {
+			Optional<Status> statusopt = findStatusByGameAndPlayer(game.getId(), playeropt.get().getId());
+			if(statusopt.isPresent()) {
+				Status status = statusopt.get();
+				List<Card> ls = status.getCards();
+				status.setCards(ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList()));
+				saveStatus(status);
+			}		
+		}
+	}
+	
+	@Transactional
+	public void deleteCard(Game game, Card card) {
+		Optional<Player> playeropt = playerService.findCurrentPlayer();
+		if(playeropt.isPresent()) {
+			Optional<Status> statusopt = findStatusByGameAndPlayer(game.getId(), playeropt.get().getId());
+			if(statusopt.isPresent()) {
+				Status status = statusopt.get();
+				List<Card> ls = status.getCards();
+				status.setCards(ls.stream().filter(c->c.getId()!=card.getId()).collect(Collectors.toList()));
+				saveStatus(status);
+			}
+				
+		}
 	}
 	
 }

@@ -38,16 +38,19 @@
     </table>
 	
     <div align="center">
-    	<c:if test="${loggedUserId==playerUserId}">
-    		<c:if test="${currentPlayerStatus.diceNumber == null}"><button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/dice'"> Lanzar dado</button>
-    		</c:if>       
+    	<c:if test="${game.finishedTurn==0}">
+    		<c:if test="${loggedUserId==playerUserId}">
+    			<c:if test="${currentPlayerStatus.diceNumber == null}"><button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/dice'"> Lanzar dado</button>
+    			</c:if>       
+    		</c:if>
+    		<c:if test="${currentPlayerStatus.diceNumber != null}"> <p>Resultado de la tirada: <c:out value="${currentPlayerStatus.diceNumber}"></c:out></p>
+    		</c:if>
     	</c:if>
-    	<c:if test="${currentPlayerStatus.diceNumber != null}"> <p>Resultado de la tirada: <c:out value="${currentPlayerStatus.diceNumber}"></c:out></p>
-    	<p><button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/turn'"> Pasar turno</button> </p>
-    	</c:if> 		
+    	<c:if test="${game.finishedTurn==1}"><p><button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/turn'"> Pasar turno</button> </p></c:if>
+    	 		
     </div>
     	 
-    <c:if test="${loggedUserId==playerUserId}">
+    <c:if test="${loggedUserId==playerUserId && game.finishedTurn==0}">
     	<c:if test="${currentPlayerStatus.diceNumber != null}">
     		<p>Introduzca la isla que quiere saquear:</p>
     		<div align="center">   	

@@ -83,7 +83,7 @@ public class CardService {
 		List<IslandStatus> l2 = new ArrayList<IslandStatus>();
 		for(int i =0;i<lis.size();i++) {
 			IslandStatus istatus = lis.get(i);
-			Card card = deck.get(ThreadLocalRandom.current().nextInt(0, deck.size()));
+			Card card = deck.get((int)(deck.size()* Math.random()));
 			istatus.setCard(card);
 			islandStatusService.saveIslandStatus(istatus);
 			l2.add(istatus);
@@ -91,4 +91,12 @@ public class CardService {
 		}
 		game.setIslandStatus(l2);
 	}
+	
+	public void llenarIsla(Game game, IslandStatus is) {
+		List<Card> deck = game.getCards();
+		Card card = deck.get((int)(deck.size()* Math.random()));
+		is.setCard(card);
+		islandStatusService.saveIslandStatus(is);
+	}
+
 }
