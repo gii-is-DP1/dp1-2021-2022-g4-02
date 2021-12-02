@@ -32,6 +32,7 @@ public class Game extends BaseEntity {
 	private Integer initialPlayer;
 	private Integer maxTurns;
 	private Integer currentTurn;
+	private Integer finishedTurn=0;
 	
 	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
 	@JoinTable(name="deck", uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "cards_id" }) })

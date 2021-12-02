@@ -45,4 +45,5 @@ public class PlayerService {
 		Optional<Player> player = playerRepository.findCurrentPlayer(User.getCurrentUser());
 		return player;
 	}
+	
 }

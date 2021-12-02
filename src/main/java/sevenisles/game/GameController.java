@@ -3,28 +3,36 @@ package sevenisles.game;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import sevenisles.card.Card;
+import sevenisles.card.CardService;
 import sevenisles.islandStatus.IslandStatus;
 import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
+import sevenisles.user.User;
+import sevenisles.util.ManualLogin;
 
 
 @Controller
 public class GameController {
 	
 	
-//	@Autowired
-//	private CardService cardService;
+	@Autowired
+	private CardService cardService;
 	
 	@Autowired
 	private GameService gameService;
@@ -136,7 +144,6 @@ public class GameController {
 				return "error";
     		}
     	}else {
-    		//Crear vista que nos informe del fallo
     		modelMap.addAttribute("message", "Necesitas estar logueado como jugador para crear una partida.");
 			return "error";
     	}
@@ -244,26 +251,31 @@ public class GameController {
     			Integer pn = game.getCurrentPlayer();
     			Status status = game.getStatus().get(pn);
     			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
-    				Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
-    				if(opt.isPresent()) {
-    					IslandStatus is = opt.get();
-    					if(is.getCard()!=null) {
-    						Integer cardNumber = status.getCards().size();
-    						if(Math.abs(status.getDiceNumber()-islandId)<=cardNumber) {
-    							gameService.robIsland(game, is, status);
-    							return "redirect:/games/{code}/board";
-    						}else {
-    							model.put("message", "No tienes suficientes cartas para pagar el saqueo de esta isla");
+    				if(game.getFinishedTurn()==1) {
+    					Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
+        				if(opt.isPresent()) {
+        					IslandStatus is = opt.get();
+        					if(is.getCard()!=null) {
+        						Integer cardNumber = status.getCards().size();
+        						Integer difference = Math.abs(status.getDiceNumber()-islandId);
+        						if(difference<=cardNumber) {
+        							return "redirect:/games/{code}/robIsland/{islandId}/payCard/"+difference;
+        						}else {
+        							model.put("message", "No tienes suficientes cartas para pagar el saqueo de esta isla");
+            	        			return "error";
+        						}		
+        					}else {
+        						model.put("message", "No puedes saquear una isla vacía");
         	        			return "error";
-    						}		
-    					}else {
-    						model.put("message", "No puedes saquear una isla vacía");
-    	        			return "error";
-    					}			
+        					}			
+        				}else {
+                			model.put("message", "No hay isla.");
+                			return "error";
+                		}
     				}else {
-            			model.put("message", "No hay isla.");
+    					model.put("message", "Ya has saqueado una isla.");
             			return "error";
-            		} 	
+    				}	
     			}else {
         			model.put("message", "No es tu turno.");
         			return "error";
@@ -277,6 +289,60 @@ public class GameController {
     		return "error";
         }	
     }
+    
+    //Pagar carta
+	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard/{difference}")
+	public String initPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId,
+			@PathVariable("difference") Integer difference, ModelMap model) {	
+		Optional<Game> optGame = gameService.findGameByCode(code);
+    	if(optGame.isPresent()) {
+    		Game game = optGame.get();
+			if(gameService.loggedUserBelongsToGame(game)) {
+				Integer pn = game.getCurrentPlayer();
+    			Status status = game.getStatus().get(pn);
+    			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+    				if(difference==0) {
+    					IslandStatus is = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId).get();
+    					gameService.robIsland(game, is, status);
+    					game.setFinishedTurn(1);
+    					gameService.saveGame(game);
+    					return "redirect:../../../board";
+    				}else {
+    					model.addAttribute("game", game);
+        				model.addAttribute("status", status);
+        				model.addAttribute("diff", difference);
+        				gameService.utilAttributes(game, model);
+        				return "games/payCard";
+    				}
+	
+    			}else {
+        			model.put("message", "No es tu turno.");
+        			return "error";
+        		}
+				
+			}else {
+    			model.put("message", "No perteneces a esta partida.");
+    			return "error";			
+    		}
+			
+		}else {
+			model.addAttribute("message", "Partida no encontrada!");
+			return "error";
+		}	
+	}
+	
+	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard/{difference}/{cardId}")
+	public String processPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId, @PathVariable("difference") Integer difference,
+			@PathVariable("cardId") Integer cardId, ModelMap model) {
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		Card card = cardService.findCardById(cardId);
+		Game game = gameService.findGameByCode(code).get();
+		statusService.deleteCard(game, card);
+		Integer diff = difference-1;
+		model.addAttribute("diff",diff);
+		return "redirect:../"+diff;
+	
+	}
     
     //Pasar turno
     @GetMapping(value = "/games/{code}/turn")

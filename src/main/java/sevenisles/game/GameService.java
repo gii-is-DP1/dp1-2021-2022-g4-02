@@ -205,6 +205,7 @@ public class GameService {
 		if(game.getCurrentPlayer()==game.getInitialPlayer()) {
 			game.setCurrentTurn(game.getCurrentTurn()+1);
 		}
+		game.setFinishedTurn(0);
 		saveGame(game);
 	}
 	
@@ -213,8 +214,7 @@ public class GameService {
 			Card card = is.getCard();
 			status.getCards().add(card);
 			statusService.saveStatus(status);
-			is.setCard(null);
-			islandStatusService.saveIslandStatus(is);
+			cardService.llenarIsla(game, is);
 	}
 	
 	
