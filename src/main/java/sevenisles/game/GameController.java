@@ -3,14 +3,9 @@ package sevenisles.game;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,14 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.game.exceptions.GameControllerException;
-import sevenisles.islandStatus.IslandStatus;
 import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
-import sevenisles.user.User;
-import sevenisles.util.ManualLogin;
 
 
 @Controller
@@ -153,35 +145,22 @@ public class GameController {
 
     @GetMapping(value = "/games/{code}/enter")
     public String enterGame(
-    		@PathVariable("code") String code, ModelMap model) {
+    		@PathVariable("code") String code, ModelMap model) throws GameControllerException {
     	Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
-    		if(statusService.isNotFull(game.getId())) {
-    			Optional<Player> optPlayer = playerService.findCurrentPlayer();
-    			if(optPlayer.isPresent()) {
-    				Player player = optPlayer.get();
-    				if(!statusService.isInAnotherGame(player)) {
-    					gameService.enterGame(game, player);
-	        			return "redirect:/games/{code}";
-    				}else {
-        				model.put("message", "Ya estás dentro de una partida.");
-        				return "error";
-    				}
-    			}else {
-    				model.put("message", "Necesitas iniciar sesión antes de unirte a una partida.");
-    				return "error";
-    			}
-	    	}else {
-				//throw new IllegalArgumentException("This game is already full.");
-				model.put("message", "Lo sentimos, esta partida ya está llena");
-				return "error";
-			}	
-		}else {
-			model.put("message", "Lo sentimos, pero dicha partida no existe.");
-			return "error";
-			
-		}
+    		Player player = gameService.enterGameUtil(game);
+    		if(!statusService.isInAnotherGame(player)) {
+    			gameService.enterGame(game, player);
+    			return "redirect:/games/{code}";
+    		}else {
+    			model.put("message", "Ya estás dentro de una partida.");
+    			return "error";
+    		}	
+    	}else {
+    		model.put("message", "Lo sentimos, pero dicha partida no existe.");
+    		return "error";
+    	}
     }
     //Hay que crear vista del tablero, para volver si sales de la partida
     
@@ -212,14 +191,12 @@ public class GameController {
     //Lanzar dado
     @GetMapping(value = "/games/{code}/dice")
     public String playerThrowDice(
-    		@PathVariable("code") String code, ModelMap model){
+    		@PathVariable("code") String code, ModelMap model) throws GameControllerException{
     	Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
-    		if(gameService.loggedUserBelongsToGame(game)) {
-    			Integer pn = game.getCurrentPlayer();
-    			Status status = game.getStatus().get(pn);
-    			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+    		if(gameService.loggedPlayerCheckTurn(game)) {
+    			Status status = game.getStatus().get(game.getCurrentPlayer());
     				if(status.getDiceNumber()==null) {
         				gameService.playerThrowDice(game);	
                 		return "redirect:/games/{code}/board";
@@ -228,14 +205,9 @@ public class GameController {
             			return "error";
             		}
     			}else {
-        			model.put("message", "No es tu turno.");
-        			return "error";
+        			return "";
         		}    				       		
     		}else {
-    			model.put("message", "No perteneces a esta partida.");
-    			return "error";
-    		}	
-    	}else {
         	model.put("message", "Partida no encontrada");
     		return "error";
         }	
@@ -244,71 +216,31 @@ public class GameController {
     //Saquear isla
     @GetMapping(value = "/games/{code}/robIsland/{islandId}")
     public String robIsland(
-    		@PathVariable("code") String code, @PathVariable("islandId") Integer islandId, ModelMap model){
+    		@PathVariable("code") String code, @PathVariable("islandId") Integer islandId, ModelMap model) throws GameControllerException{
     	Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
-    		if(gameService.loggedUserBelongsToGame(game)) {
-    			Integer pn = game.getCurrentPlayer();
-    			Status status = game.getStatus().get(pn);
-    			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
-    				if(game.getFinishedTurn()==0) {
-    					if(status.getDiceNumber()!=null) {
-    						Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
-        					if(status.getChosenIsland()==null || status.getChosenIsland()==islandId) {
-        						if(opt.isPresent()) {
-                					IslandStatus is = opt.get();
-                					if(is.getCard()!=null) {
-                						if(status.getNumberOfCardsToPay()==null) {
-                							Integer cardsNumber = status.getCards().size();
-                    						Integer difference = Math.abs(status.getDiceNumber()-islandId);
-                    						if(difference<=cardsNumber) {
-                    							status.setChosenIsland(islandId);
-                        						status.setNumberOfCardsToPay(difference);
-                        						statusService.saveStatus(status);
-                    							return "redirect:/games/{code}/robIsland/{islandId}/payCard";
-                    						}else {
-                    							model.put("message", "No tienes suficientes cartas para pagar el saqueo de esta isla");
-                        	        			return "error";
-                    						}
-                						}else {
-                							return "redirect:/games/{code}/robIsland/{islandId}/payCard";
-                						}
-                								
-                					}else {
-                						model.put("message", "No puedes saquear una isla vacía");
-                	        			return "error";
-                					}			
-                				}else {
-                        			model.put("message", "No hay isla.");
-                        			return "error";
-                        		}
-        					}else {
-            					model.put("message", "Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
-                    			return "error";
-            				}
-    					}else {
-        					model.put("message", "Primero tienes que tirar el dado.");
-                			return "error";
-        				}
-	
+    		if(gameService.loggedPlayerCheckTurn(game)) {
+    			Status status = game.getStatus().get(game.getCurrentPlayer());
+    			if(gameService.chooseIslandCondition(game, islandId, status)) {
+    				if(status.getNumberOfCardsToPay()==null) {
+    					gameService.chooseIsland(game, islandId, status);
+    					return "redirect:/games/{code}/robIsland/{islandId}/payCard";					
     				}else {
-    					model.put("message", "Ya has saqueado una isla.");
-            			return "error";
-    				}	
+    					return "redirect:/games/{code}/robIsland/{islandId}/payCard";
+    				}		
     			}else {
-        			model.put("message", "No es tu turno.");
-        			return "error";
-        		}    				       		
+    				return "error";
+    			}   				       			
     		}else {
-    			model.put("message", "No perteneces a esta partida.");
     			return "error";
-    		}	
+    		}   				 	
     	}else {
-        	model.put("message", "Partida no encontrada");
+    		model.put("message", "Partida no encontrada");
     		return "error";
-        }	
+    	}
     }
+
     
     //Pagar carta
 	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard")
@@ -317,9 +249,9 @@ public class GameController {
 		Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
-			if(gameService.cond(game)){
+			if(gameService.loggedPlayerCheckTurn(game)){
 				Status status = game.getStatus().get(game.getCurrentPlayer());
-        		if(status.getCardsToPay()==0) {
+        		if(status.getNumberOfCardsToPay()==0) {
         			gameService.robIsland(game, islandId, status);
         			return "redirect:../../board";
         		}else {
@@ -339,7 +271,7 @@ public class GameController {
 	
 	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard/{cardId}")
 	public String processPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId,
-			@PathVariable("cardId") Integer cardId, ModelMap model) {
+			@PathVariable("cardId") Integer cardId, ModelMap model) throws GameControllerException {
 		Optional<Card> cardopt = cardService.findCardById(cardId);
 		if(cardopt.isPresent()) {
 			Card card = cardopt.get();
@@ -350,38 +282,27 @@ public class GameController {
 				if(status.getNumberOfCardsToPay()>=1) {
 					return "redirect:";
 				}else {
-					IslandStatus is = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId).get();
-					gameService.robIsland(game, is, status);
-					game.setFinishedTurn(1);
-					gameService.saveGame(game);
-					status.setNumberOfCardsToPay(null);
-					statusService.saveStatus(status);
+					gameService.robIsland(game, islandId, status);
 					return "redirect:/games/{code}/board";
 				}
 			}else {
 				model.put("message", "No posees esa carta. Elige otra");
 				return "error";
-			}
-			
+			}			
 		}else {
 			model.put("message", "Carta no encontrada.");
 			return "error";
 		}
-		
-	
 	}
     
     //Pasar turno
     @GetMapping(value = "/games/{code}/turn")
     public String nextTurn(
-    		@PathVariable("code") String code, ModelMap model){
+    		@PathVariable("code") String code, ModelMap model) throws GameControllerException{
     	Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
-    		if(gameService.loggedUserBelongsToGame(game)) {
-    			Integer pn = game.getCurrentPlayer();
-    			Status status = game.getStatus().get(pn);
-    			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+    		if(gameService.loggedPlayerCheckTurn(game)) {
     				if(game.getFinishedTurn()==1) {
     					gameService.nextTurn(game);
         				return "redirect:/games/{code}/board";
@@ -391,13 +312,8 @@ public class GameController {
             		} 
     				
     			}else {
-        			model.put("message", "No es tu turno.");
         			return "error";
-        		}    				       		
-    		}else {
-    			model.put("message", "No perteneces a esta partida.");
-    			return "error";
-    		}	
+        		}    				       			
     	}else {
         	model.put("message", "Partida no encontrada");
     		return "error";
