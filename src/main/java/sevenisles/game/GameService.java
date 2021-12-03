@@ -14,6 +14,7 @@ import org.springframework.ui.ModelMap;
 
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
+import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.island.IslandService;
 import sevenisles.islandStatus.IslandStatus;
 import sevenisles.islandStatus.IslandStatusService;
@@ -211,11 +212,41 @@ public class GameService {
 	}
 	
 	@Transactional
-	public void robIsland(Game game, IslandStatus is, Status status) {
-			Card card = is.getCard();
-			status.getCards().add(card);
-			statusService.saveStatus(status);
-			cardService.llenarIsla(game, is);
+	public void robIsland(Game game, Integer islandId, Status status) throws GameControllerException{
+		if(status.getChosenIsland()!=null) {
+			if(status.getChosenIsland()==islandId) {
+				IslandStatus is = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId).get();
+				Card card = is.getCard();
+				status.getCards().add(card);
+				statusService.saveStatus(status);
+				cardService.llenarIsla(game, is);
+				game.setFinishedTurn(1);
+				saveGame(game);
+				status.setCardsToPay(null);
+				statusService.saveStatus(status);
+			}else {
+				throw new GameControllerException("Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
+			}
+		}else {
+			throw new GameControllerException("Primero debes elegir una isla que saquear.");
+		}
+	}
+	
+	@Transactional
+	public Boolean cond(Game game) throws GameControllerException{
+		if(loggedUserBelongsToGame(game)) {
+			Integer pn = game.getCurrentPlayer();
+			Status status = game.getStatus().get(pn);
+			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+				return true;
+				
+			}else {
+				throw new GameControllerException("No es tu turno.");
+    		}
+			
+		}else {
+			throw new GameControllerException("No perteneces a esta partida.");	
+		}
 	}
 	
 	
