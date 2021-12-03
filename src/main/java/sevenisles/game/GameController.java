@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
+import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.islandStatus.IslandStatus;
 import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
@@ -311,48 +312,25 @@ public class GameController {
     
     //Pagar carta
 	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard")
-	public String initPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId, ModelMap model) {	
+	public String initPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId,
+			ModelMap model) throws GameControllerException{	
 		Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
-			if(gameService.loggedUserBelongsToGame(game)) {
-				Integer pn = game.getCurrentPlayer();
-    			Status status = game.getStatus().get(pn);
-    			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
-    				if(status.getChosenIsland()!=null) {
-    					if(status.getChosenIsland()==islandId) {
-        					if(status.getNumberOfCardsToPay()==0) {
-        						IslandStatus is = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId).get();
-        						gameService.robIsland(game, is, status);
-        						game.setFinishedTurn(1);
-        						gameService.saveGame(game);
-        						status.setNumberOfCardsToPay(null);
-        						statusService.saveStatus(status);
-        						return "redirect:../../board";
-        					}else {
-        						model.addAttribute("game", game);
-        						model.addAttribute("status", status);
-        						gameService.utilAttributes(game, model);
-        						return "games/payCard";
-        					}
-        				}else {
-        					model.put("message", "Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
-                			return "error";
-        				}
-    				}else {
-    					model.put("message", "Primero debes elegir una isla que saquear.");
-            			return "error";
-    				}
-    			}else {
-        			model.put("message", "No es tu turno.");
-        			return "error";
+			if(gameService.cond(game)){
+				Status status = game.getStatus().get(game.getCurrentPlayer());
+        		if(status.getCardsToPay()==0) {
+        			gameService.robIsland(game, islandId, status);
+        			return "redirect:../../board";
+        		}else {
+        			model.addAttribute("game", game);
+        			model.addAttribute("status", status);
+        			gameService.utilAttributes(game, model);
+        			return "games/payCard";
         		}
-				
 			}else {
-    			model.put("message", "No perteneces a esta partida.");
-    			return "error";			
-    		}
-			
+				return "error";
+			}
 		}else {
 			model.addAttribute("message", "Partida no encontrada!");
 			return "error";
