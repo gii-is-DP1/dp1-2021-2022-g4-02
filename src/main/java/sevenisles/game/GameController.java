@@ -259,12 +259,12 @@ public class GameController {
         						if(opt.isPresent()) {
                 					IslandStatus is = opt.get();
                 					if(is.getCard()!=null) {
-                						if(status.getCardsToPay()==null) {
-                							Integer cardNumber = status.getCards().size();
+                						if(status.getNumberOfCardsToPay()==null) {
+                							Integer cardsNumber = status.getCards().size();
                     						Integer difference = Math.abs(status.getDiceNumber()-islandId);
-                    						if(difference<=cardNumber) {
+                    						if(difference<=cardsNumber) {
                     							status.setChosenIsland(islandId);
-                        						status.setCardsToPay(difference);
+                        						status.setNumberOfCardsToPay(difference);
                         						statusService.saveStatus(status);
                     							return "redirect:/games/{code}/robIsland/{islandId}/payCard";
                     						}else {
@@ -347,7 +347,17 @@ public class GameController {
 			Status status = game.getStatus().get(game.getCurrentPlayer());
 			if(statusService.cardInHand(status,card)) {
 				statusService.deleteCardFromHand(game, card);
-				return "redirect:";
+				if(status.getNumberOfCardsToPay()>=1) {
+					return "redirect:";
+				}else {
+					IslandStatus is = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId).get();
+					gameService.robIsland(game, is, status);
+					game.setFinishedTurn(1);
+					gameService.saveGame(game);
+					status.setNumberOfCardsToPay(null);
+					statusService.saveStatus(status);
+					return "redirect:/games/{code}/board";
+				}
 			}else {
 				model.put("message", "No posees esa carta. Elige otra");
 				return "error";

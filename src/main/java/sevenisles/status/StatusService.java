@@ -60,25 +60,29 @@ public class StatusService {
 		}else return false;
 	}
 	
+	//Establece el game y player al status
 	@Transactional
-	public void addPlayer(Status status, Game game, Player player) {
+	public void addGamePlayerToStatus(Status status, Game game, Player player) {
 		status.setGame(game);
 		status.setPlayer(player);
 		saveStatus(status);
 	}
 	
+	//Añade un nuevo status al game
 	@Transactional
-	public void addStatus(Status status, Game game) {
+	public void addStatusToGame(Status status, Game game) {
 		List<Status> ls = new ArrayList<Status>();
 		if(game.getStatus()!=null) {
 			ls.addAll(game.getStatus());
 		}
 		ls.add(status);
 		game.setStatus(ls);
+		gameService.saveGame(game);
  	}
 	
+	//Añade un nuevo status al player
 	@Transactional
-	public void addStatus(Status status, Player player) {
+	public void addStatusToPlayer(Status status, Player player) {
 		List<Status> ls = new ArrayList<Status>();
 		if(player.getStatus()!=null) {
 			ls.addAll(player.getStatus());
@@ -132,8 +136,8 @@ public class StatusService {
 				Status status = statusopt.get();
 				List<Card> ls = status.getCards();
 				status.setCards(ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList()));
-				Integer diff = status.getCardsToPay()-1;
-				status.setCardsToPay(diff);
+				Integer diff = status.getNumberOfCardsToPay()-1;
+				status.setNumberOfCardsToPay(diff);
 				saveStatus(status);
 			}		
 		}

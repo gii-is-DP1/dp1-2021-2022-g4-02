@@ -126,16 +126,17 @@ public class GameService {
 		Optional<Player> loggedPlayer = playerService.findCurrentPlayer();
 		if(loggedPlayer.isPresent()) {
 			Optional<Status> ls = statusService.findStatusByGameAndPlayer(game.getId(), loggedPlayer.get().getId());
-			if(ls.isPresent()) return true;
-		}return false;
+			return ls.isPresent();
+		}
+		return false;
 	}
 	
 	@Transactional
 	public void createGame(Game game, Player player) {
 		Status status = new Status();
-		statusService.addPlayer(status, game, player);
-		statusService.addStatus(status, game);
-		statusService.addStatus(status, player);
+		statusService.addGamePlayerToStatus(status, game, player);
+		statusService.addStatusToGame(status, game);
+		statusService.addStatusToPlayer(status, player);
 		game.setCards(cardService.llenarMazo());
 		saveGame(game);
 	}
@@ -143,9 +144,9 @@ public class GameService {
 	@Transactional
 	public void enterGame(Game game, Player player) {
 		Status status = new Status();
-		statusService.addPlayer(status, game, player);
-		statusService.addStatus(status, game);
-		statusService.addStatus(status, player);
+		statusService.addGamePlayerToStatus(status, game, player);
+		statusService.addStatusToGame(status, game);
+		statusService.addStatusToPlayer(status, player);
 		saveGame(game);
 	}
 	
@@ -158,15 +159,13 @@ public class GameService {
 		model.addAttribute("currentPlayerStatus", status);
 		model.addAttribute("playerUserId", playerUserId);
 		model.addAttribute("loggedUserId", loggedUserId);
-		System.out.println(playerUserId);
-		System.out.println(loggedUserId);
 	}
 	
 	@Transactional
 	public void startGame(Game game) {
 		game.setStartHour(LocalTime.now());
-		game.setCurrentTurn(1);
-		islandService.rellenoInicialIslas(game);
+		game.setCurrentRound(1);
+		islandService.asignacionInicialIslas(game);
 		cardService.repartoInicial(game);
 		Integer playersnumber = statusService.countPlayers(game.getId());
 		game.setCurrentPlayer(ThreadLocalRandom.current().nextInt(0, playersnumber));
@@ -205,7 +204,7 @@ public class GameService {
 //		game.setStatus(status);
 		nextPlayer(game);
 		if(game.getCurrentPlayer()==game.getInitialPlayer()) {
-			game.setCurrentTurn(game.getCurrentTurn()+1);
+			game.setCurrentRound(game.getCurrentRound()+1);
 		}
 		game.setFinishedTurn(0);
 		saveGame(game);
