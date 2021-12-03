@@ -142,6 +142,16 @@ public class GameService {
 	}
 	
 	@Transactional
+	public Player enterGameUtil(Game game) throws GameControllerException {
+		if(statusService.isNotFull(game.getId())) {
+			Optional<Player> optPlayer = playerService.findCurrentPlayer();
+			if(optPlayer.isPresent()) {
+				return optPlayer.get();
+			}else throw new GameControllerException("Necesitas iniciar sesión antes de unirte a una partida.");
+		}else throw new GameControllerException("Lo sentimos, esta partida ya está llena");
+	}
+	
+	@Transactional
 	public void enterGame(Game game, Player player) {
 		Status status = new Status();
 		statusService.addGamePlayerToStatus(status, game, player);
@@ -211,6 +221,48 @@ public class GameService {
 	}
 	
 	@Transactional
+	public Boolean chooseIslandCondition(Game game, Integer islandId, Status status) throws GameControllerException {
+		if(game.getFinishedTurn()==0) {
+			if(status.getDiceNumber()!=null) {
+				Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
+				if(status.getChosenIsland()==null || status.getChosenIsland()==islandId) {
+					if(opt.isPresent()) {
+    					IslandStatus is = opt.get();
+    					if(is.getCard()!=null) {
+        						return true;
+        				}else {
+    						throw new GameControllerException("No puedes saquear una isla vacía");
+    					}			
+    				}else {
+    					throw new GameControllerException("No hay isla.");
+            		}
+				}else {
+					throw new GameControllerException("Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
+				}
+			}else {
+				throw new GameControllerException("Primero tienes que tirar el dado.");
+			}
+
+		}else {
+			throw new GameControllerException("Ya has saqueado una isla.");
+		}
+	}
+	
+	@Transactional
+	public void chooseIsland(Game game, Integer islandId, Status status) throws GameControllerException {
+		Integer cardsNumber = status.getCards().size();
+		Integer difference = Math.abs(status.getDiceNumber()-islandId);
+		if(difference<=cardsNumber) {
+			status.setChosenIsland(islandId);
+			status.setNumberOfCardsToPay(difference);
+			statusService.saveStatus(status);
+		}else {
+			throw new GameControllerException("No tienes suficientes cartas para pagar el saqueo de esta isla");
+		}
+	}
+		
+	
+	@Transactional
 	public void robIsland(Game game, Integer islandId, Status status) throws GameControllerException{
 		if(status.getChosenIsland()!=null) {
 			if(status.getChosenIsland()==islandId) {
@@ -221,7 +273,7 @@ public class GameService {
 				cardService.llenarIsla(game, is);
 				game.setFinishedTurn(1);
 				saveGame(game);
-				status.setCardsToPay(null);
+				status.setNumberOfCardsToPay(null);
 				statusService.saveStatus(status);
 			}else {
 				throw new GameControllerException("Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
@@ -232,13 +284,12 @@ public class GameService {
 	}
 	
 	@Transactional
-	public Boolean cond(Game game) throws GameControllerException{
+	public Boolean loggedPlayerCheckTurn(Game game) throws GameControllerException{
 		if(loggedUserBelongsToGame(game)) {
 			Integer pn = game.getCurrentPlayer();
 			Status status = game.getStatus().get(pn);
 			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
-				return true;
-				
+				return true;		
 			}else {
 				throw new GameControllerException("No es tu turno.");
     		}
