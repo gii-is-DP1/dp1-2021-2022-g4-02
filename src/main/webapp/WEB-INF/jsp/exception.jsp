@@ -7,12 +7,14 @@
 		<br><br><br><br><br>
 		<spring:url value="/resources/images/pirata-error.png"
 			var="pirateImage" />
-		<img src="${pirateImage}" width=300 />
+		<img src="${pirateImage}" width=250 />
 
 		<h1><br><br>
-			Aaargg!! Ha ocurrido un error...
+			Aaargg!! ${exception.message}
 		</h1>
 
-		<p>${exception.message}</p>
+		<form>
+		<input type="button" value="Volver" onclick="history.back()">
+		</form>
 	</div>
 </petclinic:layout>

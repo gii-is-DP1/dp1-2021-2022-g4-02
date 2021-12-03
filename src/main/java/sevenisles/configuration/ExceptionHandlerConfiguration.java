@@ -29,4 +29,7 @@ public class ExceptionHandlerConfiguration
         request.setAttribute("exception", ex);
         return "exception";
     }
+   
+   
+   
 }

@@ -29,7 +29,7 @@
 	    			<form class="form-inline">
 	        			<select name="cardId" class="form-control">
 	          				<c:forEach var="card" items="${status.cards}">
-	            				<option value="${card.id}">Carta ${card.id}</option>
+	            				<option value="${card.id}">Carta ${card.cardType}</option>
 	          				</c:forEach>
 	       				 </select>
 	        			<button type="button" class="btn btn-primary" onclick="window.location.href='/games/${code}/robIsland/${islandId}/payCard/'+cardId.value">Pagar con esta carta</button>
