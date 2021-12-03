@@ -24,7 +24,7 @@
 			<tr>
 				<th>Número de isla</th>
 				<th>Carta asociada</th>
-				<th>ID Carta</th>
+				
 				<!-- <th>Acción</th>-->
 			</tr>
 		</thead>
@@ -33,7 +33,7 @@
 				<tr>
 					<td><c:out value="${islandstatus.island.id}" /></td>
 					<td><c:out value="${islandstatus.card.cardType}" /></td>
-					<td><c:out value="${islandstatus.card.id}" /></td>
+					
 
 				</tr>
 			</c:forEach>
@@ -75,7 +75,7 @@
         <tr>
             <th>Jugador</th>
             <th>Cartas en el inventario</th>
-            <th>ID Carta</th>
+            
         </tr>
         </thead>
         <tbody>
@@ -89,11 +89,7 @@
                 		<p><c:out value="${card.cardType}"/></p>
                    	 </c:forEach>
                 </td> 
-                <td>
-                	<c:forEach items="${status.cards}" var="card">
-                		<p><c:out value="${card.id}"/></p>
-                   	 </c:forEach>
-                </td> 
+                
             </tr>
         </c:forEach>
         </tbody>
