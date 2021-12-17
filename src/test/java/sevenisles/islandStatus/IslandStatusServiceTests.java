@@ -2,6 +2,15 @@ package sevenisles.islandStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,26 +65,50 @@ public class IslandStatusServiceTests {
 		assertEquals(1,count);
 	}
 	
-	/* @Test
+	@Test
 	public void testFindAll() {        
         Integer count = IslandStatusService.islandStatusCount();
 		Iterator<IslandStatus> islandStatus = IslandStatusService.islandStatusFindAll().iterator();
 		List<IslandStatus> islandStatuslist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(islandStatus, Spliterator.ORDERED), false).collect(Collectors.toList());
 		assertEquals(count,islandStatuslist.size());
-	} */
+	}
 
-    /* findIslandStatusByGame
-    findIslandStatusByGameAndIsland */
+	@Test
+	public void testFindIslandStatusByGame() throws IslandStatusNotFoundException {        
+        Optional<List<IslandStatus>> islandStatusListOpt = IslandStatusService.findIslandStatusByGame(newgame.getId());
+		
+		if(islandStatusListOpt.isPresent()) {
+			List<IslandStatus> islandStatusList = islandStatusListOpt.get();
 
-	
-	/* @AfterEach
+			Boolean bool = islandStatusList.stream().allMatch(islandStatus -> islandStatus.getGame() == newgame);
+			assertEquals(bool, true);
+		}
+		else {
+			throw new IslandStatusNotFoundException();
+		}
+	}
+
+	@Test
+	public void testFindIslandStatusByGameAndIsland() throws IslandStatusNotFoundException {        
+		Optional<IslandStatus> islandStatusOpt = IslandStatusService.findIslandStatusByGameAndIsland(newgame.getId(), newisland.getId());
+		
+		if(islandStatusOpt.isPresent()) {
+			IslandStatus islandStatus = islandStatusOpt.get();
+			assertEquals(newstatus, islandStatus);
+		}
+		else {
+			throw new IslandStatusNotFoundException();
+		}
+	}
+
+	@AfterEach
 	public void finish() {
-		//IslandStatusService.deleteIslandStatus(newstatus);
+		IslandStatusService.deleteIslandStatus(newstatus);
         IslandService.deleteIsland(newisland);
         //GameService.deleteGame(newgame);
-	} */
+	}
 	
-	/* @Test
+	@Test
 	public void testdeleteIsland() {
 		int beforecount = IslandService.islandCount();
 
@@ -85,5 +118,5 @@ public class IslandStatusServiceTests {
 		int aftercount = IslandService.islandCount();
 		
 		assertEquals(aftercount, beforecount-1);
-	} */
+	}
 }

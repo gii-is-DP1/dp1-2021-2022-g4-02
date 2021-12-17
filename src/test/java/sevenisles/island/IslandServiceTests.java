@@ -113,7 +113,7 @@ public class IslandServiceTests {
 		assertEquals(aftercount, beforecount-1);
 	}
 
-	// TODO testAsignacionIicialISlas
+	// TODO testAsignacionIicialIslas
 	/* @Test
 	public void testAsignacionInicialIslas() {
 		int beforecount = IslandService.islandCount();
