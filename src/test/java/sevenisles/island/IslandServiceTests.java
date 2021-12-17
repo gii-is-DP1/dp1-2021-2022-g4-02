@@ -55,10 +55,10 @@ public class IslandServiceTests {
 	
 	@Test
 	public void testFindAll() {        
-        Integer count = IslandService.islandCount();
+        
 		Iterator<Island> islands = IslandService.islandFindAll().iterator();
 		List<Island> islandslist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(islands, Spliterator.ORDERED), false).collect(Collectors.toList());
-		assertEquals(count,islandslist.size());
+		assertEquals(7,islandslist.size());
 	}
 	
 	@Test
