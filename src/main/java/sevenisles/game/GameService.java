@@ -59,8 +59,8 @@ public class GameService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Game findGameById(int id) throws IllegalArgumentException { 
-		return gameRepository.findById(id).get();
+	public Optional<Game> findGameById(int id) throws IllegalArgumentException { 
+		return gameRepository.findById(id);
 	}
 	
 	@Transactional(readOnly = true)

@@ -5,11 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import java.time.LocalTime;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -32,8 +34,12 @@ public class GameServicesTest {
 	
 	@Test
 	public void testCountWithInitialData() {
+		Iterator<Game> games = gameService.gameFindAll().iterator();
+		
+		List<Game> lgames = StreamSupport.stream(Spliterators.spliteratorUnknownSize(games,Spliterator.ORDERED), false).collect(Collectors.toList());
+		
         int count = gameService.gameCount();
-        assertEquals(2,count);
+        assertEquals(lgames.size(),count);
     }
 	
 	
@@ -49,9 +55,12 @@ public class GameServicesTest {
 	
 	@Test
 	public void testFindGameById(){
-		int id = 1;
-		Game game = gameService.findGameById(id);
-		assertEquals(id,game.getId());
+		Game game = new Game();
+		gameService.saveGame(game);
+		Optional<Game> findgame = gameService.findGameById(game.getId());
+		if(findgame.isPresent()) {
+			assertEquals(game.getId(),findgame.get().getId());
+		}
 	}
 	
 //	@Test
@@ -73,6 +82,14 @@ public class GameServicesTest {
 			assertEquals(unfinishedGames.get(i).getEndHour(),null);
 		}
 	}
+/*	
+	@BeforeEach
+	public void init() {
+		Game game = new Game();
+		gameService.saveGame(game);
+		System.out.println("Id del juego " + game.getId());
+	}
+	*/
 	
 	@Test
 	public void testFindFinishedGames() {
