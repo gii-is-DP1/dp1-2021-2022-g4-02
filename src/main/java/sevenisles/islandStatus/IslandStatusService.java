@@ -30,6 +30,11 @@ public class IslandStatusService {
 	
 	@Autowired
 	IslandService islandService;
+
+	@Transactional(readOnly = true)
+	public Integer islandStatusCount() {
+		return (int) islandStatusRepo.count();
+	}
 	
 	@Transactional(readOnly = true)
 	public Iterable<IslandStatus> islandStatusFindAll() {
@@ -52,12 +57,12 @@ public class IslandStatusService {
 	}
 	
 	@Transactional
-	public void deleteIslandStatus(Integer id) {
+	public void deleteIslandStatus(Integer id) throws DataAccessException {
 		islandStatusRepo.deleteById(id);
 	}
 	
 	@Transactional
-	public void deleteIslandStatus(IslandStatus status) {
+	public void deleteIslandStatus(IslandStatus status) throws DataAccessException {
 		islandStatusRepo.delete(status);
 	}
 	
