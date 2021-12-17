@@ -31,6 +31,7 @@
 				<td>
 					<c:forEach items="${game.status}" var="status">
 						<p><c:out value="${status.player.user.username}" /></p>	
+						<p><c:out value="${status.score}" /></p>	
 					</c:forEach>
 				</td>
 

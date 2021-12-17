@@ -2,6 +2,7 @@ package sevenisles.game;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -305,13 +306,44 @@ public class GameController {
     		if(gameService.loggedPlayerCheckTurn(game)) {
     				if(game.getFinishedTurn()==1) {
     					gameService.nextTurn(game);
-        				return "redirect:/games/{code}/board";
+    					if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
+    						return "redirect:/games/{code}/endGame";
+    					}else return "redirect:/games/{code}/board";
         			}else {
             			model.put("message", "No has acabado el turno.");
             			return "error";
             		} 
     				
     			}else {
+        			return "error";
+        		}    				       			
+    	}else {
+        	model.put("message", "Partida no encontrada");
+    		return "error";
+        }	
+    }
+    
+    @GetMapping(value = "/games/{code}/endGame")
+    public String finishGame(
+    		@PathVariable("code") String code, ModelMap model) throws GameControllerException{
+    	Optional<Game> optGame = gameService.findGameByCode(code);
+    	if(optGame.isPresent()) {
+    		Game game = optGame.get();
+    		if(gameService.loggedUserBelongsToGame(game)) {
+    				if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
+    					gameService.endGame(game);
+    					List<Status> orderedStatuses = gameService.orderStatusByScore(game.getStatus());
+    					List<Status> winners = statusService.findWinnerStatusByGame(game.getId()).get();
+    					model.put("ranking", orderedStatuses);
+    					model.put("winners", winners);
+        				return "games/scoreBoard";
+        			}else {
+            			model.put("message", "Aún no se puede terminar la partida");
+            			return "error";
+            		} 
+    				
+    			}else {
+    				model.put("message", "No perteneces a la partida");
         			return "error";
         		}    				       			
     	}else {
