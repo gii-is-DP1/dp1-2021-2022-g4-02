@@ -1,4 +1,4 @@
-package sevenisles.island;
+package sevenisles.islandStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,14 +22,13 @@ import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
-import sevenisles.island.exceptions.IslandNotFoundException;
-import sevenisles.islandStatus.IslandStatus;
-import sevenisles.islandStatus.IslandStatusService;
-
+import sevenisles.island.Island;
+import sevenisles.island.IslandService;
+import sevenisles.islandStatus.exceptions.IslandStatusNotFoundException;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
-public class IslandServiceTests {
-	@Autowired
+public class IslandStatusServiceTests {
+    @Autowired
 	private IslandService IslandService;
 
 	@Autowired
@@ -47,7 +46,7 @@ public class IslandServiceTests {
 	
 
 	@BeforeEach
-	public void init() throws IslandNotFoundException {
+	public void init() throws IslandStatusNotFoundException {
 		IslandService.saveIsland(newisland);
 		GameService.saveGame(newgame);
 		
@@ -62,43 +61,51 @@ public class IslandServiceTests {
 
 	@Test
 	public void testCountWithInitialData() {
-		int count = IslandService.islandCount();
-		assertEquals(7,count);
+		int count = IslandStatusService.islandStatusCount();
+		assertEquals(1,count);
 	}
 	
 	@Test
 	public void testFindAll() {        
-        
-		Iterator<Island> islands = IslandService.islandFindAll().iterator();
-		List<Island> islandslist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(islands, Spliterator.ORDERED), false).collect(Collectors.toList());
-		assertEquals(7,islandslist.size());
+        Integer count = IslandStatusService.islandStatusCount();
+		Iterator<IslandStatus> islandStatus = IslandStatusService.islandStatusFindAll().iterator();
+		List<IslandStatus> islandStatuslist = StreamSupport.stream(Spliterators.spliteratorUnknownSize(islandStatus, Spliterator.ORDERED), false).collect(Collectors.toList());
+		assertEquals(count,islandStatuslist.size());
 	}
-	
+
 	@Test
-	public void testFindById() throws IslandNotFoundException {
-		int id = 4;
-		Iterator<Island> islands = IslandService.islandFindAll().iterator();
+	public void testFindIslandStatusByGame() throws IslandStatusNotFoundException {        
+        Optional<List<IslandStatus>> islandStatusListOpt = IslandStatusService.findIslandStatusByGame(newgame.getId());
 		
-		Island comp = new Island();
-		while(islands.hasNext()) {
-			comp = islands.next();
-			if(comp.getId()==id) break;
-		}
-		Optional<Island> islandOpt = IslandService.findIslandById(id);
-		if(islandOpt.isPresent()) {
-			Island island = islandOpt.get();
-			assertEquals(comp, island);
+		if(islandStatusListOpt.isPresent()) {
+			List<IslandStatus> islandStatusList = islandStatusListOpt.get();
+
+			Boolean bool = islandStatusList.stream().allMatch(islandStatus -> islandStatus.getGame() == newgame);
+			assertEquals(bool, true);
 		}
 		else {
-			throw new IslandNotFoundException();
+			throw new IslandStatusNotFoundException();
 		}
 	}
-	
+
+	@Test
+	public void testFindIslandStatusByGameAndIsland() throws IslandStatusNotFoundException {        
+		Optional<IslandStatus> islandStatusOpt = IslandStatusService.findIslandStatusByGameAndIsland(newgame.getId(), newisland.getId());
+		
+		if(islandStatusOpt.isPresent()) {
+			IslandStatus islandStatus = islandStatusOpt.get();
+			assertEquals(newstatus, islandStatus);
+		}
+		else {
+			throw new IslandStatusNotFoundException();
+		}
+	}
+
 	@AfterEach
 	public void finish() {
-		IslandService.deleteIsland(newisland);
 		IslandStatusService.deleteIslandStatus(newstatus);
-		//GameService.deleteGame(newgame);
+        IslandService.deleteIsland(newisland);
+        //GameService.deleteGame(newgame);
 	}
 	
 	@Test
@@ -112,20 +119,4 @@ public class IslandServiceTests {
 		
 		assertEquals(aftercount, beforecount-1);
 	}
-
-	// TODO testAsignacionIicialIslas
-	/* @Test
-	public void testAsignacionInicialIslas() {
-		int beforecount = IslandService.islandCount();
-
-		IslandStatusService.deleteIslandStatus(newstatus);
-		IslandService.deleteIsland(newisland);
-		
-		int aftercount = IslandService.islandCount();
-		
-		assertEquals(aftercount, beforecount-1);
-	} */
 }
-	
-	
-
