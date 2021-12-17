@@ -108,6 +108,16 @@ public class StatusService {
 	}
 	
 	@Transactional(readOnly = true)
+	public Optional<List<Status>> findStatusByGameAndScore(int gameId, Integer score) throws IllegalArgumentException { 
+		return statusRepo.findStatusByGameAndScore(gameId, score);
+	}
+	
+	@Transactional(readOnly = true)
+	public Optional<List<Status>> findWinnerStatusByGame(int gameId) throws IllegalArgumentException { 
+		return statusRepo.findWinnerStatusByGame(gameId);
+	}
+	
+	@Transactional(readOnly = true)
 	public Optional<List<Status>> findStatusOfPlayer(int playerId) throws IllegalArgumentException { 
 		return statusRepo.findStatusOfPlayer(playerId);
 	}

@@ -1,7 +1,10 @@
 package sevenisles.game;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -23,10 +26,11 @@ import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
 import sevenisles.user.UserService;
+import sevenisles.util.ScoreCountImpl;
 import sevenisles.util.ThrowDice;
 
 @Service
-public class GameService {
+public class GameService extends ScoreCountImpl{
 	@Autowired
 	private GameRepository gameRepository;
 	
@@ -188,7 +192,7 @@ public class GameService {
 		Integer playerNumber = statusService.countPlayers(game.getId());
 		Integer cardNumber = cardService.cardCount();
 		Integer maxTurns = (cardNumber-(playerNumber*3)-islandService.islandCount())/playerNumber;
-		game.setMaxTurns(maxTurns);
+		game.setMaxRounds(maxTurns);
 	}
 	
 	@Transactional
@@ -297,6 +301,32 @@ public class GameService {
 		}else {
 			throw new GameControllerException("No perteneces a esta partida.");	
 		}
+	}
+
+	public void endGame(Game game) {
+		Integer max = 0;
+		for(int i=0;i<game.getStatus().size();i++) {
+			Status s = game.getStatus().get(i);
+			Map<String, List<Card>> map = normalGameMode(s);
+			System.out.println(map);
+			Integer score = countPoints(map);
+			s.setScore(score);
+			if(score>max) max=score;
+			statusService.saveStatus(s);
+		}
+		List<Status> ls = statusService.findStatusByGameAndScore(game.getId(), max).get();
+		if(ls.size()>1) {
+			ls = tiebreaker(ls);
+		}
+		for(Status st:ls) {
+			st.setWinner(1);
+			statusService.saveStatus(st);
+		}
+		
+	}
+	
+	public List<Status> orderStatusByScore(List<Status> statuses){
+		return statuses.stream().sorted(Comparator.comparing(Status::getScore)).collect(Collectors.toList());
 	}
 	
 	

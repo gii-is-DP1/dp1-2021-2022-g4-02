@@ -17,6 +17,12 @@ public interface StatusRepository extends CrudRepository<Status, Integer>{
 	@Query("SELECT s FROM Status s WHERE s.game.id = ?1 AND s.player.id=?2")
 	public Optional<Status> findStatusByGameAndPlayer(int gameId, int playerId);
 	
+	@Query("SELECT s FROM Status s WHERE s.game.id = ?1 AND s.score=?2")
+	public Optional<List<Status>> findStatusByGameAndScore(int gameId, Integer score);
+	
+	@Query("SELECT s FROM Status s WHERE s.game.id = ?1 AND s.winner=1")
+	public Optional<List<Status>> findWinnerStatusByGame(int gameId);
+	
 	@Query("SELECT s FROM Status s WHERE s.player.id = ?1")
 	public Optional<List<Status>> findStatusOfPlayer(int playerId);
 

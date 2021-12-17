@@ -30,6 +30,7 @@ public class Status extends BaseEntity{
 	private Player player;
 	
 	private Integer score;
+	private Integer winner=0;
 
 	@ManyToMany(cascade = CascadeType.ALL, targetEntity = Card.class)
 	@JoinTable(name="hand",uniqueConstraints = { @UniqueConstraint(columnNames = { "cards_id", "status_id" }) })

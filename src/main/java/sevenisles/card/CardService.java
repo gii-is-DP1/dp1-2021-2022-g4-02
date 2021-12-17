@@ -62,6 +62,7 @@ public class CardService {
         return mazo;
     }
 	
+	@Transactional
 	public void repartoInicial(Game game) {
 		//Reparto inicial a jugadores
 		List<Status> status = game.getStatus();
@@ -93,6 +94,7 @@ public class CardService {
 		game.setIslandStatus(l2);
 	}
 	
+	@Transactional
 	public void llenarIsla(Game game, IslandStatus is) {
 		List<Card> deck = game.getCards();
 		Card card = deck.get((int)(deck.size()* Math.random()));
@@ -100,5 +102,18 @@ public class CardService {
 		islandStatusService.saveIslandStatus(is);
 		gameService.deleteCardFromDeck(game, card);
 	}
+	
+	@Transactional
+	public List<Card> findDoubloonsInHand(List<Card> hand){
+		return hand.stream().filter(x->x.getCardType().equals(CardType.DOUBLOON)).collect(Collectors.toList());
+	}
+	
+//	@Transactional
+//	public List<Card> findMaxDifferentTreasuresInHand(List<Card> hand){
+//		List<Card> res = new ArrayList<Card>();
+//		for(Card c: hand) {
+//			
+//		}
+//	}
 
 }

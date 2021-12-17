@@ -30,7 +30,7 @@ public class Game extends BaseEntity {
 	
 	private Integer currentPlayer;
 	private Integer initialPlayer;
-	private Integer maxTurns;
+	private Integer maxRounds;
 	private Integer currentRound;
 	private Integer finishedTurn=0;
 	
