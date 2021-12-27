@@ -27,11 +27,11 @@
 	    		<h3>Elige la carta con la que quieres pagar:</h3>
 	    		<div align="center" style="margin-bottom:3rem"><br> 	
 	    			<form class="form-inline">
-	        			<select name="cardId" class="form-control">
-	          				<c:forEach var="card" items="${status.cards}">
-	            				<option value="${card.id}">Carta ${card.cardType}</option>
-	          				</c:forEach>
-	       				 </select>
+	        			
+          				<c:forEach var="card" items="${status.cards}">
+            				<input id="cardId" type="radio" name="cardToPay" value="${card.id}"><img width=4% src="<spring:url value="${card.urlCardImg}" htmlEscape="true" />" /></input>
+          				</c:forEach>
+	       				 
 	        			<button type="button" class="btn btn-primary" onclick="window.location.href='/games/${code}/robIsland/${islandId}/payCard/'+cardId.value">Pagar con esta carta</button>
 	    			</form>
 	    		</div>
@@ -53,7 +53,8 @@
                 </td>
                 <td>
                 	<c:forEach items="${status2.cards}" var="card">
-                   	 	<p><c:out value="${card.cardType}"/></p></c:forEach>
+                   	 	<img width=4% src="<spring:url value="${card.urlCardImg}" htmlEscape="true" />" />
+                   	</c:forEach>
                 </td> 
                                 <td>
                 	<c:forEach items="${status2.cards}" var="card">

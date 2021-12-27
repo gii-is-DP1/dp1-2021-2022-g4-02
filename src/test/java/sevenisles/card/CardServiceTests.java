@@ -52,7 +52,7 @@ public class CardServiceTests {
 	@Transactional
 	public void testSaveCard() {
 		int id = 22;
-		CardType ct= CardType.RUM;
+		CardType ct= CardType.RON;
 		CardType actual = CardService.findCardById(id).get().getCardType();
 		assertNotEquals(ct,actual);
 		Card card = CardService.findCardById(id).get();

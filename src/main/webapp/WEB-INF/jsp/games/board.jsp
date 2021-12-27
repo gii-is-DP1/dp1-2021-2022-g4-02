@@ -32,9 +32,7 @@
 			<c:forEach items="${game.islandStatus}" var="islandstatus">
 				<tr>
 					<td><c:out value="${islandstatus.island.id}" /></td>
-					<td><c:out value="${islandstatus.card.cardType}" /></td>
-					
-
+					<td><img width=8% src="<spring:url value="${islandstatus.card.urlCardImg}" htmlEscape="true" />" /></td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -50,7 +48,7 @@
     		<c:if test="${currentPlayerStatus.diceNumber != null}"> <h3>Resultado de la tirada: <c:out value="${currentPlayerStatus.diceNumber}"></c:out></h3>
     		</c:if>
     	</c:if>
-    	<c:if test="${game.finishedTurn==1}"><p><button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/turn'"> Pasar turno</button> </p></c:if>
+    	<c:if test="${game.finishedTurn==1 && loggedUserId==playerUserId}"><p><button type="button" align="center" class="btn btn-primary" onclick="window.location.href='/games/${game.code}/turn'"> Pasar turno</button> </p></c:if>
     	 		
     </div>
     	 
@@ -86,7 +84,7 @@
                 </td>
                 <td>
                 	<c:forEach items="${status.cards}" var="card">
-                		<p><c:out value="${card.cardType}"/></p>
+                		<img width=4% src="<spring:url value="${card.urlCardImg}" htmlEscape="true" />" />
                    	 </c:forEach>
                 </td> 
                 
