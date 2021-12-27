@@ -10,6 +10,15 @@ INSERT INTO players(id,user_id) VALUES (1,2);
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (3,'prueba','prueba','player2','123',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (9,'player',3);
 INSERT INTO players(id,user_id) VALUES (2,3);
+-- One player user
+INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (10,'prueba','prueba','player3','123',TRUE);
+INSERT INTO authorities(id,authority,user_id) VALUES (10,'player',10);
+INSERT INTO players(id,user_id) VALUES (3,10);
+-- One player user
+INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (11,'prueba','prueba','player4','123',TRUE);
+INSERT INTO authorities(id,authority,user_id) VALUES (11,'player',11);
+INSERT INTO players(id,user_id) VALUES (4,11);
+
 -- Usuario de Dámaris
 INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (4,'admin','admin','damgomser','damgomser',TRUE);
 INSERT INTO authorities(id,authority,user_id) VALUES (2,'admin',4);
@@ -113,3 +122,66 @@ INSERT INTO isles(id) VALUES (3);
 INSERT INTO isles(id) VALUES (4);
 INSERT INTO isles(id) VALUES (5);
 INSERT INTO isles(id) VALUES (6);
+
+--Juego Terminado
+INSERT INTO games(id,code,current_player,current_round,end_hour,finished_turn,initial_player,max_rounds,start_hour) VALUES (1, 'N0IAUT',0,11,null,0,0,12,'14:49:33');
+
+INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (1,33,1,1);
+INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (2,12,1,2);
+INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (3,61,1,3);
+INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (4,59,1,4);
+INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (5,65,1,5);
+INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (6,54,1,6);
+
+INSERT INTO status(id, winner, game_id, player_id) VALUES (1,0,1,1);
+INSERT INTO status(id, winner, game_id, player_id) VALUES (2,0,1,2);
+INSERT INTO status(id, winner, game_id, player_id) VALUES (3,0,1,3);
+INSERT INTO status(id, winner, game_id, player_id) VALUES (4,0,1,4);
+
+INSERT INTO players_status(player_id,status_id) VALUES (1,1);
+INSERT INTO players_status(player_id,status_id) VALUES (1,2);
+INSERT INTO players_status(player_id,status_id) VALUES (1,3);
+INSERT INTO players_status(player_id,status_id) VALUES (1,4);
+
+INSERT INTO games_status(game_id,status_id) VALUES (1,1);
+INSERT INTO games_status(game_id,status_id) VALUES (1,2);
+INSERT INTO games_status(game_id,status_id) VALUES (1,3);
+INSERT INTO games_status(game_id,status_id) VALUES (1,4);
+
+INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,1);
+INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,2);
+INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,3);
+INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,4);
+INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,5);
+INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,6);
+
+INSERT INTO hand(status_id,cards_id) VALUES (1,1);
+INSERT INTO hand(status_id,cards_id) VALUES (1,2);
+INSERT INTO hand(status_id,cards_id) VALUES (1,3);
+INSERT INTO hand(status_id,cards_id) VALUES (1,24);
+INSERT INTO hand(status_id,cards_id) VALUES (1,54);
+INSERT INTO hand(status_id,cards_id) VALUES (1,13);
+INSERT INTO hand(status_id,cards_id) VALUES (1,14);
+
+INSERT INTO hand(status_id,cards_id) VALUES (2,4);
+INSERT INTO hand(status_id,cards_id) VALUES (2,43);
+INSERT INTO hand(status_id,cards_id) VALUES (2,62);
+INSERT INTO hand(status_id,cards_id) VALUES (2,32);
+INSERT INTO hand(status_id,cards_id) VALUES (2,22);
+
+INSERT INTO hand(status_id,cards_id) VALUES (3,37);
+INSERT INTO hand(status_id,cards_id) VALUES (3,38);
+INSERT INTO hand(status_id,cards_id) VALUES (3,8);
+INSERT INTO hand(status_id,cards_id) VALUES (3,49);
+INSERT INTO hand(status_id,cards_id) VALUES (3,50);
+INSERT INTO hand(status_id,cards_id) VALUES (3,58);
+INSERT INTO hand(status_id,cards_id) VALUES (3,19);
+INSERT INTO hand(status_id,cards_id) VALUES (3,25);
+
+INSERT INTO hand(status_id,cards_id) VALUES (4,36);
+INSERT INTO hand(status_id,cards_id) VALUES (4,30);
+INSERT INTO hand(status_id,cards_id) VALUES (4,18);
+INSERT INTO hand(status_id,cards_id) VALUES (4,41);
+INSERT INTO hand(status_id,cards_id) VALUES (4,64);
+INSERT INTO hand(status_id,cards_id) VALUES (4,66);
+

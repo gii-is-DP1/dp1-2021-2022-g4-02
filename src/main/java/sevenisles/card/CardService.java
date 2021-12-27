@@ -46,6 +46,11 @@ public class CardService {
 	}
 	
 	@Transactional(readOnly = true)
+	public List<CardType> findAllCardType(){
+		return cardRepository.findAllCardType();
+	}
+	
+	@Transactional(readOnly = true)
 	public Optional<Card> findCardById(int id) throws IllegalArgumentException { 
 		return cardRepository.findById(id);
 	}
@@ -97,10 +102,14 @@ public class CardService {
 	@Transactional
 	public void llenarIsla(Game game, IslandStatus is) {
 		List<Card> deck = game.getCards();
-		Card card = deck.get((int)(deck.size()* Math.random()));
-		is.setCard(card);
+		if(deck.size()!=0) {
+			Card card = deck.get((int)(deck.size()* Math.random()));
+			is.setCard(card);
+			islandStatusService.saveIslandStatus(is);
+			gameService.deleteCardFromDeck(game, card);
+		}
+		else is.setCard(null);
 		islandStatusService.saveIslandStatus(is);
-		gameService.deleteCardFromDeck(game, card);
 	}
 	
 	@Transactional
@@ -108,12 +117,13 @@ public class CardService {
 		return hand.stream().filter(x->x.getCardType().equals(CardType.DOUBLOON)).collect(Collectors.toList());
 	}
 	
-//	@Transactional
-//	public List<Card> findMaxDifferentTreasuresInHand(List<Card> hand){
-//		List<Card> res = new ArrayList<Card>();
-//		for(Card c: hand) {
-//			
-//		}
-//	}
+	
+	public List<CardType> findCardTypeInSet(List<Card> set){
+		List<CardType> res = new ArrayList<CardType>();
+		for(Card c: set) {
+			if(!res.contains(c.getCardType())) res.add(c.getCardType());
+		}
+		return res;
+	}
 
 }
