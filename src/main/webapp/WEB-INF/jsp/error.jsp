@@ -6,7 +6,18 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
 <petclinic:layout pageName="error">
-	<form>
-		<input type="button" value="Volver" onclick="history.back()">
-	</form>
+	<div class="text-center">
+		<br><br><br><br><br>
+		<spring:url value="/resources/images/pirata-error.png"
+			var="pirateImage" />
+		<img src="${pirateImage}" width=250 />
+
+		<h1><br><br>
+			Aaargg!! ${message}
+		</h1>
+
+		<form>
+		<input type="button" class="btn btn-primary" value="Volver" onclick="history.back()">
+		</form>
+	</div>
 </petclinic:layout>

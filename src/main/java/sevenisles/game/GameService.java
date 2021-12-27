@@ -328,7 +328,7 @@ public class GameService extends ScoreCountImpl{
 	}
 	
 	public List<Status> orderStatusByScore(List<Status> statuses){
-		return statuses.stream().sorted(Comparator.comparing(Status::getScore)).collect(Collectors.toList());
+		return statuses.stream().sorted(Comparator.comparing(Status::getScore).reversed()).collect(Collectors.toList());
 	}
 	
 	

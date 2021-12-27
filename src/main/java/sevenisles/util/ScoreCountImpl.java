@@ -34,13 +34,16 @@ public class ScoreCountImpl implements ScoreCount{
 		while(!aux.isEmpty()) {
 			map.put(i.toString(), new ArrayList<Card>());
 			List<CardType> types = cardService.findAllCardType();
+			List<Card> copy = new ArrayList<Card>(aux);
 			for(Card c:aux) {
 				if(types.contains(c.getCardType())) {
-					map.get(i.toString()).add(c);
+					List<Card> set = map.get(i.toString());
+					set.add(c);
 					types.remove(c.getCardType());
-					aux.remove(c);
+					copy.remove(c);
 				}
 			}
+			aux = copy;
 			i++;
 		}
 		return map;
@@ -85,8 +88,8 @@ public class ScoreCountImpl implements ScoreCount{
 	public Integer countPoints(Map<String,List<Card>> map) {
 		Integer res=0;
 		res+=map.get("doblones").size();
-		for(Integer i=1;i<map.keySet().size()-1;i++) {
-			res+=points.get(map.get(i.toString()).size());
+		for(Integer i=1;i<map.keySet().size();i++) {
+			res+=points.get(map.get(i.toString()).size()-1);
 		}
 		return res;
 	}
