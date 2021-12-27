@@ -127,6 +127,7 @@ public class AuthoritiesController {
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
+			this.authoritiesService.insertdataAuditory(user,this.userService.findCurrentUser().get());
 			this.userService.saveUser(user);
 			Player player = new Player();
 			player.setUser(user);
@@ -164,10 +165,13 @@ public class AuthoritiesController {
 			User userToUpdate = this.userService.findUserById(id).get();
 			if(User.getCurrentUser().equals(userToUpdate.getUsername())) {
 				BeanUtils.copyProperties(user, userToUpdate,"id");
+				this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
 				this.userService.saveUser(userToUpdate);
 				ManualLogin.login(userToUpdate);
+				
 			}else {
 				BeanUtils.copyProperties(user, userToUpdate,"id");
+				this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
 				this.userService.saveUser(userToUpdate);
 			}
 			return "redirect:/admin/users";
