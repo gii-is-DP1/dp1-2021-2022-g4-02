@@ -39,81 +39,81 @@ INSERT INTO users(id,first_name,last_name,username,password,enabled) VALUES (9,'
 INSERT INTO authorities(id,authority,user_id) VALUES (7,'admin',9);
 
 ---Doblones
-INSERT INTO cards(id, card_type) VALUES (1, 0);
-INSERT INTO cards(id, card_type) VALUES (2, 0);
-INSERT INTO cards(id, card_type) VALUES (3, 0);
-INSERT INTO cards(id, card_type) VALUES (4, 0);
-INSERT INTO cards(id, card_type) VALUES (5, 0);
-INSERT INTO cards(id, card_type) VALUES (6, 0);
-INSERT INTO cards(id, card_type) VALUES (7, 0);
-INSERT INTO cards(id, card_type) VALUES (8, 0);
-INSERT INTO cards(id, card_type) VALUES (9, 0);
-INSERT INTO cards(id, card_type) VALUES (10, 0);
-INSERT INTO cards(id, card_type) VALUES (11, 0);
-INSERT INTO cards(id, card_type) VALUES (12, 0);
-INSERT INTO cards(id, card_type) VALUES (13, 0);
-INSERT INTO cards(id, card_type) VALUES (14, 0);
-INSERT INTO cards(id, card_type) VALUES (15, 0);
-INSERT INTO cards(id, card_type) VALUES (16, 0);
-INSERT INTO cards(id, card_type) VALUES (17, 0);
-INSERT INTO cards(id, card_type) VALUES (18, 0);
-INSERT INTO cards(id, card_type) VALUES (19, 0);
-INSERT INTO cards(id, card_type) VALUES (20, 0);
-INSERT INTO cards(id, card_type) VALUES (21, 0);
-INSERT INTO cards(id, card_type) VALUES (22, 0);
-INSERT INTO cards(id, card_type) VALUES (23, 0);
-INSERT INTO cards(id, card_type) VALUES (24, 0);
-INSERT INTO cards(id, card_type) VALUES (25, 0);
-INSERT INTO cards(id, card_type) VALUES (26, 0);
-INSERT INTO cards(id, card_type) VALUES (27, 0);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (1, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (2, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (3, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (4, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (5, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (6, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (7, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (8, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (9, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (10, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (11, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (12, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (13, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (14, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (15, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (16, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (17, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (18, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (19, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (20, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (21, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (22, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (23, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (24, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (25, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (26, 0, '/resources/images/doblon.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (27, 0, '/resources/images/doblon.jpg');
 ---Calices
-INSERT INTO cards(id, card_type) VALUES (28, 1);
-INSERT INTO cards(id, card_type) VALUES (29, 1);
-INSERT INTO cards(id, card_type) VALUES (30, 1);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (28, 1, '/resources/images/caliz.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (29, 1, '/resources/images/caliz.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (30, 1, '/resources/images/caliz.jpg');
 ---Rubíes
-INSERT INTO cards(id, card_type) VALUES (31, 2);
-INSERT INTO cards(id, card_type) VALUES (32, 2);
-INSERT INTO cards(id, card_type) VALUES (33, 2);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (31, 2, '/resources/images/rubi.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (32, 2, '/resources/images/rubi.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (33, 2, '/resources/images/rubi.jpg');
 ---Diamantes
-INSERT INTO cards(id, card_type) VALUES (34, 3);
-INSERT INTO cards(id, card_type) VALUES (35, 3);
-INSERT INTO cards(id, card_type) VALUES (36, 3);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (34, 3, '/resources/images/diamante.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (35, 3, '/resources/images/diamante.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (36, 3, '/resources/images/diamante.jpg');
 ---Collares
-INSERT INTO cards(id, card_type) VALUES (37, 4);
-INSERT INTO cards(id, card_type) VALUES (38, 4);
-INSERT INTO cards(id, card_type) VALUES (39, 4);
-INSERT INTO cards(id, card_type) VALUES (40, 4);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (37, 4, '/resources/images/collar.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (38, 4, '/resources/images/collar.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (39, 4, '/resources/images/collar.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (40, 4, '/resources/images/collar.jpg');
 ---Mapas
-INSERT INTO cards(id, card_type) VALUES (41, 5);
-INSERT INTO cards(id, card_type) VALUES (42, 5);
-INSERT INTO cards(id, card_type) VALUES (43, 5);
-INSERT INTO cards(id, card_type) VALUES (44, 5);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (41, 5, '/resources/images/mapa.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (42, 5, '/resources/images/mapa.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (43, 5, '/resources/images/mapa.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (44, 5, '/resources/images/mapa.jpg');
 ---Coronas
-INSERT INTO cards(id, card_type) VALUES (45, 6);
-INSERT INTO cards(id, card_type) VALUES (46, 6);
-INSERT INTO cards(id, card_type) VALUES (47, 6);
-INSERT INTO cards(id, card_type) VALUES (48, 6);
----Revólveres
-INSERT INTO cards(id, card_type) VALUES (49, 7);
-INSERT INTO cards(id, card_type) VALUES (50, 7);
-INSERT INTO cards(id, card_type) VALUES (51, 7);
-INSERT INTO cards(id, card_type) VALUES (52, 7);
-INSERT INTO cards(id, card_type) VALUES (53, 7);
-INSERT INTO cards(id, card_type) VALUES (54, 7);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (45, 6, '/resources/images/corona.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (46, 6, '/resources/images/corona.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (47, 6, '/resources/images/corona.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (48, 6, '/resources/images/corona.jpg');
+---Pistolas
+INSERT INTO cards(id, card_type, url_card_img) VALUES (49, 7, '/resources/images/pistola.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (50, 7, '/resources/images/pistola.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (51, 7, '/resources/images/pistola.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (52, 7, '/resources/images/pistola.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (53, 7, '/resources/images/pistola.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (54, 7, '/resources/images/pistola.jpg');
 ---Espadas
-INSERT INTO cards(id, card_type) VALUES (55, 8);
-INSERT INTO cards(id, card_type) VALUES (56, 8);
-INSERT INTO cards(id, card_type) VALUES (57, 8);
-INSERT INTO cards(id, card_type) VALUES (58, 8);
-INSERT INTO cards(id, card_type) VALUES (59, 8);
-INSERT INTO cards(id, card_type) VALUES (60, 8);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (55, 8, '/resources/images/espada.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (56, 8, '/resources/images/espada.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (57, 8, '/resources/images/espada.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (58, 8, '/resources/images/espada.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (59, 8, '/resources/images/espada.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (60, 8, '/resources/images/espada.jpg');
 ---Ron
-INSERT INTO cards(id, card_type) VALUES (61, 9);
-INSERT INTO cards(id, card_type) VALUES (62, 9);
-INSERT INTO cards(id, card_type) VALUES (63, 9);
-INSERT INTO cards(id, card_type) VALUES (64, 9);
-INSERT INTO cards(id, card_type) VALUES (65, 9);
-INSERT INTO cards(id, card_type) VALUES (66, 9);
+INSERT INTO cards(id, card_type, url_card_img) VALUES (61, 9, '/resources/images/ron.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (62, 9, '/resources/images/ron.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (63, 9, '/resources/images/ron.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (64, 9, '/resources/images/ron.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (65, 9, '/resources/images/ron.jpg');
+INSERT INTO cards(id, card_type, url_card_img) VALUES (66, 9, '/resources/images/ron.jpg');
 
 -- Islas
 INSERT INTO isles(id) VALUES (1);
@@ -124,7 +124,7 @@ INSERT INTO isles(id) VALUES (5);
 INSERT INTO isles(id) VALUES (6);
 
 --Juego Terminado
-INSERT INTO games(id,code,current_player,current_round,end_hour,finished_turn,initial_player,max_rounds,start_hour) VALUES (1, 'N0IAUT',0,11,null,0,0,12,'14:49:33');
+INSERT INTO games(id,code,current_player,current_round,end_hour,finished_turn,initial_player,max_rounds,start_hour) VALUES (1, 'N0IAUT',0,12,null,0,0,12,'14:49:33');
 
 INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (1,33,1,1);
 INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (2,12,1,2);

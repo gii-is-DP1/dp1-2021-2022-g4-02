@@ -115,7 +115,7 @@ public class GameController {
 			if(gameService.loggedUserBelongsToGame(game.get())) {
 				if(game.get().getStatus().get(game.get().getCurrentPlayer()).getPlayer().equals(playerService.findCurrentPlayer().get())) {
 					response.addHeader("Refresh", "10");
-				}else response.addHeader("Refresh", "1");
+				}else response.addHeader("Refresh", "3");
 				modelMap.addAttribute("game", game.get());
 				gameService.utilAttributes(game.get(), modelMap);
 				return vista;

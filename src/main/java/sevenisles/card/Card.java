@@ -29,6 +29,9 @@ public class Card extends BaseEntity{
 	@NotEmpty
 	private CardType cardType;//Crear tabla cardType que asocie codigo con String
 	
+	@NotEmpty
+	private String urlCardImg;
+	
 	@OneToOne(optional=true,cascade = CascadeType.ALL,mappedBy = "card")
 	private IslandStatus islandStatus;
 	

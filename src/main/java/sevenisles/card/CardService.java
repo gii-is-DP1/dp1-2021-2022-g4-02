@@ -114,7 +114,7 @@ public class CardService {
 	
 	@Transactional
 	public List<Card> findDoubloonsInHand(List<Card> hand){
-		return hand.stream().filter(x->x.getCardType().equals(CardType.DOUBLOON)).collect(Collectors.toList());
+		return hand.stream().filter(x->x.getCardType().equals(CardType.DOBLON)).collect(Collectors.toList());
 	}
 	
 	
