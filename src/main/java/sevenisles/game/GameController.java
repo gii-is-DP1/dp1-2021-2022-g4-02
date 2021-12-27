@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -52,7 +54,8 @@ public class GameController {
 	}
 	
 	@GetMapping(value = "/games/availableGames")
-	public String availableGamesList(ModelMap modelMap) {
+	public String availableGamesList(ModelMap modelMap, HttpServletResponse response) {
+		response.addHeader("Refresh", "5");
 		String vista = "games/availableGames";
 		Iterable<Game> games = gameService.findAvailableGames();
 		modelMap.addAttribute("games", games);
@@ -88,7 +91,8 @@ public class GameController {
 	}
 	
 	@GetMapping(value = "/games/{code}")
-	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code){
+	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response){
+		response.addHeader("Refresh", "5");
 		String vista = "games/gameDetails";
 		String vistaError = "error";
 		Optional<Game> game = gameService.findGameByCode(code);
@@ -103,12 +107,15 @@ public class GameController {
 	
 	//Tablero
 	@GetMapping(value = "/games/{code}/board")
-	public String gameBoardByCode(ModelMap modelMap, @PathVariable("code") String code){
+	public String gameBoardByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response){
 		String vista = "games/board";
 		String vistaError = "error";
 		Optional<Game> game = gameService.findGameByCode(code);
 		if(game.isPresent()) {
 			if(gameService.loggedUserBelongsToGame(game.get())) {
+				if(game.get().getStatus().get(game.get().getCurrentPlayer()).getPlayer().equals(playerService.findCurrentPlayer().get())) {
+					response.addHeader("Refresh", "10");
+				}else response.addHeader("Refresh", "1");
 				modelMap.addAttribute("game", game.get());
 				gameService.utilAttributes(game.get(), modelMap);
 				return vista;
@@ -252,6 +259,7 @@ public class GameController {
     		Game game = optGame.get();
 			if(gameService.loggedPlayerCheckTurn(game)){
 				Status status = game.getStatus().get(game.getCurrentPlayer());
+				System.out.println(status + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         		if(status.getNumberOfCardsToPay()==0) {
         			gameService.robIsland(game, islandId, status);
         			return "redirect:../../board";

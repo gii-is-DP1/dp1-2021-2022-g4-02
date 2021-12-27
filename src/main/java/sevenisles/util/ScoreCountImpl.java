@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
+import sevenisles.card.CardType;
 import sevenisles.status.Status;
 
 public class ScoreCountImpl implements ScoreCount{
@@ -31,10 +32,15 @@ public class ScoreCountImpl implements ScoreCount{
 		map.put("doblones", doubloons);
 		aux.removeAll(doubloons);
 		while(!aux.isEmpty()) {
-			List<Card> copy = new ArrayList<Card>(aux);
-			copy.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
-			map.put(i.toString(), copy);
-			aux.removeAll(copy);
+			map.put(i.toString(), new ArrayList<Card>());
+			List<CardType> types = cardService.findAllCardType();
+			for(Card c:aux) {
+				if(types.contains(c.getCardType())) {
+					map.get(i.toString()).add(c);
+					types.remove(c.getCardType());
+					aux.remove(c);
+				}
+			}
 			i++;
 		}
 		return map;
@@ -51,7 +57,7 @@ public class ScoreCountImpl implements ScoreCount{
 		List<Card> doubloons = cardService.findDoubloonsInHand(hand);
 		map.put("doblones", doubloons);
 		copy.removeAll(doubloons);
-		copy.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
+		
 		map.put(i.toString(), copy);
 		hand.removeAll(copy);
 		return map;

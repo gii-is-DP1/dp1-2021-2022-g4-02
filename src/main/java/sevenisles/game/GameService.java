@@ -265,7 +265,7 @@ public class GameService extends ScoreCountImpl{
 		}
 	}
 		
-	
+	//arreglar
 	@Transactional
 	public void robIsland(Game game, Integer islandId, Status status) throws GameControllerException{
 		if(status.getChosenIsland()!=null) {
@@ -304,6 +304,8 @@ public class GameService extends ScoreCountImpl{
 	}
 
 	public void endGame(Game game) {
+		game.setEndHour(LocalTime.now());
+		saveGame(game);
 		Integer max = 0;
 		for(int i=0;i<game.getStatus().size();i++) {
 			Status s = game.getStatus().get(i);
