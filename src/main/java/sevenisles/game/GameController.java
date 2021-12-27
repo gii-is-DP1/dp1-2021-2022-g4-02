@@ -2,7 +2,6 @@ package sevenisles.game;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -71,7 +70,7 @@ public class GameController {
 	}
 	
 	@GetMapping(value = "/games/startedGame")
-	public String startedGame(ModelMap modelMap) {
+	public String startedGame(ModelMap modelMap) throws GameControllerException{
 		String vista = "games/startedGame";
 		Optional<List<Status>> opt = statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId());
 		if(opt.isPresent()) {
@@ -81,17 +80,15 @@ public class GameController {
 				modelMap.addAttribute("game", status.get().getGame());
 				return vista;
 			}else{
-				modelMap.addAttribute("message", "No tienes ninguna partida empezada.");
-				return "error";
+				throw new GameControllerException("No tienes ninguna partida empezada.");
 			}
 		}else{
-			modelMap.addAttribute("message", "No has jugado ninguna partida.");
-			return "error";
+			throw new GameControllerException("No has jugado ninguna partida.");
 		}
 	}
 	
 	@GetMapping(value = "/games/{code}")
-	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response){
+	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response) throws GameControllerException{
 		response.addHeader("Refresh", "5");
 		String vista = "games/gameDetails";
 		String vistaError = "error";
@@ -100,14 +97,13 @@ public class GameController {
 			modelMap.addAttribute("game", game.get());
 			return vista;
 		}else {
-			modelMap.addAttribute("message", "Partida no encontrada");
-			return vistaError;
+			throw new GameControllerException("Partida no encontrada");
 		}
 	}
 	
 	//Tablero
 	@GetMapping(value = "/games/{code}/board")
-	public String gameBoardByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response){
+	public String gameBoardByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response) throws GameControllerException{
 		String vista = "games/board";
 		String vistaError = "error";
 		Optional<Game> game = gameService.findGameByCode(code);
@@ -120,12 +116,10 @@ public class GameController {
 				gameService.utilAttributes(game.get(), modelMap);
 				return vista;
     		}else {
-    			modelMap.addAttribute("message", "No perteneces a esta partida.");
-    			return vistaError;
+    			throw new GameControllerException("No perteneces a esta partida.");
     		}
 		}else {
-			modelMap.addAttribute("message", "Partida no encontrada");
-			return vistaError;
+			throw new GameControllerException("Partida no encontrada");
 		}
 	}	
 	
@@ -133,7 +127,7 @@ public class GameController {
 	/* CREACIÓN DE LA PARTIDA   */
 	
     @GetMapping(value = "/games/create")
-    public String createGame(ModelMap modelMap) {
+    public String createGame(ModelMap modelMap) throws GameControllerException{
     	Game game = new Game();
     	if(playerService.findCurrentPlayer().isPresent()) {
     		Player player = playerService.findCurrentPlayer().get();
@@ -141,12 +135,10 @@ public class GameController {
     			gameService.createGame(game, player);
 	        	return "redirect:/games/" + game.getCode();
     		}else{
-				modelMap.put("message", "Ya estás dentro de una partida.");
-				return "error";
+    			throw new GameControllerException("Ya estás dentro de una partida.");
     		}
     	}else {
-    		modelMap.addAttribute("message", "Necesitas estar logueado como jugador para crear una partida.");
-			return "error";
+    		throw new GameControllerException("Necesitas estar logueado como jugador para crear una partida.");
     	}
 
     } 
@@ -162,19 +154,17 @@ public class GameController {
     			gameService.enterGame(game, player);
     			return "redirect:/games/{code}";
     		}else {
-    			model.put("message", "Ya estás dentro de una partida.");
-    			return "error";
+    			throw new GameControllerException("Ya estás dentro de una partida.");
     		}	
     	}else {
-    		model.put("message", "Lo sentimos, pero dicha partida no existe.");
-    		return "error";
+    		throw new GameControllerException("Lo sentimos, pero dicha partida no existe.");
     	}
     }
     //Hay que crear vista del tablero, para volver si sales de la partida
     
     @GetMapping(value = "/games/{code}/start")
     public String startGame(
-    		@PathVariable("code") String code, ModelMap model) {
+    		@PathVariable("code") String code, ModelMap model) throws GameControllerException{
     	Optional<Game> optGame = gameService.findGameByCode(code);
     	if(optGame.isPresent()) {
     		Game game = optGame.get();
@@ -183,16 +173,14 @@ public class GameController {
         			gameService.startGame(game);
             		return "redirect:/games/{code}/board";
         		}else {
-        			model.put("message", "Necesitas al menos 2 jugadores para empezar.");
-        			return "error";
+        			throw new GameControllerException("Necesitas al menos 2 jugadores para empezar.");
         		}
     		}else {
-    			model.put("message", "No perteneces a esta partida.");
-    			return "error";
+    			throw new GameControllerException("No perteneces a esta partida.");
+
     		}   		
     	}else {
-    		model.put("message", "Partida no encontrada");
-			return "error";
+    		throw new GameControllerException("Partida no encontrada");
     	}
     }
     
@@ -209,15 +197,13 @@ public class GameController {
         				gameService.playerThrowDice(game);	
                 		return "redirect:/games/{code}/board";
         			}else {
-            			model.put("message", "Ya has tirado el dado este turno.");
-            			return "error";
+        				throw new GameControllerException("Ya has tirado el dado este turno.");
             		}
     			}else {
         			return "";
         		}    				       		
     		}else {
-        	model.put("message", "Partida no encontrada");
-    		return "error";
+    			throw new GameControllerException("Partida no encontrada");
         }	
     }
     
@@ -238,14 +224,13 @@ public class GameController {
     					return "redirect:/games/{code}/robIsland/{islandId}/payCard";
     				}		
     			}else {
-    				return "error";
+    				return "exception";
     			}   				       			
     		}else {
-    			return "error";
+    			return "exception";
     		}   				 	
     	}else {
-    		model.put("message", "Partida no encontrada");
-    		return "error";
+    		throw new GameControllerException("Partida no encontrada");
     	}
     }
 
@@ -273,8 +258,7 @@ public class GameController {
 				return "error";
 			}
 		}else {
-			model.addAttribute("message", "Partida no encontrada!");
-			return "error";
+			throw new GameControllerException("Partida no encontrada!");
 		}	
 	}
 	
@@ -295,12 +279,10 @@ public class GameController {
 					return "redirect:/games/{code}/board";
 				}
 			}else {
-				model.put("message", "No posees esa carta. Elige otra");
-				return "error";
+				throw new GameControllerException("No posees esa carta. Elige otra");
 			}			
 		}else {
-			model.put("message", "Carta no encontrada.");
-			return "error";
+			throw new GameControllerException("Carta no encontrada.");
 		}
 	}
     
@@ -318,16 +300,14 @@ public class GameController {
     						return "redirect:/games/{code}/endGame";
     					}else return "redirect:/games/{code}/board";
         			}else {
-            			model.put("message", "No has acabado el turno.");
-            			return "error";
+        				throw new GameControllerException("No has acabado el turno.");
             		} 
     				
     			}else {
         			return "error";
         		}    				       			
     	}else {
-        	model.put("message", "Partida no encontrada");
-    		return "error";
+    		throw new GameControllerException("Partida no encontrada");
         }	
     }
     
@@ -342,21 +322,19 @@ public class GameController {
     					gameService.endGame(game);
     					List<Status> orderedStatuses = gameService.orderStatusByScore(game.getStatus());
     					List<Status> winners = statusService.findWinnerStatusByGame(game.getId()).get();
+    					model.put("number", winners.size());
     					model.put("ranking", orderedStatuses);
     					model.put("winners", winners);
         				return "games/scoreBoard";
         			}else {
-            			model.put("message", "Aún no se puede terminar la partida");
-            			return "error";
+        				throw new GameControllerException("Aún no se puede terminar la partida");
             		} 
     				
     			}else {
-    				model.put("message", "No perteneces a la partida");
-        			return "error";
+    				throw new GameControllerException("No perteneces a la partida");
         		}    				       			
     	}else {
-        	model.put("message", "Partida no encontrada");
-    		return "error";
+    		throw new GameControllerException("Partida no encontrada");
         }	
     }
     

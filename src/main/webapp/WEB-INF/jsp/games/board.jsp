@@ -6,7 +6,18 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
 <petclinic:layout pageName="games">
-    <h1 align="center">Partida en curso</h1>
+	<c:choose>
+	<c:when test="${game.currentRound > game.maxRounds}">
+		<div class='text-center'>
+		<h1>Partida finalizada</h1>
+		<br></br>
+		<p><button type="button"  class="btn btn-primary" onclick="window.location.href='/games/${game.code}/endGame'"> Ver puntuación</button> </p>
+		<br></br>
+    </div>
+    
+    </c:when>
+	
+    <c:otherwise><h1 align="center">Partida en curso</h1>
 
     <br></br></br>
     <div class="col-md-12">
@@ -67,6 +78,8 @@
     		</div>
     	</c:if>	
     </c:if>
+    </c:otherwise>
+    </c:choose>
     
     <table id="GameInventory" class="table table-striped">
         <thead>
@@ -92,7 +105,6 @@
         </c:forEach>
         </tbody>
     </table>
-    
     
 
 </petclinic:layout>

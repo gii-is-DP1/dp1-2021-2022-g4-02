@@ -14,7 +14,7 @@
 		</h1>
 
 		<form>
-		<input type="button" value="Volver" onclick="history.back()">
+		<input type="button" class="btn btn-primary" value="Volver" onclick="history.back()">
 		</form>
 	</div>
 </petclinic:layout>
