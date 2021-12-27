@@ -16,6 +16,7 @@
 package sevenisles.user;
 
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,17 @@ public class AuthoritiesService {
 		authoritiesRepository.delete(auth);
 	}
 	
+	@Transactional
+	public void editdataAuditory(User userToUpdate, User userLogged) {
+		userToUpdate.setModifier(userLogged.getUsername());
+		userToUpdate.setLastModifiedDate(LocalDateTime.now());
+	}
 	
+	@Transactional
+	public void insertdataAuditory(User userToUpdate, User userLogged) {
+		userToUpdate.setModifier(userLogged.getUsername());
+		userToUpdate.setLastModifiedDate(LocalDateTime.now());
+		userToUpdate.setCreator(userLogged.getUsername());
+		userToUpdate.setCreatedDate(LocalDateTime.now());
+	}
 }
