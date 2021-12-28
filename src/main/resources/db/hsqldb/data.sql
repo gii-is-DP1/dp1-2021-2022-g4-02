@@ -124,7 +124,7 @@ INSERT INTO isles(id) VALUES (5);
 INSERT INTO isles(id) VALUES (6);
 
 --Juego Terminado
-INSERT INTO games(id,code,current_player,current_round,end_hour,finished_turn,initial_player,max_rounds,start_hour) VALUES (1, 'N0IAUT',3,12,null,1,0,12,'14:49:33');
+INSERT INTO games(id,code,current_player,current_round,end_hour,finished_turn,initial_player,max_rounds,start_hour) VALUES (1, 'N0IAUT',3,12,null,0,0,12,'14:49:33');
 
 INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (1,33,1,1);
 INSERT INTO island_status(id, card_id, game_id, island_id) VALUES (2,12,1,2);

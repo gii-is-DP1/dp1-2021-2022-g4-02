@@ -290,14 +290,17 @@ public class GameService extends ScoreCountImpl{
 	@Transactional
 	public Boolean loggedPlayerCheckTurn(Game game) throws GameControllerException{
 		if(loggedUserBelongsToGame(game)) {
-			Integer pn = game.getCurrentPlayer();
-			Status status = game.getStatus().get(pn);
-			if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
-				return true;		
+			if(!(game.getCurrentRound()>game.getMaxRounds())) {
+				Integer pn = game.getCurrentPlayer();
+				Status status = game.getStatus().get(pn);
+				if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+					return true;		
+				}else {
+					throw new GameControllerException("No es tu turno.");
+	    		}
 			}else {
-				throw new GameControllerException("No es tu turno.");
-    		}
-			
+				throw new GameControllerException("La partida ha terminado.");
+			}
 		}else {
 			throw new GameControllerException("No perteneces a esta partida.");	
 		}

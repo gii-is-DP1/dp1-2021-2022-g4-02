@@ -151,8 +151,16 @@ public class GameController {
     		Game game = optGame.get();
     		Player player = gameService.enterGameUtil(game);
     		if(!statusService.isInAnotherGame(player)) {
-    			gameService.enterGame(game, player);
-    			return "redirect:/games/{code}";
+    			if(game.getStartHour()==null) {
+    				if(game.getEndHour()==null) {
+    					gameService.enterGame(game, player);
+            			return "redirect:/games/{code}";
+    				}else {
+        				throw new GameControllerException("La partida ya ha terminado.");
+        			}
+    			}else {
+    				throw new GameControllerException("La partida ya ha empezado.");
+    			}
     		}else {
     			throw new GameControllerException("Ya estás dentro de una partida.");
     		}	
@@ -193,17 +201,17 @@ public class GameController {
     		Game game = optGame.get();
     		if(gameService.loggedPlayerCheckTurn(game)) {
     			Status status = game.getStatus().get(game.getCurrentPlayer());
-    				if(status.getDiceNumber()==null) {
-        				gameService.playerThrowDice(game);	
-                		return "redirect:/games/{code}/board";
-        			}else {
-        				throw new GameControllerException("Ya has tirado el dado este turno.");
-            		}
-    			}else {
-        			return "";
-        		}    				       		
+    			if(status.getDiceNumber()==null) {
+        			gameService.playerThrowDice(game);	
+                	return "redirect:/games/{code}/board";
+        		}else {
+        			throw new GameControllerException("Ya has tirado el dado este turno.");
+            	}
     		}else {
-    			throw new GameControllerException("Partida no encontrada");
+        		return "";
+        	}    				       		
+    	}else {
+    		throw new GameControllerException("Partida no encontrada");
         }	
     }
     
@@ -247,7 +255,11 @@ public class GameController {
 				System.out.println(status + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         		if(status.getNumberOfCardsToPay()==0) {
         			gameService.robIsland(game, islandId, status);
-        			return "redirect:../../board";
+        			gameService.nextTurn(game);
+					if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
+						return "redirect:/games/{code}/endGame";
+					}else return "redirect:/games/{code}/board";
+        			//return "redirect:../../board";
         		}else {
         			model.addAttribute("game", game);
         			model.addAttribute("status", status);
@@ -276,7 +288,12 @@ public class GameController {
 					return "redirect:";
 				}else {
 					gameService.robIsland(game, islandId, status);
-					return "redirect:/games/{code}/board";
+					//4 líneas de pasar turno
+					gameService.nextTurn(game);
+					if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
+						return "redirect:/games/{code}/endGame";
+					}else return "redirect:/games/{code}/board";
+					//return "redirect:/games/{code}/board";
 				}
 			}else {
 				throw new GameControllerException("No posees esa carta. Elige otra");
@@ -286,30 +303,30 @@ public class GameController {
 		}
 	}
     
-    //Pasar turno
-    @GetMapping(value = "/games/{code}/turn")
-    public String nextTurn(
-    		@PathVariable("code") String code, ModelMap model) throws GameControllerException{
-    	Optional<Game> optGame = gameService.findGameByCode(code);
-    	if(optGame.isPresent()) {
-    		Game game = optGame.get();
-    		if(gameService.loggedPlayerCheckTurn(game)) {
-    				if(game.getFinishedTurn()==1) {
-    					gameService.nextTurn(game);
-    					if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
-    						return "redirect:/games/{code}/endGame";
-    					}else return "redirect:/games/{code}/board";
-        			}else {
-        				throw new GameControllerException("No has acabado el turno.");
-            		} 
-    				
-    			}else {
-        			return "error";
-        		}    				       			
-    	}else {
-    		throw new GameControllerException("Partida no encontrada");
-        }	
-    }
+//    //Pasar turno
+//    @GetMapping(value = "/games/{code}/turn")
+//    public String nextTurn(
+//    		@PathVariable("code") String code, ModelMap model) throws GameControllerException{
+//    	Optional<Game> optGame = gameService.findGameByCode(code);
+//    	if(optGame.isPresent()) {
+//    		Game game = optGame.get();
+//    		if(gameService.loggedPlayerCheckTurn(game)) {
+//    				if(game.getFinishedTurn()==1) {
+//    					gameService.nextTurn(game);
+//    					if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
+//    						return "redirect:/games/{code}/endGame";
+//    					}else return "redirect:/games/{code}/board";
+//        			}else {
+//        				throw new GameControllerException("No has acabado el turno.");
+//            		} 
+//    				
+//    			}else {
+//        			return "error";
+//        		}    				       			
+//    	}else {
+//    		throw new GameControllerException("Partida no encontrada");
+//        }	
+//    }
     
     @GetMapping(value = "/games/{code}/endGame")
     public String finishGame(
