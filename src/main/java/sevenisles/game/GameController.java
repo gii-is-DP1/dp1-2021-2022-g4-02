@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.game.exceptions.GameControllerException;
-import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
@@ -26,23 +25,21 @@ import sevenisles.status.StatusService;
 public class GameController {
 	
 	
-	@Autowired
 	private CardService cardService;
 	
-	@Autowired
 	private GameService gameService;
 	
-	@Autowired
 	private PlayerService playerService;
 	
-//	@Autowired
-//	private UserService userService;
-	
-	@Autowired
 	private StatusService statusService;
 	
 	@Autowired
-	private IslandStatusService islandStatusService;
+	public GameController(CardService cardService, GameService gameService, PlayerService playerService, StatusService statusService) {
+		this.cardService = cardService;
+		this.gameService = gameService;
+		this.playerService = playerService;
+		this.statusService = statusService;
+	}
 	
 	@GetMapping(value = "/games")
 	public String gamesList(ModelMap modelMap) {
@@ -91,7 +88,7 @@ public class GameController {
 	public String gameDetailsByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response) throws GameControllerException{
 		response.addHeader("Refresh", "5");
 		String vista = "games/gameDetails";
-		String vistaError = "error";
+		//String vistaError = "error";
 		Optional<Game> game = gameService.findGameByCode(code);
 		if(game.isPresent()) {
 			modelMap.addAttribute("game", game.get());
@@ -105,7 +102,7 @@ public class GameController {
 	@GetMapping(value = "/games/{code}/board")
 	public String gameBoardByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response) throws GameControllerException{
 		String vista = "games/board";
-		String vistaError = "error";
+		//String vistaError = "error";
 		Optional<Game> game = gameService.findGameByCode(code);
 		if(game.isPresent()) {
 			if(gameService.loggedUserBelongsToGame(game.get())) {

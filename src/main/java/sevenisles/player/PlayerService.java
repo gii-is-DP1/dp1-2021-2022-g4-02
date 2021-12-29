@@ -11,9 +11,13 @@ import sevenisles.user.User;
 
 @Service
 public class PlayerService {
-	@Autowired
-	private PlayerRepository playerRepository;
 
+	private PlayerRepository playerRepository;
+	
+	@Autowired
+	public PlayerService(PlayerRepository playerRepository) {
+		this.playerRepository = playerRepository;
+	}
 	
 	@Transactional(readOnly = true)
 	public Integer playerCount() {
