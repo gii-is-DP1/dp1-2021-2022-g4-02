@@ -1,6 +1,8 @@
 package sevenisles.game;
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalTime;
 import java.util.Iterator;
@@ -16,11 +18,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-
+import sevenisles.card.Card;
+import sevenisles.card.CardService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.status.Status;
+import sevenisles.status.StatusService;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -30,7 +36,20 @@ public class GameServicesTest {
 	private GameService gameService;
 	@Autowired
 	private PlayerService playerService;
+	@Autowired
+	private CardService cardService;
+	@Autowired
+	private StatusService statusService;
 	
+	Game game = new Game();
+	
+	@BeforeEach
+	public void init() {
+		game.setId(23);
+		Iterator<Card> cards = cardService.cardFindAll().iterator();
+		List<Card> deck = StreamSupport.stream(Spliterators.spliteratorUnknownSize(cards, Spliterator.ORDERED), false).collect(Collectors.toList());
+		game.setCards(deck);
+	}
 	
 	@Test
 	public void testCountWithInitialData() {
@@ -55,8 +74,6 @@ public class GameServicesTest {
 	
 	@Test
 	public void testFindGameById(){
-		Game game = new Game();
-		gameService.saveGame(game);
 		Optional<Game> findgame = gameService.findGameById(game.getId());
 		if(findgame.isPresent()) {
 			assertEquals(game.getId(),findgame.get().getId());
@@ -101,7 +118,6 @@ public class GameServicesTest {
 	
 	@Test
 	public void testSaveGame() {
-		Game game = new Game();
 		int count = gameService.gameCount();
 		gameService.saveGame(game);
 		assertEquals(count+1,gameService.gameCount());
@@ -125,4 +141,75 @@ public class GameServicesTest {
 			assertEquals(notStartedGames.get(i).getEndHour(),null);
 		}
 	}
+	
+	@Test
+	public void testFindAvailableGames() {
+		List<Game> availableGames = gameService.findAvailableGames();
+		for(Integer i=0;i<availableGames.size();i++) {
+			assertEquals(availableGames.get(i).getStartHour(),null);
+			assertEquals(availableGames.get(i).getEndHour(),null);
+			assertTrue(availableGames.get(i).getStatus().size()<4);
+		}
+	}
+	
+	@Test
+	public void testNextPlayer() {
+		Game game = new Game();
+		Player player1 = new Player();
+		Player player2 = new Player();
+		gameService.enterGame(game, player1);
+		gameService.enterGame(game, player2);
+		
+		game.setCurrentPlayer(0);
+		gameService.nextPlayer(game);
+		assertEquals(game.getCurrentPlayer(), 1);
+	}
+	
+	@Test
+	public void testEnterGame() {
+		Game game = new Game();
+		Player player = new Player();
+		gameService.enterGame(game, player);
+		assertEquals(game.getStatus().size(), 1);
+	}
+	
+	@Test
+	public void testDeleteCardFromDeckWithIds() {
+		int deckBefore = game.getCards().size();
+		Card cardToDelete = game.getCards().get(0);
+		System.out.println("mazo antes "+deckBefore);
+		System.out.println("----------------------------"+game.getId());
+		System.out.println("----------------------------"+cardToDelete.getId());
+		gameService.deleteCardFromDeck(game.getId(), cardToDelete.getId());
+		System.out.println(game.getCards().get(0).getId());
+		gameService.saveGame(game);
+		System.out.println("cartas actuales "+game.getCards().size());
+		assertEquals(game.getCards().size(),deckBefore-1);
+		assertFalse(game.getCards().contains(cardToDelete));	
+	}
+	
+	@Test
+	public void testDeleteCardFromDeck() {
+		int deckBefore = game.getCards().size();
+		Card cardToDelete = game.getCards().get(0);
+		System.out.println("mazo antes "+deckBefore);
+		gameService.deleteCardFromDeck(game, cardToDelete);
+		gameService.saveGame(game);
+		System.out.println("cartas actuales "+game.getCards().size());
+		assertEquals(game.getCards().size(),deckBefore-1);
+		assertFalse(game.getCards().contains(cardToDelete));	
+	}
+
+	@Test
+	public void createGame() {
+		Player player = new Player();
+		player.setId(10);
+		Game game = new Game();
+		game.setId(20);
+		gameService.createGame(game, player);
+		Optional<Status> status = statusService.findStatusByGameAndPlayer(game.getId(), player.getId());
+		assertTrue(gameService.findNotStartedGames().contains(game));
+		assertFalse(status.get().equals(null));
+	}
+	
 }

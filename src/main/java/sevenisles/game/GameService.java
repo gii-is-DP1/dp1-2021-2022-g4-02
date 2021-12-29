@@ -114,21 +114,23 @@ public class GameService extends ScoreCountImpl{
 		gameRepository.save(gameToUpdate);
 	}
 	
-	private void nextPlayer(Game game) {
+	public void nextPlayer(Game game) {
 		Integer next = (game.getCurrentPlayer()+1)%statusService.countPlayers(game);
 		game.setCurrentPlayer(next);
 	}
 	
-	private void deleteCardFromDeck(Integer gameId, Integer cardId) {
+	public void deleteCardFromDeck(Integer gameId, Integer cardId) {
 		Optional<Game> gameopt = gameRepository.findById(gameId);
 		if(gameopt.isPresent()) {
 			Game game = gameopt.get();
 			List<Card> ls = game.getCards();
 			game.setCards(ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList()));
+			saveGame(game);
 		}
+		
 	}
 	
-	private void deleteCardFromDeck(Game game, Card card) {
+	public void deleteCardFromDeck(Game game, Card card) {
 		List<Card> ls = game.getCards();
 		game.setCards(ls.stream().filter(c->c.getId()!=card.getId()).collect(Collectors.toList()));
 	}
