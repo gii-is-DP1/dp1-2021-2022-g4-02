@@ -1,9 +1,11 @@
 package sevenisles.island;
 
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -17,9 +19,7 @@ import sevenisles.model.BaseEntity;
 @Table(name = "isles")
 public class Island extends BaseEntity{
 	
-	@OneToOne(optional=true,cascade = CascadeType.ALL,mappedBy = "card")
-	private IslandStatus islandStatus;
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "island", targetEntity= IslandStatus.class)
+	private List<IslandStatus> islandStatuses;
 	
-//	@ManyToMany(targetEntity = Game.class,mappedBy="islands")
-//	private List<Game> game;
 }

@@ -22,9 +22,9 @@ public class IslandStatus extends BaseEntity{
 	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Game.class)
 	private Game game;
 
-	@OneToOne(targetEntity = Island.class)
+	@ManyToOne(targetEntity = Island.class)
 	private Island island;
 	
-	@OneToOne(targetEntity = Card.class)
+	@ManyToOne(targetEntity = Card.class)
 	private Card card;
 }

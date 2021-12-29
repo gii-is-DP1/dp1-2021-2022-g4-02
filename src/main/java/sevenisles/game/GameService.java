@@ -3,15 +3,11 @@ package sevenisles.game;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -118,14 +114,12 @@ public class GameService extends ScoreCountImpl{
 		gameRepository.save(gameToUpdate);
 	}
 	
-	@Transactional
-	public void nextPlayer(Game game) {
+	private void nextPlayer(Game game) {
 		Integer next = (game.getCurrentPlayer()+1)%statusService.countPlayers(game);
 		game.setCurrentPlayer(next);
 	}
 	
-	@Transactional
-	public void deleteCardFromDeck(Integer gameId, Integer cardId) {
+	private void deleteCardFromDeck(Integer gameId, Integer cardId) {
 		Optional<Game> gameopt = gameRepository.findById(gameId);
 		if(gameopt.isPresent()) {
 			Game game = gameopt.get();
@@ -134,8 +128,7 @@ public class GameService extends ScoreCountImpl{
 		}
 	}
 	
-	@Transactional
-	public void deleteCardFromDeck(Game game, Card card) {
+	private void deleteCardFromDeck(Game game, Card card) {
 		List<Card> ls = game.getCards();
 		game.setCards(ls.stream().filter(c->c.getId()!=card.getId()).collect(Collectors.toList()));
 	}
@@ -157,7 +150,7 @@ public class GameService extends ScoreCountImpl{
 		statusService.addStatusToGame(status, game);
 		saveGame(game);
 		statusService.addStatusToPlayer(status, player);
-		game.setCards(cardService.llenarMazo());
+		game.setCards((List<Card>)cardService.cardFindAll());
 		saveGame(game);
 	}
 	
@@ -281,7 +274,6 @@ public class GameService extends ScoreCountImpl{
 		}
 	}
 		
-	//arreglar
 	@Transactional
 	public void robIsland(Game game, Integer islandId, Status status) throws GameControllerException{
 		if(status.getChosenIsland()!=null) {
@@ -303,7 +295,6 @@ public class GameService extends ScoreCountImpl{
 		}
 	}
 	
-	@Transactional
 	public Boolean loggedPlayerCheckTurn(Game game) throws GameControllerException{
 		if(loggedUserBelongsToGame(game)) {
 			if(!(game.getCurrentRound()>game.getMaxRounds())) {
@@ -321,7 +312,8 @@ public class GameService extends ScoreCountImpl{
 			throw new GameControllerException("No perteneces a esta partida.");	
 		}
 	}
-
+	
+	@Transactional
 	public void endGame(Game game) {
 		game.setEndHour(LocalTime.now());
 		saveGame(game);
@@ -350,8 +342,7 @@ public class GameService extends ScoreCountImpl{
 		return statuses.stream().sorted(Comparator.comparing(Status::getScore).reversed()).collect(Collectors.toList());
 	}
 	
-	@Transactional
-	public void repartoInicial(Game game) {
+	private void repartoInicial(Game game) {
 		//Reparto inicial a jugadores
 		List<Status> status = game.getStatus();
 		List<Card> doblones = cardService.findDoubloons();	
@@ -382,8 +373,7 @@ public class GameService extends ScoreCountImpl{
 		game.setIslandStatus(l2);
 	}
 	
-	@Transactional
-	public void llenarIsla(Game game, IslandStatus is) {
+	private void llenarIsla(Game game, IslandStatus is) {
 		List<Card> deck = game.getCards();
 		if(deck.size()!=0) {
 			Card card = deck.get((int)(deck.size()* Math.random()));
@@ -395,10 +385,8 @@ public class GameService extends ScoreCountImpl{
 		islandStatusService.saveIslandStatus(is);
 	}
 	
-	@Transactional
-	public void asignacionInicialIslas(Game game) {
-		Iterator<Island> it = islandService.islandFindAll().iterator();
-		List<Island> li = StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,Spliterator.ORDERED), false).collect(Collectors.toList());
+	private void asignacionInicialIslas(Game game) {
+		List<Island> li = (List<Island>) islandService.islandFindAll();
 		List<IslandStatus> ls = new ArrayList<IslandStatus>();
 		for(int i = 0;i<li.size();i++) {
 			Island island = li.get(i);

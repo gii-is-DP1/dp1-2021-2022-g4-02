@@ -6,20 +6,21 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 
-import sevenisles.model.BaseEntity;
-import sevenisles.game.Game;
-import sevenisles.island.Island;
-import sevenisles.islandStatus.IslandStatus;
-import sevenisles.status.Status;
 import lombok.Getter;
 import lombok.Setter;
+import sevenisles.game.Game;
+import sevenisles.islandStatus.IslandStatus;
+import sevenisles.model.BaseEntity;
+import sevenisles.status.Status;
 
 @Getter
 @Setter
@@ -32,8 +33,8 @@ public class Card extends BaseEntity{
 	@NotEmpty
 	private String urlCardImg;
 	
-	@OneToOne(optional=true,cascade = CascadeType.ALL,mappedBy = "card")
-	private IslandStatus islandStatus;
+	@OneToMany(cascade = CascadeType.ALL,mappedBy="card", targetEntity= IslandStatus.class)
+	private List<IslandStatus> islandStatuses;
 	
 	@ManyToMany(targetEntity = Status.class,mappedBy="cards")
 	private List<Status> status;
