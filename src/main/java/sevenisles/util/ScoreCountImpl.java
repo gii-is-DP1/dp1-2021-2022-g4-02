@@ -65,7 +65,7 @@ public class ScoreCountImpl implements ScoreCount{
 		copy.removeAll(doubloons);
 		
 		map.put(i.toString(), copy);
-		hand.removeAll(copy);
+		//hand.removeAll(copy);
 		return map;
 	}
 	
