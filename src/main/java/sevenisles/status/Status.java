@@ -23,7 +23,7 @@ import sevenisles.player.Player;
 @Table(name= "status")
 public class Status extends BaseEntity{
 	
-	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Game.class)
+	@ManyToOne(targetEntity = Game.class)
 	private Game game;
 	
 	@ManyToOne(targetEntity = Player.class)
@@ -32,7 +32,7 @@ public class Status extends BaseEntity{
 	private Integer score;
 	private Integer winner=0;
 
-	@ManyToMany(cascade = CascadeType.ALL, targetEntity = Card.class)
+	@ManyToMany(targetEntity = Card.class)
 	@JoinTable(name="hand",uniqueConstraints = { @UniqueConstraint(columnNames = { "cards_id", "status_id" }) })
 	private List<Card> cards;
 	

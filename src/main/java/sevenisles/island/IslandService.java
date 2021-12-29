@@ -42,20 +42,4 @@ public class IslandService {
 		islandRepo.delete(islandToDelete);
 	}
 	
-	/*@Transactional
-	public void asignacionInicialIslas(Game game) {
-		Iterator<Island> it = islandFindAll().iterator();
-		List<Island> li = StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,Spliterator.ORDERED), false).collect(Collectors.toList());
-		List<IslandStatus> ls = new ArrayList<IslandStatus>();
-		for(int i = 0;i<li.size();i++) {
-			Island island = li.get(i);
-			IslandStatus status = new IslandStatus();
-			status.setIsland(island);
-			status.setGame(game);
-			islandStatusService.saveIslandStatus(status);
-			ls.add(status);
-		}
-		game.setIslandStatus(ls);
-	}*/
-
 }

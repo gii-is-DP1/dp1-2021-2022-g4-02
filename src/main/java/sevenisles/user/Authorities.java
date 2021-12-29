@@ -17,10 +17,7 @@ import sevenisles.model.BaseEntity;
 @Entity
 @Table(name = "authorities")
 public class Authorities extends BaseEntity{
-	
-//  @OneToOne(cascade = CascadeType.ALL)
-//  @JoinColumn(name = "lobby_id", referencedColumnName = "id")
-//  private Lobby lobbies;
+
 	
 	@OneToOne(optional=true)
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
