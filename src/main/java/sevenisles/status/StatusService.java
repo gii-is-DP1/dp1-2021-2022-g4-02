@@ -52,7 +52,7 @@ public class StatusService {
 	@Transactional 
 	public boolean isInAnotherGame(Player player){
 		Optional<List<Status>> status = statusRepo.findStatusOfPlayer(player.getId());
-		System.out.println(statusRepo.findStatusOfPlayer(player.getId()));
+		//System.out.println(statusRepo.findStatusOfPlayer(player.getId()));
 		if(status.isPresent()) {
 			List<Status> ls = status.get();
 			return ls.stream()

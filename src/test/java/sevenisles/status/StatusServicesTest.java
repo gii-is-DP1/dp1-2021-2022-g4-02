@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 
 import sevenisles.card.Card;
@@ -67,6 +68,7 @@ public class StatusServicesTest {
 		newstatus.setCards(cards);
 		newstatus.setGame(newgame);
 		newstatus.setPlayer(newplayer);
+		newstatus.setScore(26);
 		statusServices.saveStatus(newstatus);
 	}
 	
@@ -78,15 +80,16 @@ public class StatusServicesTest {
 	}
 	
 	
-	/*
+	
 	@Test
-	public void testStatusFindAll() {
-		
-		
-		
+	public void testIsInAnotherGame() {
+	boolean expected = false;
+	boolean cond = statusServices.isInAnotherGame(newplayer);
+	assertEquals(cond,expected);
+	
 	}
 	
-	*/
+	
 	
 	@Test
 	public void findStatusByGame() {
@@ -244,25 +247,44 @@ public class StatusServicesTest {
 		
 	}
 	
-	/*-----------------------------Falta cubrir un amarillo--------------------------------*/
+	
+	@Test
+	public void testFindStatusByGameAndScore() {
+		int checkscore = 26;
+		List<Status> statuscheck = statusServices.findStatusByGameAndScore(newgame.getId(), checkscore).get();
+		assertEquals(newstatus.getId(),statuscheck.get(0).getId());
+		
+		
+	}
+
 	@Test
 	public void testAddStatusToPlayer() {
 	
 		
 		Integer idstatus = newstatus.getId();
-
+		Status newsecondstatus = new Status();
 		
 		newstatus.setPlayer(newplayer);
 		statusServices.saveStatus(newstatus);
 		playerServices.savePlayer(newplayer);
+		statusServices.saveStatus(newsecondstatus);
 		statusServices.addStatusToPlayer(newstatus, newplayer);
+		statusServices.addStatusToPlayer(newsecondstatus, newplayer);
 		List<Status> lstatus = statusServices.findStatusOfPlayer(newplayer.getId()).get();
-		System.out.println("-----------------------ESTADOS DE UN JUGADOOOOOR"+lstatus);
+		
 		
 		assertEquals(idstatus,lstatus.get(0).getId());
 	}
 	
-	
+	@Test
+	public void testAddStatusToGame() {
+		Status statustest = new Status();
+		statusServices.saveStatus(statustest);
+		statusServices.addStatusToGame(statustest, newgame);
+		statusServices.addStatusToGame(newstatus, newgame);
+		
+		assertEquals(statustest.getId(),newgame.getStatus().get(0).getId());
+	}
 	
 	@Test
 	public void testdeleteStatus() {
@@ -279,7 +301,15 @@ public class StatusServicesTest {
 		assertEquals(aftercount, beforecount-1);
 	}
 	
-	
+	@Test
+	public void testAddGamePlayerToStatus() {
+		Player player = new Player();
+		playerServices.savePlayer(player);
+		Status statustest = new Status();
+		statusServices.addGamePlayerToStatus(statustest, newgame, player);
+		Status checkstatus = statusServices.findStatusByGameAndPlayer(newgame.getId(),player.getId()).get();
+		assertEquals(checkstatus.getId(),statustest.getId());
+	}
 	
 	@Test
 	public void testdeleteStatusById() {
@@ -295,6 +325,20 @@ public class StatusServicesTest {
 		
 		assertEquals(aftercount, beforecount-1);
 	}
+	
+	/*------------------------REVISAR----------*/
+	@WithMockUser(username="player1")
+	@Test
+	public void testDeleteCardFromHand() {
+		
+		boolean expected = false;
+		Card randomcard = newstatus.getCards().get(0);
+		statusServices.deleteCardFromHand(newgame,randomcard);
+		boolean existscard = statusServices.cardInHand(newstatus,randomcard);
+		assertEquals(existscard,expected);
+	
+	}
+	
 	
 	@Test
 	public void testcardInHand() {
