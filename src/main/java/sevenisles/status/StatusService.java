@@ -12,21 +12,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import sevenisles.card.Card;
 import sevenisles.game.Game;
-import sevenisles.game.GameService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 
 @Service
 public class StatusService {
 	
-	@Autowired
-	StatusRepository statusRepo;
+	private StatusRepository statusRepo;
+	
+	
+	private PlayerService playerService;
 	
 	@Autowired
-	GameService gameService;
-	
-	@Autowired
-	PlayerService playerService;
+	public StatusService(StatusRepository statusRepo, PlayerService playerService) {
+		this.statusRepo = statusRepo;
+		this.playerService = playerService;
+	}
 	
 	@Transactional
 	public Integer countPlayers(Integer gameId) {
@@ -77,7 +78,6 @@ public class StatusService {
 		}
 		ls.add(status);
 		game.setStatus(ls);
-		gameService.saveGame(game);
  	}
 	
 	//Añade un nuevo status al player

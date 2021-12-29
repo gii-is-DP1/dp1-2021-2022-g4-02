@@ -15,20 +15,11 @@
  */
 package sevenisles.user;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -53,14 +44,18 @@ public class UserController {
 	private static final String VIEWS_USER_CREATE_OR_UPDATE_FORM = "users/createOrUpdateUserForm";
 //	private static final String VIEWS_ERROR = "error";
 	
-	@Autowired
 	private PlayerService playerService;
 	
-	@Autowired
 	private UserService userService;
 	
-	@Autowired
 	private AuthoritiesService authoritiesService;
+	
+	@Autowired
+	public UserController(PlayerService playerService, UserService userService, AuthoritiesService authoritiesService) {
+		this.playerService = playerService;
+		this.userService = userService;
+		this.authoritiesService  = authoritiesService;
+	}
 	
 	//Get detalles de usuario
 	@GetMapping(value = "/profile")

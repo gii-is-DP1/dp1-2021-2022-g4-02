@@ -1,25 +1,15 @@
 package sevenisles.user;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
 import sevenisles.player.Player;
@@ -44,14 +33,21 @@ public class AuthoritiesController {
 	private static final String VIEWS_AUTH_CREATE_OR_UPDATE_FORM = "authorities/editAuth";
 	private static final String VIEWS_ERROR = "error";
 	
-	@Autowired
 	private AuthoritiesService authoritiesService;
-	@Autowired
+	
 	private UserService userService;
-	@Autowired
+	
 	private GameService gameService;
-	@Autowired
+	
 	private PlayerService playerService;
+	
+	@Autowired
+	public AuthoritiesController(AuthoritiesService authoritiesService, UserService userService, GameService gameService, PlayerService playerService) {
+		this.authoritiesService = authoritiesService;
+		this.userService = userService;
+		this.gameService = gameService;
+		this.playerService = playerService;
+	}
 	
 	@GetMapping(value = "admin/users")
 	public String usersList(ModelMap modelMap) {

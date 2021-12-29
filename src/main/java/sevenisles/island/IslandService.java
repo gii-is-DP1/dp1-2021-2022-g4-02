@@ -1,30 +1,21 @@
 package sevenisles.island;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import sevenisles.game.Game;
-import sevenisles.islandStatus.IslandStatus;
-import sevenisles.islandStatus.IslandStatusService;
-
 @Service
 public class IslandService {
-	@Autowired
+
 	private IslandRepository islandRepo;
-	
+		
 	@Autowired
-	private IslandStatusService islandStatusService;
+	public IslandService(IslandRepository islandRepo) {
+		this.islandRepo = islandRepo;
+	}
 	
 	@Transactional(readOnly = true)
 	public Integer islandCount() {
@@ -51,7 +42,7 @@ public class IslandService {
 		islandRepo.delete(islandToDelete);
 	}
 	
-	@Transactional
+	/*@Transactional
 	public void asignacionInicialIslas(Game game) {
 		Iterator<Island> it = islandFindAll().iterator();
 		List<Island> li = StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,Spliterator.ORDERED), false).collect(Collectors.toList());
@@ -65,6 +56,6 @@ public class IslandService {
 			ls.add(status);
 		}
 		game.setIslandStatus(ls);
-	}
+	}*/
 
 }

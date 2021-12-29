@@ -7,7 +7,7 @@ public class GameValidator implements Validator {
 
 	@Override
 	public void validate(Object obj, Errors errors) {
-		Game game = (Game) obj;
+		//Game game = (Game) obj;
 		
 //		// full game
 //		if(!game.isNotFull()) {

@@ -3,11 +3,15 @@ package sevenisles.game;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -18,6 +22,7 @@ import org.springframework.ui.ModelMap;
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.game.exceptions.GameControllerException;
+import sevenisles.island.Island;
 import sevenisles.island.IslandService;
 import sevenisles.islandStatus.IslandStatus;
 import sevenisles.islandStatus.IslandStatusService;
@@ -31,26 +36,36 @@ import sevenisles.util.ThrowDice;
 
 @Service
 public class GameService extends ScoreCountImpl{
-	@Autowired
+	
 	private GameRepository gameRepository;
 	
-	@Autowired
 	private StatusService statusService;
 	
-	@Autowired
 	private PlayerService playerService;
 	
-	@Autowired
 	private UserService userService;
 	
-	@Autowired
 	private CardService cardService;
 	
-	@Autowired
 	private IslandService islandService;
 	
-	@Autowired
 	private IslandStatusService islandStatusService;
+	
+	@Autowired
+	public GameService(CardService cardService, GameRepository gameRepository, StatusService statusService,
+			PlayerService playerService, UserService userService, IslandService islandService, IslandStatusService islandStatusService) {
+		super(cardService);
+		this.cardService = cardService;
+		this.gameRepository = gameRepository;
+		this.statusService = statusService;
+		this.playerService = playerService;
+		this.userService = userService;
+		this.islandService = islandService;
+		this.islandStatusService = islandStatusService;
+		
+		
+	}
+
 	
 	@Transactional(readOnly = true)
 	public Integer gameCount() {
@@ -140,6 +155,7 @@ public class GameService extends ScoreCountImpl{
 		Status status = new Status();
 		statusService.addGamePlayerToStatus(status, game, player);
 		statusService.addStatusToGame(status, game);
+		saveGame(game);
 		statusService.addStatusToPlayer(status, player);
 		game.setCards(cardService.llenarMazo());
 		saveGame(game);
@@ -179,8 +195,8 @@ public class GameService extends ScoreCountImpl{
 	public void startGame(Game game) {
 		game.setStartHour(LocalTime.now());
 		game.setCurrentRound(1);
-		islandService.asignacionInicialIslas(game);
-		cardService.repartoInicial(game);
+		asignacionInicialIslas(game);
+		repartoInicial(game);
 		Integer playersnumber = statusService.countPlayers(game.getId());
 		game.setCurrentPlayer(ThreadLocalRandom.current().nextInt(0, playersnumber));
 		game.setInitialPlayer(game.getCurrentPlayer());
@@ -274,7 +290,7 @@ public class GameService extends ScoreCountImpl{
 				Card card = is.getCard();
 				status.getCards().add(card);
 				statusService.saveStatus(status);
-				cardService.llenarIsla(game, is);
+				llenarIsla(game, is);
 				game.setFinishedTurn(1);
 				saveGame(game);
 				status.setNumberOfCardsToPay(null);
@@ -332,6 +348,67 @@ public class GameService extends ScoreCountImpl{
 	
 	public List<Status> orderStatusByScore(List<Status> statuses){
 		return statuses.stream().sorted(Comparator.comparing(Status::getScore).reversed()).collect(Collectors.toList());
+	}
+	
+	@Transactional
+	public void repartoInicial(Game game) {
+		//Reparto inicial a jugadores
+		List<Status> status = game.getStatus();
+		List<Card> doblones = cardService.findDoubloons();	
+		for(int i=0;i<status.size();i++) {
+			List<Card> hand = new ArrayList<Card>();
+			for(int j=0;j<3;j++) {
+				Card card = doblones.get(j);
+				hand.add(card);
+				deleteCardFromDeck(game.getId(), card.getId());
+			}
+			doblones = doblones.subList(3, doblones.size());
+			Status s = status.get(i);
+			s.setCards(hand);
+			statusService.saveStatus(s);
+		}
+		//Reparto inicial a islas
+		List<IslandStatus> lis = game.getIslandStatus();
+		List<IslandStatus> l2 = new ArrayList<IslandStatus>();
+		for(int i =0;i<lis.size();i++) {
+			List<Card> deck = game.getCards();
+			IslandStatus istatus = lis.get(i);
+			Card card = deck.get((int)(deck.size()* Math.random()));
+			istatus.setCard(card);
+			islandStatusService.saveIslandStatus(istatus);
+			l2.add(istatus);
+			deleteCardFromDeck(game, card);
+		}
+		game.setIslandStatus(l2);
+	}
+	
+	@Transactional
+	public void llenarIsla(Game game, IslandStatus is) {
+		List<Card> deck = game.getCards();
+		if(deck.size()!=0) {
+			Card card = deck.get((int)(deck.size()* Math.random()));
+			is.setCard(card);
+			islandStatusService.saveIslandStatus(is);
+			deleteCardFromDeck(game, card);
+		}
+		else is.setCard(null);
+		islandStatusService.saveIslandStatus(is);
+	}
+	
+	@Transactional
+	public void asignacionInicialIslas(Game game) {
+		Iterator<Island> it = islandService.islandFindAll().iterator();
+		List<Island> li = StreamSupport.stream(Spliterators.spliteratorUnknownSize(it,Spliterator.ORDERED), false).collect(Collectors.toList());
+		List<IslandStatus> ls = new ArrayList<IslandStatus>();
+		for(int i = 0;i<li.size();i++) {
+			Island island = li.get(i);
+			IslandStatus status = new IslandStatus();
+			status.setIsland(island);
+			status.setGame(game);
+			islandStatusService.saveIslandStatus(status);
+			ls.add(status);
+		}
+		game.setIslandStatus(ls);
 	}
 	
 	

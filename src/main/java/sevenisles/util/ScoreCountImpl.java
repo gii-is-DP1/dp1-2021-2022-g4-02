@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,8 +16,12 @@ import sevenisles.status.Status;
 
 public class ScoreCountImpl implements ScoreCount{
 	
-	@Autowired
 	private CardService cardService;
+	
+	@Autowired
+	public ScoreCountImpl(CardService cardService) {
+		this.cardService = cardService;
+	}
 	
 	private final List<Integer> points = Arrays.asList(1,3,7,13,21,30,40,50,60);
 

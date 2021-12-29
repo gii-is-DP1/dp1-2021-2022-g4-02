@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class PlayerController {
 	
-	@Autowired
 	private PlayerService playerService;
 
+	@Autowired
+	public PlayerController(PlayerService playerService) {
+		this.playerService  = playerService;
+	}
+	
 	@GetMapping(value = "/players")
 	public String playersList(ModelMap modelMap) {
 		String vista = "players/playersList";

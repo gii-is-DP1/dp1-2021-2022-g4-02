@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -14,26 +13,16 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import sevenisles.game.Game;
-import sevenisles.game.GameService;
-import sevenisles.islandStatus.IslandStatus;
-import sevenisles.islandStatus.IslandStatusService;
-import sevenisles.status.Status;
-import sevenisles.status.StatusService;
-
 @Service
 public class CardService {
-	@Autowired
+	
 	private CardRepository cardRepository;
 	
-	@Autowired
-	private GameService gameService;
 	
 	@Autowired
-	private StatusService statusService;
-	
-	@Autowired
-	private IslandStatusService islandStatusService;
+	public CardService(CardRepository cardRepository) {
+		this.cardRepository = cardRepository;
+	}
 	
 	@Transactional(readOnly = true)
 	public Integer cardCount() {
@@ -67,6 +56,7 @@ public class CardService {
         return mazo;
     }
 	
+	/*
 	@Transactional
 	public void repartoInicial(Game game) {
 		//Reparto inicial a jugadores
@@ -111,6 +101,7 @@ public class CardService {
 		else is.setCard(null);
 		islandStatusService.saveIslandStatus(is);
 	}
+	*/
 	
 	@Transactional
 	public List<Card> findDoubloonsInHand(List<Card> hand){
@@ -124,6 +115,10 @@ public class CardService {
 			if(!res.contains(c.getCardType())) res.add(c.getCardType());
 		}
 		return res;
+	}
+	
+	public List<Card> findDoubloons(){
+		return cardRepository.findDoubloons();
 	}
 
 }

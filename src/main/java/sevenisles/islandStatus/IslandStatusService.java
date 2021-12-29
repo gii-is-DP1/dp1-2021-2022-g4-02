@@ -8,21 +8,16 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import sevenisles.game.GameService;
-import sevenisles.island.IslandService;
-
 @Service
 public class IslandStatusService {
 	
-	@Autowired
-	IslandStatusRepository islandStatusRepo;
+	private IslandStatusRepository islandStatusRepo;
 	
 	@Autowired
-	GameService gameService;
+	public IslandStatusService(IslandStatusRepository islandStatusRepo) {
+		this.islandStatusRepo = islandStatusRepo;
+	}
 	
-	@Autowired
-	IslandService islandService;
-
 	@Transactional(readOnly = true)
 	public Integer islandStatusCount() {
 		return (int) islandStatusRepo.count();
