@@ -119,4 +119,16 @@ public class IslandStatusServiceTests {
 		
 		assertEquals(aftercount, beforecount-1);
 	}
+	
+	@Test
+	public void testdeleteIslandById() {
+		int beforecount = IslandService.islandCount();
+
+		IslandStatusService.deleteIslandStatus(newstatus.getId());
+		IslandService.deleteIsland(newisland);
+		
+		int aftercount = IslandService.islandCount();
+		
+		assertEquals(aftercount, beforecount-1);
+	}
 }

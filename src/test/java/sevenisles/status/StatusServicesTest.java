@@ -1,0 +1,316 @@
+package sevenisles.status;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Service;
+
+import sevenisles.card.Card;
+import sevenisles.card.CardService;
+import sevenisles.game.Game;
+import sevenisles.game.GameService;
+import sevenisles.player.Player;
+import sevenisles.player.PlayerService;
+
+
+@DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
+public class StatusServicesTest {
+	
+	@Autowired
+	private StatusService statusServices;
+	
+	@Autowired
+	private GameService gameServices;
+	
+	@Autowired
+	private PlayerService playerServices;
+	
+	@Autowired
+	private CardService CardService;
+	
+	Status newstatus = new Status();
+	Status newtwostatus = new Status();
+	Player newplayer = new Player();
+	Player newtwoplayer = new Player();
+	Game newgame = new Game();
+	
+	
+
+	@BeforeEach
+	public void init() {
+		playerServices.savePlayer(newplayer);
+		statusServices.saveStatus(newstatus);
+		gameServices.saveGame(newgame);
+		
+		Card firstcard = CardService.findCardById(1).get();
+		CardService.saveCard(firstcard);
+		Card secondcard = CardService.findCardById(2).get();
+		CardService.saveCard(secondcard);
+		
+		List<Card> cards = new ArrayList<>();
+		cards.add(firstcard);
+		cards.add(secondcard);
+		
+		newstatus.setCards(cards);
+		newstatus.setGame(newgame);
+		newstatus.setPlayer(newplayer);
+		statusServices.saveStatus(newstatus);
+	}
+	
+
+	
+	@AfterEach
+	public void finish() {
+		statusServices.deleteStatus(newstatus);
+	}
+	
+	
+	/*
+	@Test
+	public void testStatusFindAll() {
+		
+		
+		
+	}
+	
+	*/
+	
+	@Test
+	public void findStatusByGame() {
+		int idnewstatus = newstatus.getId();
+		List<Status> statusbygame = statusServices.findStatusByGame(newgame.getId()).get();
+		assertEquals(statusbygame.get(0).getId(),idnewstatus);
+		
+	}
+	
+	@Test
+	public void findStatusByGameAndPlayer() {
+		int idnewstatus = newstatus.getId();
+		Status statusbygameandplayer = statusServices.findStatusByGameAndPlayer(newgame.getId(),newplayer.getId()).get();
+		assertEquals(statusbygameandplayer.getId(),idnewstatus);
+		
+	}
+	
+	
+	@Test
+	public void testCountPlayers() {
+		
+		Integer nplayers = statusServices.countPlayers(newgame);
+		assertEquals(nplayers,1);
+	}
+	
+	@Test
+	public void testIsNotReadyToStart() {
+		boolean expected = false;
+		boolean cond = statusServices.isReadyToStart(newgame.getId());
+		assertEquals(cond,expected);
+	}
+	/*
+	
+	@Test
+	public void add
+	*/
+	@Test
+	public void testIsNotReadyToStartOverPlayers() {
+		boolean expected = false;
+		
+		playerServices.savePlayer(newtwoplayer);
+		statusServices.saveStatus(newtwostatus);
+		
+		newtwostatus.setGame(newgame);
+		newtwostatus.setPlayer(newtwoplayer);
+		statusServices.saveStatus(newtwostatus);
+		
+		
+		
+		Player newthirdplayer = new Player();
+		Player newfourthplayer = new Player();
+		Player newfithplayer = new Player();
+		
+		playerServices.savePlayer(newthirdplayer);
+		playerServices.savePlayer(newfourthplayer);
+		playerServices.savePlayer(newfithplayer);
+		
+		
+		Status newthirdstatus = new Status();
+		Status newsfourthtatus = new Status();
+		Status newsfithtatus = new Status();
+		
+		newthirdstatus.setPlayer(newthirdplayer);
+		newsfourthtatus.setPlayer(newfourthplayer);
+		newsfithtatus.setPlayer(newfithplayer);
+		
+		newthirdstatus.setGame(newgame);
+		newsfourthtatus.setGame(newgame);
+		newsfithtatus.setGame(newgame);
+		
+		statusServices.saveStatus(newthirdstatus);
+		statusServices.saveStatus(newsfourthtatus);
+		statusServices.saveStatus(newsfithtatus);
+		gameServices.saveGame(newgame);
+		
+		
+		
+		
+		
+		boolean cond = statusServices.isReadyToStart(newgame.getId());
+		assertEquals(cond,expected);
+	}
+	
+	@Test
+	public void testIsReadyToStart() {
+		boolean expected = true;
+
+		playerServices.savePlayer(newtwoplayer);
+		statusServices.saveStatus(newtwostatus);
+		
+		newtwostatus.setGame(newgame);
+		newtwostatus.setPlayer(newtwoplayer);
+		statusServices.saveStatus(newtwostatus);
+		
+		boolean cond = statusServices.isReadyToStart(newgame.getId());
+		assertEquals(cond,expected);
+	}
+	
+	@Test
+	public void findWinnerStatusByGame() {
+		
+		playerServices.savePlayer(newtwoplayer);
+		statusServices.saveStatus(newtwostatus);
+		
+		
+		
+
+		newtwostatus.setGame(newgame);
+		newtwostatus.setPlayer(newtwoplayer);
+		newtwostatus.setWinner(1);
+		statusServices.saveStatus(newtwostatus);
+
+		List<Status> statuswinner = statusServices.findWinnerStatusByGame(newgame.getId()).get();
+		assertEquals(statuswinner.get(0).getId(),newtwostatus.getId());
+	}
+	
+	@Test
+	public void testIsNotFull() {
+		boolean expected = true;
+		boolean cond = statusServices.isNotFull(newgame.getId());
+		assertEquals(cond,expected);
+		
+	}
+	
+	
+	@Test
+	public void testIsFull() {
+		//Llenamos el juego, que en un principio tenía un solo jugador y estado a 4 jugadores y estados
+		boolean expected = false;
+		Player newthirdplayer = new Player();
+		Player newfourthplayer = new Player();
+		playerServices.savePlayer(newtwoplayer);
+		playerServices.savePlayer(newthirdplayer);
+		playerServices.savePlayer(newfourthplayer);
+		
+		Status newsecondstatus = new Status();
+		Status newthirdstatus = new Status();
+		Status newsfourthtatus = new Status();
+		
+		newsecondstatus.setPlayer(newtwoplayer);
+		newthirdstatus.setPlayer(newthirdplayer);
+		newsfourthtatus.setPlayer(newfourthplayer);
+		newsecondstatus.setGame(newgame);
+		newthirdstatus.setGame(newgame);
+		newsfourthtatus.setGame(newgame);
+		
+		statusServices.saveStatus(newsecondstatus);
+		statusServices.saveStatus(newthirdstatus);
+		statusServices.saveStatus(newsfourthtatus);
+		
+		gameServices.saveGame(newgame);
+		
+		boolean cond = statusServices.isNotFull(newgame.getId());
+		assertEquals(cond,expected);
+		
+	}
+	
+	/*-----------------------------Falta cubrir un amarillo--------------------------------*/
+	@Test
+	public void testAddStatusToPlayer() {
+	
+		
+		Integer idstatus = newstatus.getId();
+
+		
+		newstatus.setPlayer(newplayer);
+		statusServices.saveStatus(newstatus);
+		playerServices.savePlayer(newplayer);
+		statusServices.addStatusToPlayer(newstatus, newplayer);
+		List<Status> lstatus = statusServices.findStatusOfPlayer(newplayer.getId()).get();
+		System.out.println("-----------------------ESTADOS DE UN JUGADOOOOOR"+lstatus);
+		
+		assertEquals(idstatus,lstatus.get(0).getId());
+	}
+	
+	
+	
+	@Test
+	public void testdeleteStatus() {
+		List<Status> statuslist = (List<Status>) statusServices.statusrFindAll();
+		int beforecount = statuslist.size();
+		
+		statusServices.deleteStatus(newstatus);
+		
+		
+		Iterator<Status> statusitbefore = statusServices.statusrFindAll().iterator();
+        List<Status> statuslistbef = StreamSupport.stream(Spliterators.spliteratorUnknownSize(statusitbefore, Spliterator.ORDERED), false).collect(Collectors.toList());
+		int aftercount = statuslistbef.size();
+		
+		assertEquals(aftercount, beforecount-1);
+	}
+	
+	
+	
+	@Test
+	public void testdeleteStatusById() {
+		List<Status> statuslist = (List<Status>) statusServices.statusrFindAll();
+      
+		int beforecount = statuslist.size();
+		statusServices.deleteStatus(newstatus.getId());
+		
+		
+		Iterator<Status> statusitbefore = statusServices.statusrFindAll().iterator();
+        List<Status> statuslistbef = StreamSupport.stream(Spliterators.spliteratorUnknownSize(statusitbefore, Spliterator.ORDERED), false).collect(Collectors.toList());
+		int aftercount = statuslistbef.size();
+		
+		assertEquals(aftercount, beforecount-1);
+	}
+	
+	@Test
+	public void testcardInHand() {
+		Boolean expected = true;
+		Card firstcard = newstatus.getCards().get(0);
+		Boolean cond = statusServices.cardInHand(newstatus,firstcard);
+		assertEquals(cond,expected);
+	}
+	
+	
+	@Test
+	public void testNocardInHand() {
+		Boolean expected = false;
+		Card firstcard = new Card();
+		Boolean cond = statusServices.cardInHand(newstatus,firstcard);
+		assertEquals(cond,expected);
+	}
+	
+}
