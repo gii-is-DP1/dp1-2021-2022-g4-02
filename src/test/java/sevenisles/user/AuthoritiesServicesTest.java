@@ -1,7 +1,8 @@
 package sevenisles.user;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,6 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +27,7 @@ public class AuthoritiesServicesTest {
 	@Autowired
 	private UserService userServices;
 	
+	
 	User newuser = new User();
 	
 	@BeforeEach
@@ -41,6 +42,10 @@ public class AuthoritiesServicesTest {
 		newuser.setFirstName("user");
 		newuser.setLastName("prueba");
 		newuser.setAuthorities(auth);
+		newuser.setCreator("newuser");
+		newuser.setCreatedDate(LocalDateTime.now());
+		newuser.setLastModifiedDate(LocalDateTime.now());
+		newuser.setModifier("newuser");
 		userServices.saveUser(newuser);
 	}
 	
@@ -109,5 +114,56 @@ public class AuthoritiesServicesTest {
 		}
 		int cuentaFinal = authoritiesServices.authCount();
 		assertEquals(cuentaFinal,cuentaInicial-1);
+	}
+	
+	@Test
+	public void testEditdataAuditory() {
+		
+		User user2 = new User();
+		Authorities auth2 = new Authorities();
+		auth2.setAuthority("admin");
+		auth2.setUser(user2);
+		authoritiesServices.saveAuthorities(auth2);
+		user2.setUsername("userprueba2");
+		user2.setPassword("userprueba2");
+		user2.setFirstName("user2");
+		user2.setLastName("prueba");
+		user2.setAuthorities(auth2);
+		user2.setCreator("Modificador");
+		user2.setCreatedDate(LocalDateTime.now());
+		user2.setLastModifiedDate(LocalDateTime.now());
+		user2.setModifier("Modificador");
+		userServices.saveUser(newuser);
+		
+		authoritiesServices.editdataAuditory(newuser, user2);
+		
+		assertTrue(newuser.getLastModifiedDate().isAfter(newuser.getCreatedDate()));
+		assertEquals(newuser.getModifier(),user2.getUsername());
+	}
+	
+	@Test
+	public void testInsertdataAuditory() {
+		
+		User user2 = new User();
+		Authorities auth2 = new Authorities();
+		auth2.setAuthority("admin");
+		auth2.setUser(user2);
+		authoritiesServices.saveAuthorities(auth2);
+		user2.setUsername("userprueba2");
+		user2.setPassword("userprueba2");
+		user2.setFirstName("user2");
+		user2.setLastName("prueba");
+		user2.setAuthorities(auth2);
+		user2.setCreator("Modificador");
+		user2.setCreatedDate(LocalDateTime.now());
+		user2.setLastModifiedDate(LocalDateTime.now());
+		user2.setModifier("Modificador");
+		userServices.saveUser(newuser);
+		
+		authoritiesServices.insertdataAuditory(newuser, user2);
+		
+		assertTrue(newuser.getCreatedDate().isAfter(newuser.getLastModifiedDate()));
+		assertEquals(newuser.getModifier(),user2.getUsername());
+		assertEquals(newuser.getCreator(),user2.getUsername());
 	}
 }
