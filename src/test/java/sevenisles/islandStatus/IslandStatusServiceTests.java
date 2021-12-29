@@ -62,7 +62,7 @@ public class IslandStatusServiceTests {
 	@Test
 	public void testCountWithInitialData() {
 		int count = IslandStatusService.islandStatusCount();
-		assertEquals(1,count);
+		assertEquals(7,count);
 	}
 	
 	@Test

@@ -51,7 +51,7 @@ public class UserServiceTest {
 	@Test
 	public void testCountUserWithInitialData() {
         int count = userServices.userCount();
-        assertEquals(10,count);
+        assertEquals(12,count);
     }
 	
 	@Test
