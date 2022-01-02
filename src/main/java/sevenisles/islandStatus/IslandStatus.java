@@ -1,9 +1,7 @@
 package sevenisles.islandStatus;
-
-import javax.persistence.CascadeType;
+ 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -19,7 +17,7 @@ import sevenisles.model.BaseEntity;
 @Entity
 public class IslandStatus extends BaseEntity{
 	
-	@ManyToOne(cascade = CascadeType.ALL,targetEntity = Game.class)
+	@ManyToOne(targetEntity = Game.class)
 	private Game game;
 
 	@ManyToOne(targetEntity = Island.class)

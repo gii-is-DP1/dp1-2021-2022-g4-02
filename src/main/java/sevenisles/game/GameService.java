@@ -199,7 +199,7 @@ public class GameService extends ScoreCountImpl{
 		saveGame(game);
 	}
 	
-	private void maxTurns (Game game) {
+	public void maxTurns (Game game) {
 		Integer playerNumber = statusService.countPlayers(game.getId());
 		Integer cardNumber = cardService.cardCount();
 		Integer maxTurns = (cardNumber-(playerNumber*3)-islandService.islandCount())/playerNumber;
@@ -212,10 +212,7 @@ public class GameService extends ScoreCountImpl{
 		List<Status> status = game.getStatus();
 		Status playerstatus = status.get(game.getCurrentPlayer());
 		playerstatus.setDiceNumber(number);
-		//status.set(game.getCurrentPlayer(), playerstatus);
 		statusService.saveStatus(playerstatus);
-		//game.setStatus(status);
-		//saveGame(game);
 	}
 	
 	@Transactional
@@ -224,9 +221,7 @@ public class GameService extends ScoreCountImpl{
 		Status playerstatus = status.get(game.getCurrentPlayer());
 		playerstatus.setDiceNumber(null);
 		playerstatus.setChosenIsland(null);
-//		status.set(game.getCurrentPlayer(), playerstatus);
 		statusService.saveStatus(playerstatus);
-//		game.setStatus(status);
 		nextPlayer(game);
 		if(game.getCurrentPlayer()==game.getInitialPlayer()) {
 			game.setCurrentRound(game.getCurrentRound()+1);
@@ -344,7 +339,7 @@ public class GameService extends ScoreCountImpl{
 		return statuses.stream().sorted(Comparator.comparing(Status::getScore).reversed()).collect(Collectors.toList());
 	}
 	
-	private void repartoInicial(Game game) {
+	public void repartoInicial(Game game) {
 		//Reparto inicial a jugadores
 		List<Status> status = game.getStatus();
 		List<Card> doblones = cardService.findDoubloons();	
@@ -375,7 +370,7 @@ public class GameService extends ScoreCountImpl{
 		game.setIslandStatus(l2);
 	}
 	
-	private void llenarIsla(Game game, IslandStatus is) {
+	public void llenarIsla(Game game, IslandStatus is) {
 		List<Card> deck = game.getCards();
 		if(deck.size()!=0) {
 			Card card = deck.get((int)(deck.size()* Math.random()));
@@ -387,7 +382,7 @@ public class GameService extends ScoreCountImpl{
 		islandStatusService.saveIslandStatus(is);
 	}
 	
-	private void asignacionInicialIslas(Game game) {
+	public void asignacionInicialIslas(Game game) {
 		List<Island> li = (List<Island>) islandService.islandFindAll();
 		List<IslandStatus> ls = new ArrayList<IslandStatus>();
 		for(int i = 0;i<li.size();i++) {
