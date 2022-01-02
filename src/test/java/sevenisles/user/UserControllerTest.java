@@ -13,26 +13,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
-<<<<<<< HEAD
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-<<<<<<< HEAD
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-=======
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
-import org.springframework.test.annotation.DirtiesContext;
->>>>>>> b664537d07f194e70c2d6a37ce35a7010b859b6f
 import org.springframework.test.web.servlet.MockMvc;
-=======
->>>>>>> 20299c814873b95ec4baae03db3a946c61577df0
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
