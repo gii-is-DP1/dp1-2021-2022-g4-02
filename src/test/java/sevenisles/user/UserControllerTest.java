@@ -1,5 +1,6 @@
 package sevenisles.user;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,6 +31,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @WebMvcTest(controllers = UserController.class, excludeFilters = @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE,
 classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
 public class UserControllerTest {
+
+	private static final Integer TEST_USER_ID = 1;
 
 	@Autowired
 	private MockMvc mockMvc; 
@@ -43,14 +48,24 @@ public class UserControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(context) 
 				.apply(SecurityMockMvcConfigurers.springSecurity()).build();
 
+		User user = new User();
+		user.setId(TEST_USER_ID);
+		user.setFirstName("Prueba");
+		user.setLastName("Uno");
+		user.setPassword("123");
+		user.setCreatedDate(LocalDateTime.now());
+		
+		Authorities auth = new Authorities();
+		auth.setAuthority("player");
+		user.setAuthorities(auth);
+		
+		when(this.userService.findUserById(TEST_USER_ID)).thenReturn(Optional.of(user));
 	}
 	
 	@Test
-	@WithMockUser(username="user1", password="user1")
+	@WithMockUser(value="spring")
 	void userDetailsTest() throws Exception{
 		mockMvc.perform(get("/profile")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
-				.andExpect(model().attribute("user", hasProperty("username", is("user1"))))
-				.andExpect(model().attribute("user", hasProperty("password", is("user1"))))
 				.andExpect(view().name("users/userDetails"));
 		
 	}
