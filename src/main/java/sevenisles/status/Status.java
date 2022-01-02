@@ -26,7 +26,7 @@ public class Status extends BaseEntity{
 	@ManyToOne(targetEntity = Game.class)
 	private Game game;
 	
-	@ManyToOne(targetEntity = Player.class)
+	@ManyToOne(cascade = CascadeType.REFRESH,targetEntity = Player.class)
 	private Player player;
 	
 	private Integer score;

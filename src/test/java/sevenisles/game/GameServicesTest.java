@@ -65,11 +65,13 @@ public class GameServicesTest {
 		this.islandStatusService = islandStatusService;
 	}
 	
+	List<Status> status = new ArrayList<Status>();
+	
 	@BeforeEach
 	public void init() {
         game = new Game();
         List<Card> deck =(List<Card>) cardService.cardFindAll();
-        List<Status> status = new ArrayList<Status>();
+        
         game.setStatus(status);
         game.setCards(deck);
         gameService.saveGame(game);
@@ -104,17 +106,15 @@ public class GameServicesTest {
 		}
 	}
 	
-//	@Test
-//	public void testFindGameByCode() {
-//		Game game = new Game();
-//		Player player = playerService.findPlayerById(1).get();
-//		game.addPlayer(player);
-//		game.setStartHour(LocalTime.now());
-//		game.setCode("GTHYUIL");
-//		gameService.saveGame(game);
-//		assertEquals(game.getId(),gameService.findGameByCode("GTHYUIL").get().getId());
-//
-//	}
+	@Test
+	public void testFindGameByCode() {
+		Game game = new Game();
+		game.setStartHour(LocalTime.now());
+		game.setCode("GTHYUIL");
+		gameService.saveGame(game);
+		assertEquals(game.getId(),gameService.findGameByCode("GTHYUIL").get().getId());
+
+	}
 	
 	@Test
 	public void testFindUnfinishedGames() {
@@ -257,12 +257,15 @@ public class GameServicesTest {
 		//assertTrue(model.getAttribute("loggedUserId").equals(loggedUserId));
 	}*/
 	
-	/*@Test
+	@Test
 	public void testStartGame() {
 		Player p1 = new Player();
-		p1.setId(30);
+		
+		playerService.savePlayer(p1);
 		Player p2 = new Player();
-		p2.setId(31);
+		playerService.savePlayer(p2);
+
+		
 		gameService.enterGame(game, p1);
 		gameService.enterGame(game, p2);
 		gameService.startGame(game);
@@ -274,7 +277,7 @@ public class GameServicesTest {
 		}
 		assertTrue(game.getCurrentRound()==1);
 		
-	}*/
+	}
 	
 	@Test
 	public void testMaxTurns() {
@@ -402,5 +405,28 @@ public class GameServicesTest {
 		
 		assertTrue(numCardsInHand);
 		assertTrue(doubloonsInHand);
+	}
+	
+	@Test
+	public void testOrderStatusByScore() {
+		
+		Status statuscheckone = new Status();
+		Status statuschecktwo = new Status();
+		Status statuscheckthree = new Status();
+		
+		statuscheckone.setScore(20);
+		statuschecktwo.setScore(40);
+		statuscheckthree.setScore(25);
+		
+		statusService.saveStatus(statuscheckone);
+		statusService.saveStatus(statuschecktwo);
+		statusService.saveStatus(statuscheckthree);
+		
+		status.add(statuscheckone);
+		status.add(statuscheckone);
+		status.add(statuscheckone);
+		
+		List<Status> statusordered = gameService.orderStatusByScore(status);
+		assertEquals(statuscheckone.getScore(),statusordered.get(1).getScore());
 	}
 }
