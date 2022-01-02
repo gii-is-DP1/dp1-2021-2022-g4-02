@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -20,35 +21,58 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
+import sevenisles.card.CardType;
+import sevenisles.island.Island;
+import sevenisles.island.IslandService;
+import sevenisles.islandStatus.IslandStatus;
+import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
+import sevenisles.user.User;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class GameServicesTest {
 	
-	@Autowired
+
 	private GameService gameService;
-	@Autowired
+
 	private PlayerService playerService;
-	@Autowired
+
 	private CardService cardService;
-	@Autowired
+
 	private StatusService statusService;
 	
-	Game game = new Game();
+	private IslandService islandService;
+	
+	private IslandService islandStatusService;
+	
+	Game game;
+	
+	@Autowired
+	public GameServicesTest(GameService gameService, PlayerService playerService, CardService cardService, StatusService statusService, IslandService islandService, IslandService islandStatusService) {
+		this.gameService = gameService;
+		this.playerService = playerService;
+		this.cardService = cardService;
+		this.statusService = statusService;
+		this.islandService = islandService;
+		this.islandStatusService = islandStatusService;
+	}
 	
 	@BeforeEach
 	public void init() {
-		game.setId(23);
-		Iterator<Card> cards = cardService.cardFindAll().iterator();
-		List<Card> deck = StreamSupport.stream(Spliterators.spliteratorUnknownSize(cards, Spliterator.ORDERED), false).collect(Collectors.toList());
-		game.setCards(deck);
+        game = new Game();
+        List<Card> deck =(List<Card>) cardService.cardFindAll();
+        List<Status> status = new ArrayList<Status>();
+        game.setStatus(status);
+        game.setCards(deck);
+        gameService.saveGame(game);
 	}
 	
 	@Test
@@ -119,7 +143,8 @@ public class GameServicesTest {
 	@Test
 	public void testSaveGame() {
 		int count = gameService.gameCount();
-		gameService.saveGame(game);
+		Game g2 = new Game();
+		gameService.saveGame(g2);
 		assertEquals(count+1,gameService.gameCount());
 	}
 	
@@ -148,7 +173,7 @@ public class GameServicesTest {
 		for(Integer i=0;i<availableGames.size();i++) {
 			assertEquals(availableGames.get(i).getStartHour(),null);
 			assertEquals(availableGames.get(i).getEndHour(),null);
-			assertTrue(availableGames.get(i).getStatus().size()<4);
+			assertTrue(availableGames.get(i).getStatus()==null||availableGames.get(i).getStatus().size()<4);
 		}
 	}
 	
@@ -177,39 +202,205 @@ public class GameServicesTest {
 	public void testDeleteCardFromDeckWithIds() {
 		int deckBefore = game.getCards().size();
 		Card cardToDelete = game.getCards().get(0);
-		System.out.println("mazo antes "+deckBefore);
-		System.out.println("----------------------------"+game.getId());
-		System.out.println("----------------------------"+cardToDelete.getId());
 		gameService.deleteCardFromDeck(game.getId(), cardToDelete.getId());
 		System.out.println(game.getCards().get(0).getId());
 		gameService.saveGame(game);
-		System.out.println("cartas actuales "+game.getCards().size());
 		assertEquals(game.getCards().size(),deckBefore-1);
-		assertFalse(game.getCards().contains(cardToDelete));	
+		for(Card c:game.getCards()) {
+            assertFalse(c.getId()==cardToDelete.getId());
+        }	
 	}
 	
 	@Test
 	public void testDeleteCardFromDeck() {
 		int deckBefore = game.getCards().size();
-		Card cardToDelete = game.getCards().get(0);
+		Card cardToDelete = cardService.findCardById(1).get();
 		System.out.println("mazo antes "+deckBefore);
 		gameService.deleteCardFromDeck(game, cardToDelete);
-		gameService.saveGame(game);
-		System.out.println("cartas actuales "+game.getCards().size());
 		assertEquals(game.getCards().size(),deckBefore-1);
-		assertFalse(game.getCards().contains(cardToDelete));	
+		System.out.println("contiene la carta eliminada???"+game.getCards().contains(cardToDelete));
+		for(Card c:game.getCards()) {
+            assertFalse(c.getId()==cardToDelete.getId());
+        }	
 	}
 
 	@Test
-	public void createGame() {
+	public void testCreateGame() {
 		Player player = new Player();
-		player.setId(10);
-		Game game = new Game();
-		game.setId(20);
-		gameService.createGame(game, player);
-		Optional<Status> status = statusService.findStatusByGameAndPlayer(game.getId(), player.getId());
-		assertTrue(gameService.findNotStartedGames().contains(game));
+		playerService.savePlayer(player);
+		Game game1 = new Game();
+		gameService.createGame(game1, player);
+		Optional<Status> status = statusService.findStatusByGameAndPlayer(game1.getId(), player.getId());
+		assertTrue(gameService.findNotStartedGames().contains(game1));
 		assertFalse(status.get().equals(null));
 	}
 	
+	/*@Test
+	public void testUtilAttributes() {
+		ModelMap model = new ModelMap();
+		User user = new User();
+		user.setUsername("Manolito");
+		Player player = new Player();
+		player.setUser(user);
+		gameService.enterGame(game, player);
+		Integer currentPlayer = 0;
+		game.setCurrentPlayer(currentPlayer);
+		
+		gameService.utilAttributes(game, model);
+		
+		Status status = game.getStatus().get(currentPlayer);
+		Integer playerUserId = status.getPlayer().getUser().getId();
+		//Necesitamos añadirle el currentUser al modelo
+		//Integer loggedUserId = ;
+		assertTrue(model.getAttribute("currentPlayerStatus").equals(status));
+		assertTrue(model.getAttribute("playerUserId").equals(playerUserId));
+		//assertTrue(model.getAttribute("loggedUserId").equals(loggedUserId));
+	}*/
+	
+	/*@Test
+	public void testStartGame() {
+		Player p1 = new Player();
+		p1.setId(30);
+		Player p2 = new Player();
+		p2.setId(31);
+		gameService.enterGame(game, p1);
+		gameService.enterGame(game, p2);
+		gameService.startGame(game);
+		assertTrue(game.getStartHour()!=null);
+		assertTrue(game.getCurrentRound()==1);
+		List<Island> li = (List<Island>) islandService.islandFindAll();
+		for(int i = 0;i<li.size();i++) {
+			assertTrue(game.getIslandStatus().get(i).getCard()!=null);
+		}
+		assertTrue(game.getCurrentRound()==1);
+		
+	}*/
+	
+	@Test
+	public void testMaxTurns() {
+		Game g2 = new Game();
+		Player p1 = new Player();
+		Player p2 = new Player();
+		gameService.enterGame(g2, p1);
+		gameService.enterGame(g2, p2);
+		gameService.maxTurns(g2);
+		assertEquals(g2.getMaxRounds(), 27);
+	}
+	
+	@Test
+	public void testPlayerThrowDice() {
+		Game g2 = new Game();
+		Player p1 = new Player();
+		Player p2 = new Player();
+		gameService.enterGame(g2, p1);
+		gameService.enterGame(g2, p2);
+		Integer currentPlayer = 0;
+		g2.setCurrentPlayer(currentPlayer);
+		gameService.playerThrowDice(g2);
+		Integer diceNumber = g2.getStatus().get(currentPlayer).getDiceNumber();
+		assertTrue(diceNumber>=1 && diceNumber<=6);
+	}
+	
+	@Test
+	public void testNextTurn1() {
+		Game g2 = new Game();
+		Player p1 = new Player();
+		Player p2 = new Player();
+		gameService.enterGame(g2, p1);
+		gameService.enterGame(g2, p2);
+		g2.setInitialPlayer(1);
+		g2.setCurrentRound(3);
+		Integer roundBefore = g2.getCurrentRound();
+		Integer currentPlayer = 0;
+		g2.setCurrentPlayer(currentPlayer);
+		
+		gameService.nextTurn(g2);
+		assertEquals(g2.getStatus().get(currentPlayer).getDiceNumber(), null);
+		assertEquals(g2.getStatus().get(currentPlayer).getChosenIsland(), null);
+		assertEquals(g2.getCurrentPlayer(),(currentPlayer+1)%g2.getStatus().size());
+		assertEquals(g2.getCurrentRound(), roundBefore+1);
+		assertEquals(g2.getFinishedTurn(),0);
+	}
+	
+	@Test
+	public void testNextTurn2() {
+		Game g2 = new Game();
+		Player p1 = new Player();
+		Player p2 = new Player();
+		gameService.enterGame(g2, p1);
+		gameService.enterGame(g2, p2);
+		g2.setInitialPlayer(0);
+		g2.setCurrentRound(3);
+		Integer roundBefore = g2.getCurrentRound();
+		Integer currentPlayer = 0;
+		g2.setCurrentPlayer(currentPlayer);
+		
+		gameService.nextTurn(g2);
+		assertEquals(g2.getStatus().get(currentPlayer).getDiceNumber(), null);
+		assertEquals(g2.getStatus().get(currentPlayer).getChosenIsland(), null);
+		assertEquals(g2.getCurrentPlayer(),(currentPlayer+1)%g2.getStatus().size());
+		assertEquals(g2.getCurrentRound(), roundBefore);
+		assertEquals(g2.getFinishedTurn(),0);
+	}
+	
+	@Test
+	public void testLlenarIsla1() {
+		gameService.asignacionInicialIslas(game);
+		IslandStatus islSt = game.getIslandStatus().get(0);
+		gameService.llenarIsla(game, islSt);
+		Card islandCard = game.getIslandStatus().get(0).getCard();
+		assertNotEquals(islandCard, null);
+		for(Card c:game.getCards()) {
+            assertFalse(c.getId()==islandCard.getId());
+        }	
+	}
+	
+	@Test
+	public void testLlenarIsla2() {
+		Game g2 = new Game();
+		g2.setCards(new ArrayList<Card>());
+		gameService.asignacionInicialIslas(g2);
+		IslandStatus islSt = g2.getIslandStatus().get(0);
+		gameService.llenarIsla(g2, islSt);
+		assertEquals(g2.getIslandStatus().get(0).getCard(), null);
+	}
+	
+	@Test
+	public void testAsignacionInicialIslas(){
+		gameService.asignacionInicialIslas(game);
+		assertEquals(game.getIslandStatus().size(), 6);
+		Boolean emptyIslands = true;
+		for(IslandStatus islSt: game.getIslandStatus()) {
+			if(islSt.getCard()!=null) emptyIslands = false;
+		}
+		assertTrue(emptyIslands);
+	}
+	
+	@Test
+	public void testRepartoInicial() {
+		//Todavia no tiene la cobertura total del método del servicio
+		//Hace falta retocar
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		
+		Boolean filledIslands = true;
+		for(IslandStatus islSt: game.getIslandStatus()) {
+			if(islSt.getCard()==null) filledIslands = false;
+		}
+		assertTrue(filledIslands);
+		
+		Boolean numCardsInHand = true;
+		Boolean doubloonsInHand = true;
+		for(Status st: game.getStatus()) {
+			Integer countDoubloons = 0;
+			for(Card card: st.getCards()) {
+				if(card.getCardType()==CardType.DOBLON) countDoubloons++;
+			}
+			if(st.getCards().size()!=3) numCardsInHand = false;
+			if(countDoubloons != 3) doubloonsInHand = false;
+		}
+		
+		assertTrue(numCardsInHand);
+		assertTrue(doubloonsInHand);
+	}
 }

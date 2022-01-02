@@ -109,6 +109,12 @@ public class UserServiceTest {
 		assertEquals(count,countinicial-1);
 	}
 	
-	
+	@Test
+	public void testDeleteUserById() {
+		int countinicial = userServices.userCount();
+		userServices.deleteUser(newuser.getId());
+		int count = userServices.userCount();
+		assertEquals(count,countinicial-1);
+	}
 
 }
