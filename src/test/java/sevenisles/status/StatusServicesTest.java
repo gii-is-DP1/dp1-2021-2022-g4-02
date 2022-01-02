@@ -25,22 +25,31 @@ import sevenisles.game.Game;
 import sevenisles.game.GameService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.user.User;
+import sevenisles.user.UserService;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class StatusServicesTest {
 	
-	@Autowired
 	private StatusService statusServices;
-	
-	@Autowired
+
 	private GameService gameServices;
 	
-	@Autowired
 	private PlayerService playerServices;
 	
-	@Autowired
 	private CardService CardService;
+	
+	private UserService userService;
+	
+	@Autowired
+	public StatusServicesTest(StatusService statusServices, GameService gameServices, PlayerService playerServices, CardService CardService, UserService userServices) {
+		this.statusServices = statusServices;
+		this.gameServices = gameServices;
+		this.playerServices = playerServices;
+		this.CardService = CardService;
+		this.userService = userServices;
+	} 
 	
 	Status newstatus = new Status();
 	Status newtwostatus = new Status();
@@ -52,7 +61,15 @@ public class StatusServicesTest {
 
 	@BeforeEach
 	public void init() {
+		User user1 = new User();
+		user1.setUsername("prueba");
 		playerServices.savePlayer(newplayer);
+		user1.setPlayer(newplayer);
+		user1.setFirstName("Prueba");
+		user1.setLastName("Uno");
+		user1.setPassword("123");
+		userService.saveUser(user1);
+		playerServices.savePlayer(newtwoplayer);
 		statusServices.saveStatus(newstatus);
 		gameServices.saveGame(newgame);
 		
@@ -84,7 +101,7 @@ public class StatusServicesTest {
 	@Test
 	public void testIsInAnotherGame() {
 	boolean expected = false;
-	boolean cond = statusServices.isInAnotherGame(newplayer);
+	boolean cond = statusServices.isInAnotherGame(newtwoplayer);
 	assertEquals(cond,expected);
 	
 	}
@@ -327,16 +344,18 @@ public class StatusServicesTest {
 	}
 	
 	/*------------------------REVISAR----------*/
-	@WithMockUser(username="player1")
+	@WithMockUser(username="prueba")
 	@Test
 	public void testDeleteCardFromHand() {
 		
 		boolean expected = false;
-		Card randomcard = newstatus.getCards().get(0);
+		List<Card> lsBefore = newstatus.getCards();
+		Card randomcard = CardService.findCardById(lsBefore.get(0).getId()).get();
 		statusServices.deleteCardFromHand(newgame,randomcard);
 		boolean existscard = statusServices.cardInHand(newstatus,randomcard);
+		List<Card> lsAfter= newstatus.getCards();
 		assertEquals(existscard,expected);
-	
+		assertEquals(lsBefore.size()-1,lsAfter.size());
 	}
 	
 	
