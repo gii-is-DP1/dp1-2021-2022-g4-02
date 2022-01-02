@@ -140,6 +140,7 @@ public class StatusService {
 	@Transactional
 	public void deleteCardFromHand(Game game, Integer cardId) {
 		Optional<Player> playeropt = playerService.findCurrentPlayer();
+		
 		if(playeropt.isPresent()) {
 			Optional<Status> statusopt = findStatusByGameAndPlayer(game.getId(), playeropt.get().getId());
 			if(statusopt.isPresent()) {
