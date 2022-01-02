@@ -2,6 +2,7 @@ package sevenisles.status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.stereotype.Service;
 
 import sevenisles.card.Card;
@@ -100,13 +102,37 @@ public class StatusServicesTest {
 	
 	@Test
 	public void testIsInAnotherGame() {
-	boolean expected = false;
+	boolean expected = true;
+	newtwostatus.setGame(newgame);
+	newtwostatus.setPlayer(newtwoplayer);
+	statusServices.saveStatus(newtwostatus);
 	boolean cond = statusServices.isInAnotherGame(newtwoplayer);
 	assertEquals(cond,expected);
 	
 	}
 	
 	
+	@Test
+	public void testIsInAnotherGameNotPresent() {
+	boolean expected = false;
+	
+	boolean cond = statusServices.isInAnotherGame(newtwoplayer);
+	assertEquals(cond,expected);
+	
+	}
+	
+	@Test
+	public void testIsInAnotherGameFilters() {
+	boolean expected = false;
+	newgame.setStartHour(LocalTime.now());
+	newgame.setEndHour(LocalTime.now());
+	newtwostatus.setGame(newgame);
+	newtwostatus.setPlayer(newtwoplayer);
+	statusServices.saveStatus(newtwostatus);
+	boolean cond = statusServices.isInAnotherGame(newtwoplayer);
+	assertEquals(cond,expected);
+	
+	}
 	
 	@Test
 	public void findStatusByGame() {
@@ -344,7 +370,7 @@ public class StatusServicesTest {
 	}
 	
 	/*------------------------REVISAR----------*/
-	@WithMockUser(username="prueba")
+	@WithMockUser(username="prueba")	
 	@Test
 	public void testDeleteCardFromHand() {
 		
