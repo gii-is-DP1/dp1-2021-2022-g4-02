@@ -68,7 +68,7 @@ public class UserControllerTest {
 	@Test
 	@WithMockUser(value="spring")
 	void userDetailsTest() throws Exception{
-		mockMvc.perform(get("/profile")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
+		mockMvc.perform(get("user/profile")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
 				.andExpect(view().name("users/userDetails"));
 		
 	}
