@@ -12,12 +12,14 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,12 +29,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import sevenisles.configuration.SecurityConfiguration;
+import sevenisles.util.ManualLogin;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations={"file:src/main/webapp/WEB-INF/jetty-web.xml"})
-@WebMvcTest(controllers = UserController.class, excludeFilters = @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE,
-classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
-
+@WebMvcTest(value=UserController.class,
+		excludeFilters = @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE,classes = WebSecurityConfigurer.class),
+		excludeAutoConfiguration = SecurityConfiguration.class)
 public class UserControllerTest {
 
 	private static final Integer TEST_USER_ID = 1;
@@ -42,6 +45,10 @@ public class UserControllerTest {
 	
 	@MockBean
 	private UserService userService;
+	
+	@MockBean
+	private UserController userController;
+	
 	
 	@Autowired
 	private WebApplicationContext context;
@@ -53,6 +60,7 @@ public class UserControllerTest {
 
 		User user = new User();
 		user.setId(TEST_USER_ID);
+		user.setUsername("spring");
 		user.setFirstName("Prueba");
 		user.setLastName("Uno");
 		user.setPassword("123");
@@ -62,15 +70,31 @@ public class UserControllerTest {
 		auth.setAuthority("player");
 		user.setAuthorities(auth);
 		
-		when(this.userService.findUserById(TEST_USER_ID)).thenReturn(Optional.of(user));
+		Mockito.when(this.userService.findUserById(TEST_USER_ID)).thenReturn(Optional.of(user));
+		Mockito.when(this.userService.findCurrentUser()).thenReturn(Optional.of(user));
+	}
+	
+	
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void userDetailsTest() throws Exception{
+		System.out.println(SecurityContextHolder.getContext().getAuthentication());
+		mockMvc.perform(get("/profile")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
+				.andExpect(view().name("users/userDetails"));
 	}
 	
 	@Test
-	@WithMockUser(value="spring")
-	void userDetailsTest() throws Exception{
-		mockMvc.perform(get("/profile")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
-				.andExpect(view().name("users/userDetails"));
-		
+	@WithMockUser(value="spring", authorities=("player"))
+	void initUpdateForm() throws Exception{
+		mockMvc.perform(get("/profile/edit")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
+				.andExpect(view().name("users/createOrUpdateUserForm"));
+	}
+	
+	@Test
+	void initCreationUserForm() throws Exception{
+		mockMvc.perform(get("/users/new")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
+				.andExpect(view().name("users/createOrUpdateUserForm"));
 	}
 	
 }
