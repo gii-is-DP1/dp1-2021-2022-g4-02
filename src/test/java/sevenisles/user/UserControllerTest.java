@@ -1,7 +1,8 @@
 package sevenisles.user;
 
-import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -29,10 +30,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import sevenisles.configuration.SecurityConfiguration;
-import sevenisles.util.ManualLogin;
+import sevenisles.player.PlayerService;
 
+//locations={"file:src/main/webapp/WEB-INF/jetty-web.xml"}
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations={"file:src/main/webapp/WEB-INF/jetty-web.xml"})
+@ContextConfiguration(classes=UserController.class)
 @WebMvcTest(value=UserController.class,
 		excludeFilters = @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE,classes = WebSecurityConfigurer.class),
 		excludeAutoConfiguration = SecurityConfiguration.class)
@@ -47,7 +49,13 @@ public class UserControllerTest {
 	private UserService userService;
 	
 	@MockBean
+	private PlayerService playerService;
+	
+	@Autowired
 	private UserController userController;
+	
+	@MockBean
+	private AuthoritiesService authoritiesService;
 	
 	
 	@Autowired
@@ -55,8 +63,8 @@ public class UserControllerTest {
 	
 	@BeforeEach
 	public void setup() { 
-		mockMvc = MockMvcBuilders.webAppContextSetup(context) 
-				.apply(SecurityMockMvcConfigurers.springSecurity()).build();
+//		mockMvc = MockMvcBuilders.webAppContextSetup(context) 
+//				.apply(SecurityMockMvcConfigurers.springSecurity()).build();
 
 		User user = new User();
 		user.setId(TEST_USER_ID);
@@ -80,20 +88,63 @@ public class UserControllerTest {
 	@WithMockUser(value="spring", authorities=("player"))
 	void userDetailsTest() throws Exception{
 		System.out.println(SecurityContextHolder.getContext().getAuthentication());
-		mockMvc.perform(get("/profile")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
+		mockMvc.perform(get("/profile")).andExpect(status().isOk())
+				.andExpect(model().attributeExists("user"))
 				.andExpect(view().name("users/userDetails"));
+	}
+	
+	@Test
+	void userDetailsTestNoUser() throws Exception{
+		System.out.println(SecurityContextHolder.getContext().getAuthentication());
+		mockMvc.perform(get("/profile")).andExpect(status().isUnauthorized());
 	}
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
 	void initUpdateForm() throws Exception{
-		mockMvc.perform(get("/profile/edit")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
+		mockMvc.perform(get("/profile/edit")).andExpect(status().isOk())
+				.andExpect(model().attributeExists("user"))
+				.andExpect(view().name("users/createOrUpdateUserForm"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void processUpdateForm() throws Exception{
+		mockMvc.perform(post("/profile/edit")
+						.with(csrf())
+						.param("firstName", "Juan")
+						.param("lastName", "Palomo")
+						.param("username", "Juanito")
+						.param("password", "123"))
+				.andExpect(status().isOk())
+				.andExpect(model().attributeExists("user"))
+				.andExpect(view().name("users/userDetails"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void processUpdateFormError() throws Exception{
+		mockMvc.perform(post("/profile/edit")
+						.with(csrf())
+						.param("firstName", "Ju")
+						.param("lastName", "Palomo")
+						.param("username", "Juanito")
+						.param("password", "123"))
+				.andExpect(status().isOk())
+				.andExpect(model().attributeHasErrors("user"))
 				.andExpect(view().name("users/createOrUpdateUserForm"));
 	}
 	
 	@Test
 	void initCreationUserForm() throws Exception{
-		mockMvc.perform(get("/users/new")).andExpect(status().isOk()).andExpect(model().attributeExists("user"))
+		mockMvc.perform(post("/users/new")
+						.with(csrf())
+						.param("firstName", "Juan")
+                        .param("lastName", "Palomo")
+                        .param("username", "Juanito")
+                        .param("password", "123"))
+		.andExpect(status().is(401))
+				.andExpect(model().attributeExists("user"))
 				.andExpect(view().name("users/createOrUpdateUserForm"));
 	}
 	

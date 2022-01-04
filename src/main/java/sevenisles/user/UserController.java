@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import sevenisles.player.Player;
@@ -42,6 +43,7 @@ import sevenisles.util.ManualLogin;
 public class UserController {
 
 	private static final String VIEWS_USER_CREATE_OR_UPDATE_FORM = "users/createOrUpdateUserForm";
+	private static final String VIEWS_USER_DETAILS = "users/userDetails";
 //	private static final String VIEWS_ERROR = "error";
 	
 	private PlayerService playerService;
@@ -60,18 +62,16 @@ public class UserController {
 	//Get detalles de usuario
 	@GetMapping(value = "/profile")
 	public String userDetails(ModelMap modelMap){
-		String vista = "users/userDetails";
 		Optional<User> user = userService.findCurrentUser();
-		if(user.isPresent()) modelMap.addAttribute("user", user.get());
-		return vista;
+		modelMap.addAttribute("user", user.get());
+		return VIEWS_USER_DETAILS;
 	}
 	
 	/* Edición de un usuario */
 	@GetMapping(value = "profile/edit")
 	public String initUpdateForm(Model model ) {
 		Optional<User> user = this.userService.findCurrentUser();
-		if(user.isPresent()) model.addAttribute(user.get());
-		else model.addAttribute("message", "No estás logueado!");
+		model.addAttribute("user", user.get());
 		return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 	}
 	
@@ -86,7 +86,7 @@ public class UserController {
 			BeanUtils.copyProperties(user, userToUpdate,"id");
 			this.userService.saveUser(userToUpdate);
 			ManualLogin.login(userToUpdate);
-			return "redirect:/profile";
+			return VIEWS_USER_DETAILS;
 		}
 		
 	}
