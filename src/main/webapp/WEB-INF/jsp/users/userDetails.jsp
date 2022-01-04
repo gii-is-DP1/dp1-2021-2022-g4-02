@@ -5,7 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
-<petclinic:layout pageName="user">
+<petclinic:layout pageName="users">
     <h2>Profile</h2>
 
     <table id="userTable" class="table table-striped">

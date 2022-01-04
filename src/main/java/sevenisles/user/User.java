@@ -11,7 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -33,16 +35,19 @@ public class User extends UserAuditory implements Serializable, Comparable<User>
 	private Integer id;
 	
 	
-	@NotEmpty
+	@NotBlank
 	@Column(unique=true)
+	@Size(min = 3, max = 50)
 	String username;
 	
-	@NotEmpty
+	@NotBlank
 	String password;
 	
-	@NotEmpty
+	@NotBlank
+	@Size(min = 3, max = 50)
 	String firstName;
-	@NotEmpty
+	@NotBlank
+	@Size(min = 3, max = 50)
 	String lastName;
 	
 	boolean enabled;
