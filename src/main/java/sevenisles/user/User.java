@@ -59,7 +59,8 @@ public class User extends UserAuditory implements Serializable, Comparable<User>
 	Player player;
 	
 	public static String getCurrentUser() {
-		return SecurityContextHolder.getContext().getAuthentication().getName();
+		if(SecurityContextHolder.getContext().getAuthentication()==null) return "";
+		else return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 
 	@Override
