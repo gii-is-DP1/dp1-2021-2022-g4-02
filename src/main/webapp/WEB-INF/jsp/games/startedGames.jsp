@@ -14,7 +14,6 @@
           	<th>Código</th>
             <th>Hora de comienzo</th>
             <th>Jugadores</th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -31,11 +30,6 @@
                     	<p><c:out value="${status.player.user.username}" /></p>
                     </c:forEach>
                 </td>
-				<td>
-					<div style="text-align: center">
-						<button class="btn btn-default" type="submit">Espectar</button>
-					</div>
-				</td>
 				</tr>
         </c:forEach>
         </tbody>
