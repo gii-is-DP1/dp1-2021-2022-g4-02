@@ -46,8 +46,14 @@ public class PlayerService {
 	
 	@Transactional(readOnly = true)
 	public Optional<Player> findCurrentPlayer() throws DataAccessException {
-		Optional<Player> player = playerRepository.findCurrentPlayer(User.getCurrentUser());
-		return player;
+		if(User.getCurrentUser()=="") {
+			Optional<Player> player = Optional.empty();
+			return player;
+		}else {
+			Optional<Player> player = playerRepository.findCurrentPlayer(User.getCurrentUser());
+			return player;
+		}
+		
 	}
 	
 }

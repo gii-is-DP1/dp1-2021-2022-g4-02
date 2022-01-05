@@ -1,7 +1,9 @@
 package sevenisles.game;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalTime;
@@ -20,12 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.card.CardType;
+import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.island.Island;
 import sevenisles.island.IslandService;
 import sevenisles.islandStatus.IslandStatus;
@@ -34,7 +38,11 @@ import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
+import sevenisles.user.Authorities;
+import sevenisles.user.AuthoritiesService;
 import sevenisles.user.User;
+import sevenisles.user.UserService;
+import sevenisles.util.ManualLogin;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -53,24 +61,58 @@ public class GameServicesTest {
 	
 	private IslandService islandStatusService;
 	
+	private UserService userService;
+	
+	private AuthoritiesService authService;
+	
 	Game game;
 	
 	@Autowired
-	public GameServicesTest(GameService gameService, PlayerService playerService, CardService cardService, StatusService statusService, IslandService islandService, IslandService islandStatusService) {
+	public GameServicesTest(GameService gameService, PlayerService playerService, CardService cardService, StatusService statusService,
+			IslandService islandService, IslandService islandStatusService, UserService userService,AuthoritiesService authService) {
 		this.gameService = gameService;
 		this.playerService = playerService;
 		this.cardService = cardService;
 		this.statusService = statusService;
 		this.islandService = islandService;
 		this.islandStatusService = islandStatusService;
+		this.userService=userService;
+		this.authService=authService;
 	}
 	
-	List<Status> status = new ArrayList<Status>();
+	List<Status> status;
 	
 	@BeforeEach
 	public void init() {
         game = new Game();
+        status = new ArrayList<Status>();
         List<Card> deck =(List<Card>) cardService.cardFindAll();
+        
+        User user = new User();
+        user.setUsername("test");
+        user.setFirstName("Perico");
+        user.setLastName("El de los palotes");
+        user.setPassword("prueba");
+        
+        Authorities auth = new Authorities();
+        auth.setAuthority("player");
+        auth.setUser(user);
+        authService.saveAuthorities(auth);
+        user.setAuthorities(auth);
+        
+        Player player = new Player();
+        player.setUser(user);
+        playerService.savePlayer(player);
+        user.setPlayer(player);
+        
+        userService.saveUser(user);
+        
+        Status status1 = new Status();
+        status1.setPlayer(player);
+        status1.setGame(game);
+        status1.setScore(10);
+        statusService.saveStatus(status1);
+        status.add(status1);
         
         game.setStatus(status);
         game.setCards(deck);
@@ -223,6 +265,20 @@ public class GameServicesTest {
             assertFalse(c.getId()==cardToDelete.getId());
         }	
 	}
+	
+	@Test
+	@WithMockUser(username="test")
+	public void testLoggedUserBelongsToGame() {
+		Boolean cond = gameService.loggedUserBelongsToGame(game);
+		assertEquals(true, cond);
+	}
+	
+	@Test
+	@WithMockUser(username="test2", authorities="admin")
+	public void testLoggedUserBelongsToGameError() {
+		Boolean cond = gameService.loggedUserBelongsToGame(game);
+		assertEquals(false, cond);
+	}
 
 	@Test
 	public void testCreateGame() {
@@ -233,6 +289,39 @@ public class GameServicesTest {
 		Optional<Status> status = statusService.findStatusByGameAndPlayer(game1.getId(), player.getId());
 		assertTrue(gameService.findNotStartedGames().contains(game1));
 		assertFalse(status.get().equals(null));
+	}
+	
+	@Test
+	@WithMockUser(username="test")
+	public void testEnterGameUtil()  {
+		try {
+			Player player = gameService.enterGameUtil(game);
+			assertEquals("test", player.getUser().getUsername());
+		} catch (GameControllerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@WithMockUser(username="test")
+	public void testEnterGameUtilFullGame()  {
+		Status status1 = new Status();
+		Status status2 = new Status();
+		Status status3 = new Status();
+		status1.setGame(game);status2.setGame(game);status3.setGame(game);
+		status.add(status1);status.add(status2);status.add(status3);
+		game.setStatus(status);
+		assertThrows(GameControllerException.class,()->{
+			gameService.enterGameUtil(game);
+		});
+	}
+	
+	@Test
+	public void testEnterGameUtilNotLogged()  {
+		assertThrows(GameControllerException.class,()->{
+			gameService.enterGameUtil(game);
+		});
 	}
 	
 	/*@Test
@@ -423,10 +512,10 @@ public class GameServicesTest {
 		statusService.saveStatus(statuscheckthree);
 		
 		status.add(statuscheckone);
-		status.add(statuscheckone);
-		status.add(statuscheckone);
+		status.add(statuschecktwo);
+		status.add(statuscheckthree);
 		
 		List<Status> statusordered = gameService.orderStatusByScore(status);
-		assertEquals(statuscheckone.getScore(),statusordered.get(1).getScore());
+		assertEquals(statuschecktwo.getScore(),statusordered.get(0).getScore());
 	}
 }

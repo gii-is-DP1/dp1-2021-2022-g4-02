@@ -29,6 +29,7 @@ import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.user.User;
 import sevenisles.user.UserService;
+import sevenisles.util.ManualLogin;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -53,18 +54,26 @@ public class StatusServicesTest {
 		this.userService = userServices;
 	} 
 	
-	Status newstatus = new Status();
-	Status newtwostatus = new Status();
-	Player newplayer = new Player();
-	Player newtwoplayer = new Player();
-	Game newgame = new Game();
+	Status newstatus;
+	Status newtwostatus;
+	Player newplayer;
+	Player newtwoplayer;
+	Game newgame;
 	
 	
 
 	@BeforeEach
 	public void init() {
+		
+		newstatus = new Status();
+		newtwostatus = new Status();
+		newplayer = new Player();
+		newtwoplayer = new Player();
+		newgame = new Game();
+		
 		User user1 = new User();
 		user1.setUsername("prueba");
+		newplayer.setUser(user1);
 		playerServices.savePlayer(newplayer);
 		user1.setPlayer(newplayer);
 		user1.setFirstName("Prueba");
@@ -72,13 +81,10 @@ public class StatusServicesTest {
 		user1.setPassword("123");
 		userService.saveUser(user1);
 		playerServices.savePlayer(newtwoplayer);
-		statusServices.saveStatus(newstatus);
 		gameServices.saveGame(newgame);
 		
 		Card firstcard = CardService.findCardById(1).get();
-		CardService.saveCard(firstcard);
 		Card secondcard = CardService.findCardById(2).get();
-		CardService.saveCard(secondcard);
 		
 		List<Card> cards = new ArrayList<>();
 		cards.add(firstcard);
@@ -88,6 +94,7 @@ public class StatusServicesTest {
 		newstatus.setGame(newgame);
 		newstatus.setPlayer(newplayer);
 		newstatus.setScore(26);
+		newstatus.setNumberOfCardsToPay(1);
 		statusServices.saveStatus(newstatus);
 	}
 	
@@ -237,9 +244,6 @@ public class StatusServicesTest {
 		playerServices.savePlayer(newtwoplayer);
 		statusServices.saveStatus(newtwostatus);
 		
-		
-		
-
 		newtwostatus.setGame(newgame);
 		newtwostatus.setPlayer(newtwoplayer);
 		newtwostatus.setWinner(1);
@@ -376,11 +380,11 @@ public class StatusServicesTest {
 		
 		boolean expected = false;
 		List<Card> lsBefore = newstatus.getCards();
-		Card randomcard = CardService.findCardById(lsBefore.get(0).getId()).get();
+		Card randomcard = lsBefore.get(0);
 		statusServices.deleteCardFromHand(newgame,randomcard);
 		boolean existscard = statusServices.cardInHand(newstatus,randomcard);
 		List<Card> lsAfter= newstatus.getCards();
-		assertEquals(existscard,expected);
+		assertEquals(expected,existscard);
 		assertEquals(lsBefore.size()-1,lsAfter.size());
 	}
 	
