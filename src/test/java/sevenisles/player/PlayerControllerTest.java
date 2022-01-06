@@ -86,19 +86,21 @@ public class PlayerControllerTest {
 	
 	}
 	
-//	@Test
-//	@WithMockUser(value="spring", authorities=("player"))
-//	void playerListTest() throws Exception{
-//		mockMvc.perform(get("/players")).andExpect(status().isOk())
-//			.andExpect(model().attributeExists("players"))
-//			.andExpect(view().name("players/playersList"));
-//	}
-//	
-//	@Test
-//	@WithMockUser(value="spring", authorities=("player"))
-//	void playerListByIdTest() throws Exception{
-//		mockMvc.perform(get("/players/{playerId}",TEST_PLAYER_ID)).andExpect(status().isOk())
-//			.andExpect(model().attributeExists("player"))
-//			.andExpect(view().name("players/playersDetails"));
-//	}
+
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void playerListTest() throws Exception{
+		mockMvc.perform(get("/players")).andExpect(status().isOk())
+			.andExpect(model().attributeExists("players"))
+			.andExpect(view().name("players/playersList"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void playerListByIdTest() throws Exception{
+		mockMvc.perform(get("/players/{playerId}",TEST_PLAYER_ID)).andExpect(status().isOk())
+			.andExpect(model().attributeExists("player"))
+			.andExpect(view().name("player/playerDetails"));
+	}
+
 }

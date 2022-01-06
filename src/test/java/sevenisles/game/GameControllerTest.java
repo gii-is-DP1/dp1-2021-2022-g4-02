@@ -1,5 +1,6 @@
 package sevenisles.game;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,6 +34,7 @@ import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.card.CardType;
 import sevenisles.configuration.SecurityConfiguration;
+import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
@@ -79,6 +81,7 @@ public class GameControllerTest {
 	
 	private static final Integer TEST_GAME_ID = 1;
 	private static final Integer TEST_USER_ID = 1;
+	private static final String TEST_GAME_CODE = "B3KLRM";
 	
 	@BeforeEach
 	public void setup() { 
@@ -86,13 +89,14 @@ public class GameControllerTest {
 		//Creación del game
 		Game game = new Game();
 		game.setId(TEST_GAME_ID);
-		game.setCode("B3KLRM");
+		game.setCode(TEST_GAME_CODE);
 		game.setCards((List<Card>) cardService.cardFindAll());
 		List<Status> status = new ArrayList<Status>();
 		game.setStatus(status);
 		
 		//Creación del player con sesión iniciada actualmente
 		User user = new User();
+		
 		user.setId(TEST_USER_ID);
 		user.setUsername("spring");
 		user.setFirstName("Prueba");
@@ -107,6 +111,8 @@ public class GameControllerTest {
 		Player p1 = new Player();
 		p1.setId(1);
 		p1.setUser(user);
+		
+		user.setPlayer(p1);
 		/*
 		Player p2 = new Player();
 		p2.setId(2);
@@ -130,6 +136,12 @@ public class GameControllerTest {
 		st.setGame(game);
 		st.setCards(new ArrayList<>());	
 		sts.add(st2);
+		
+		//Devuelve una partida por código de partida
+		Mockito.when(this.gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.of(game));
+		
+		//Hacer que el usuario de la prueba pertenezca a la partida
+		Mockito.when(this.gameService.loggedUserBelongsToGame(game)).thenReturn(true);
 		
 		Mockito.when(this.userService.findUserById(TEST_USER_ID)).thenReturn(Optional.of(user));
 		Mockito.when(this.userService.findCurrentUser()).thenReturn(Optional.of(user));
@@ -195,4 +207,42 @@ public class GameControllerTest {
 				.andExpect(view().name("games/gameRules"));
 	}
 	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void gameDetailsByCodeTest() throws Exception{
+		mockMvc.perform(get("/games/{code}",TEST_GAME_CODE))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("game"));
+	}
+	
+	/*FALTA CAPTURAR LA EXCEPCIÓN
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void gameDetailsByCodeNotFoundTest() throws Exception{
+		
+			mockMvc.perform(get("/games/{code}","HYUYT"))
+				.andExpect(status().is5xxServerError());
+		
+	}
+	
+	*/
+	/*
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void gameBoardByCodeTest() throws Exception{
+		mockMvc.perform(get("/games/{code}/board",TEST_GAME_CODE))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("game"));
+	}
+	
+	*/
+	/* CAPTURAR LA EXCEPCIÓN
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void gameBoardByCodeNotBelongTest() throws Exception{
+		mockMvc.perform(get("/games/{code}/board",TEST_GAME_CODE))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("game"));
+	}
+	*/
 }
