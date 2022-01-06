@@ -12,9 +12,11 @@
         <thead>
         <tr>
          	<th>Código</th>
+         	<th>Modo de Juego</th>
             <th>Hora de comienzo</th>
             <th>Hora de fin</th>
             <th>Jugadores</th>
+            <th>Puntos</th>
         </tr>
         </thead>
         <tbody>
@@ -22,6 +24,10 @@
 				<td>
 					<c:out value="${game.code}" />
 				</td>
+				 <td >
+					<c:if test="${game.gameMode==0}">Normal</c:if>
+					<c:if test="${game.gameMode==1}">Secundario</c:if>
+                </td>
 				<td>
 					<c:out value="${game.startHour}" />
 				</td>
@@ -30,11 +36,14 @@
 				</td>
 				<td>
 					<c:forEach items="${game.status}" var="status">
-						<p><c:out value="${status.player.user.username}" /></p>	
+						<p><c:out value="${status.player.user.username}" /></p>		
+					</c:forEach>
+				</td>
+				<td>
+					<c:forEach items="${game.status}" var="status">
 						<p><c:out value="${status.score}" /></p>	
 					</c:forEach>
 				</td>
-
 			</tr>
         </tbody>
     </table>

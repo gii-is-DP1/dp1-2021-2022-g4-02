@@ -18,11 +18,14 @@
     </c:when>
 	
     <c:otherwise><h1 align="center">Partida en curso</h1>
-
     <br></br></br>
     <div class="col-md-12">
 	    <div class="col-md-6" align="left">
-	    	<h2>Ronda Nº <c:out value="${game.currentRound}"></c:out><br/> Turno de: <c:out value="${currentPlayerStatus.player.user.username}"></c:out></h2>
+	    	<h2>
+	    	Modo de Juego: 
+				<c:if test="${game.gameMode==0}">Normal</c:if>
+				<c:if test="${game.gameMode==1}">Secundario</c:if><br>
+	    	Ronda Nº <c:out value="${game.currentRound}"></c:out><br/> Turno de: <c:out value="${currentPlayerStatus.player.user.username}"></c:out></h2>
 	    </div>
 	    <div class="col-md-6" align="right"><br>
 	    	<h2>Cógido de Partida: <c:out value="${game.code}"></c:out></h2>

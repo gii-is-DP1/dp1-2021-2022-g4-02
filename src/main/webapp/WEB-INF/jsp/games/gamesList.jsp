@@ -12,6 +12,7 @@
         <thead>
         <tr>
         	<th>Código</th>
+        	<th>Modo de juego</th>
             <th>Hora de comienzo</th>
             <th>Hora de fin</th>
             <th>Jugadores</th>
@@ -22,6 +23,10 @@
             <tr>
             	<td >
                     <c:out value="${game.code}"/>
+                </td>
+                <td >
+					<c:if test="${game.gameMode==0}">Normal</c:if>
+					<c:if test="${game.gameMode==1}">Secundario</c:if>
                 </td>
                 <td>
                     <c:out value="${game.startHour}"/>

@@ -357,6 +357,7 @@ public class GameController {
     					gameService.endGame(game);
     					List<Status> orderedStatuses = gameService.orderStatusByScore(game.getStatus());
     					List<Status> winners = statusService.findWinnerStatusByGame(game.getId()).get();
+    					model.put("game", game);
     					model.put("number", winners.size());
     					model.put("ranking", orderedStatuses);
     					model.put("winners", winners);
