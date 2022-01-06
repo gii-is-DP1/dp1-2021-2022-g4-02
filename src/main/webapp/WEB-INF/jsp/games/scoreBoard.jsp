@@ -9,12 +9,20 @@
     <h1 align='center'>Ranking de la partida</h1>
     <c:choose>
     <c:when test="${number>1}">
-    <h1>Los ganadores son: <c:forEach items="${winners}" var="status" varStatus="loop">
+    <h1>
+   		Modo de Juego: 
+				<c:if test="${game.gameMode==0}">Normal</c:if>
+				<c:if test="${game.gameMode==1}">Secundario</c:if><br>
+    	Los ganadores son: <c:forEach items="${winners}" var="status" varStatus="loop">
     	 	<c:out value="${status.player.user.username}"></c:out>
     	 	<c:if test="${!loop.last }">, </c:if>
     	 </c:forEach></h1>
     	 </c:when>
-    <c:otherwise><h1>El ganador es: <c:forEach items="${winners}" var="status">
+    <c:otherwise><h1>
+    			Modo de Juego: 
+				<c:if test="${game.gameMode==0}">Normal</c:if>
+				<c:if test="${game.gameMode==1}">Secundario</c:if><br>
+				El ganador es: <c:forEach items="${winners}" var="status">
     	 	<c:out value="${status.player.user.username}"></c:out>
     	 </c:forEach></h1>
 	</c:otherwise>
