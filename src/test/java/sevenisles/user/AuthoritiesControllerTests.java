@@ -44,8 +44,9 @@ import sevenisles.player.PlayerService;
 public class AuthoritiesControllerTests {
 
 	private static final Integer TEST_USER_ID = 1;
-	private static final Integer TEST_USERADMIN_ID = 2;
+	private static final Integer TEST_USERADMIN_ID = 22;
 	private static final Integer TEST_USERNOAUTH_ID = 3;
+	private static final Integer TEST_AUTH_ID = 1;
 	
 	@Autowired
 	private MockMvc mockMvc; 
@@ -82,6 +83,7 @@ public class AuthoritiesControllerTests {
 		user.setCreatedDate(LocalDateTime.now());
 		
 		Authorities auth = new Authorities();
+		auth.setId(TEST_AUTH_ID);
 		auth.setAuthority("player");
 		user.setAuthorities(auth);
 		
@@ -90,16 +92,16 @@ public class AuthoritiesControllerTests {
 		
 		
 		User useradmin = new User();
-		user.setId(TEST_USERADMIN_ID);
-		user.setUsername("useradmin");
-		user.setFirstName("AdminPrueba");
-		user.setLastName("Uno");
-		user.setPassword("123");
-		user.setCreatedDate(LocalDateTime.now());
+		useradmin.setId(TEST_USERADMIN_ID);
+		useradmin.setUsername("useradmin");
+		useradmin.setFirstName("AdminPrueba");
+		useradmin.setLastName("Uno");
+		useradmin.setPassword("123");
+		useradmin.setCreatedDate(LocalDateTime.now());
 		
 		Authorities authadmin = new Authorities();
-		auth.setAuthority("admin");
-		user.setAuthorities(authadmin);
+		authadmin.setAuthority("admin");
+		useradmin.setAuthorities(authadmin);
 		
 		User userNoAuth = new User();
 		userNoAuth.setId(TEST_USERNOAUTH_ID);
@@ -110,6 +112,8 @@ public class AuthoritiesControllerTests {
 		userNoAuth.setCreatedDate(LocalDateTime.now());
 		
 		Mockito.when(this.userService.findUserById(TEST_USERNOAUTH_ID)).thenReturn(Optional.of(userNoAuth));
+		Mockito.when(this.authoritiesService.findAuthByUser(TEST_USER_ID)).thenReturn(Optional.of(auth));
+		Mockito.when(this.authoritiesService.findAuthByUser(TEST_USERADMIN_ID)).thenReturn(Optional.of(authadmin));
 		Mockito.when(this.userService.findUserById(TEST_USER_ID)).thenReturn(Optional.of(user));
 		Mockito.when(this.userService.findUserById(TEST_USERADMIN_ID)).thenReturn(Optional.of(useradmin));
 		Mockito.when(this.userService.findCurrentUser()).thenReturn(Optional.of(useradmin));
@@ -199,7 +203,21 @@ public class AuthoritiesControllerTests {
 				.andExpect(status().is3xxRedirection());
 	}
 	
-	 /*NO COGE BIEN EL USERNAME DEL USUARIO ACTUAL Y DEL USER QUE LE PASAMOS
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void processUpdateOtherUserWithErrorForm() throws Exception{
+		mockMvc.perform(post("/admin/{id}/edit",TEST_USER_ID)
+						.with(csrf())
+						.param("lastName", "Palomo")
+						.param("username", "Juanito")
+						.param("password", "123"))
+				.andExpect(status().isOk())
+				.andExpect(model().attributeExists("user"))
+				.andExpect(view().name("authorities/editUser"));
+				
+	}
+	
+	
 	@Test
 	@WithMockUser(username="useradmin", authorities=("admin"))
 	void processUpdateOwnForm() throws Exception{
@@ -211,7 +229,7 @@ public class AuthoritiesControllerTests {
 						.param("password", "123"))
 				.andExpect(status().is3xxRedirection());
 	}
-	*/
+	
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
@@ -227,14 +245,16 @@ public class AuthoritiesControllerTests {
 	    	
 	}
 	
-	/* NO COGE BIEN EL USERNAME DEL USUARIO ACTUAL Y DEL USER QUE LE PASAMOS
+	
 	@Test
-	@WithMockUser(value="spring", authorities=("admin"))
+	@WithMockUser(value="useradmin", authorities=("admin"))
 	void processDeleteUserOwnTest() throws Exception{
-		mockMvc.perform(get("/admin/users/{id}/delete",TEST_USERADMIN_ID)).andExpect(status().is3xxRedirection());
+		mockMvc.perform(get("/admin/users/{id}/delete",TEST_USERADMIN_ID)).andExpect(status().isOk())
+		.andExpect(model().attributeExists("message"))
+		.andExpect(view().name("error"));
 	    	
 	}
-	 */
+	
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
@@ -246,7 +266,7 @@ public class AuthoritiesControllerTests {
 	
 	
 	@Test
-	@WithMockUser(value="spring", authorities=("player"))
+	@WithMockUser(value="spring", authorities=("admin"))
 	void processAuthCreationFormTest() throws Exception{
 		mockMvc.perform(post("/admin/authorities/{user}/new",TEST_USERNOAUTH_ID)
 				.with(csrf())
@@ -254,5 +274,107 @@ public class AuthoritiesControllerTests {
 				.andExpect(status().isOk())
 				.andExpect(view().name("authorities/editAuth"));
 	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("admin"))
+	void initUpdateAuthFormTest() throws Exception{
+		mockMvc.perform(get("/admin/authorities/{user}/edit",TEST_USER_ID)).andExpect(status().isOk())
+				.andExpect(model().attributeExists("authorities"))
+				.andExpect(view().name("authorities/editAuth"));
+	}
+	
+	@Test
+	@WithMockUser(value="useradmin", authorities=("admin"))
+	void initUpdateAuthCurrentUserFormTest() throws Exception{
+		mockMvc.perform(get("/admin/authorities/{user}/edit",TEST_USERADMIN_ID)).andExpect(status().isOk())
+				.andExpect(model().attributeExists("message"))
+				.andExpect(view().name("error"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("admin"))
+	void initUpdateAuthFormNotFoundTest() throws Exception{
+		mockMvc.perform(get("/admin/authorities/{user}/edit",TEST_USERNOAUTH_ID)).andExpect(status().isOk())
+				.andExpect(model().attributeExists("message"))
+				.andExpect(view().name("error"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("admin"))
+	void processAuthUpdateFormTest() throws Exception{
+		mockMvc.perform(post("/admin/authorities/{user}/edit",TEST_USER_ID)
+				.with(csrf())
+				.param("authority", "player"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("authorities/editAuth"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("admin"))
+	void processDeleteAuthTest() throws Exception{
+		mockMvc.perform(get("/admin/authorities/{id}/delete",TEST_USER_ID)).andExpect(status().is3xxRedirection());
+	    	
+	}
+	
+
+	@Test
+	@WithMockUser(value="useradmin", authorities=("admin"))
+	void processDeleteAuthCurrentUserTest() throws Exception{
+		mockMvc.perform(get("/admin/authorities/{id}/delete",TEST_USERADMIN_ID))
+		.andExpect(status().isOk())
+		.andExpect(model().attributeExists("message"))
+		.andExpect(view().name("error"));
+	    	
+	}
+	
+	
+	@Test
+	@WithMockUser(value="useradmin", authorities=("admin"))
+	void processDeleteAuthAuthNotFoundTest() throws Exception{
+		
+		mockMvc.perform(get("/admin/authorities/{id}/delete",TEST_USERNOAUTH_ID))
+		.andExpect(status().isOk())
+		.andExpect(model().attributeExists("message"))
+		.andExpect(view().name("error"));
+	    	
+	}
+	
+	@Test
+	@WithMockUser(value="useradmin", authorities=("admin"))
+	void initCreationUserForm() throws Exception{
+		mockMvc.perform(get("admin/users/new"))
+				.andExpect(status().isOk())
+				.andExpect(model().attributeExists("user"))
+				.andExpect(view().name("authorities/editUser"));
+	}
+	
+	@Test
+	@WithMockUser(value="useradmin", authorities=("admin"))
+	void processCreationUserForm() throws Exception{
+		mockMvc.perform(post("admin/users/new")
+						.with(csrf())
+						.param("firstName", "Juan")
+                        .param("lastName", "Palomo")
+                        .param("username", "Juanito")
+                        .param("password", "123"))
+		.andExpect(status().is(302))
+		.andExpect(view().name("redirect:/admin/users"));
+	}
+	
+	@Test
+	@WithMockUser(value="useradmin", authorities=("admin"))
+	void processCreationUserFormError() throws Exception{
+		mockMvc.perform(post("admin/users/new")
+						.with(csrf())
+                        .param("lastName", "Palomo")
+                        .param("username", "Juanito")
+                        .param("password", "123"))
+		.andExpect(status().isOk())
+		.andExpect(model().attributeExists("user"))
+		.andExpect(view().name("authorities/editUser"));
+	}
+	
+	
+	
 	
 }

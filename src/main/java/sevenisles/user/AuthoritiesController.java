@@ -118,8 +118,9 @@ public class AuthoritiesController {
 	
 	
 	@PostMapping(value = "admin/users/new")
-	public String processCreationForm(@Valid User user , BindingResult result) {		
+	public String processCreationForm(@Valid User user , BindingResult result, Map<String, Object> model) {		
 		if (result.hasErrors()) {
+			model.put("user", user);
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
@@ -180,6 +181,8 @@ public class AuthoritiesController {
 	public String processDeleteUser(@PathVariable("id") Integer id, ModelMap model) {
 		Optional<User> user =  userService.findUserById(id);
 		if(user.isPresent()) {
+			System.out.println(User.getCurrentUser());
+			System.out.println(user.get().getUsername());
 			if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
 				userService.deleteUser(user.get());
 				model.addAttribute("message", "Permisos encontrados!");
@@ -227,6 +230,7 @@ public class AuthoritiesController {
 	@GetMapping(value = "admin/authorities/{user}/edit")
 	public String initAuthUpdateForm(@PathVariable("user") Integer id, Model model ) {	
 		Optional<Authorities> authorities = this.authoritiesService.findAuthByUser(id);
+		System.out.println("Autoridadddddd"+authorities);
 		if(authorities.isPresent()) {
 			if(!(User.getCurrentUser().equals(userService.findUserById(id).get().getUsername()))){
 				model.addAttribute(authorities.get());
@@ -265,7 +269,9 @@ public class AuthoritiesController {
 			Optional<Authorities> auth =  authoritiesService.findAuthByUser(id);
 			if(auth.isPresent()) {
 				Optional<User> user = userService.findUserById(id);
-				if(user.isPresent()) {
+				
+					System.out.println("Username currentUser "+User.getCurrentUser());
+					System.out.println("Username User "+user.get().getUsername());
 					if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
 						user.get().setAuthorities(null);
 						userService.saveUser(user.get());
@@ -277,11 +283,6 @@ public class AuthoritiesController {
 						model.addAttribute("message", "No te puedes borrar tus permisos");
 						return VIEWS_ERROR;
 					}
-				}else {
-					model.addAttribute("message", "Usuario no encontrado!");
-					return VIEWS_ERROR;
-				}
-				
 			}else {
 				model.addAttribute("message", "Permisos no encontrados!");
 				return VIEWS_ERROR;
