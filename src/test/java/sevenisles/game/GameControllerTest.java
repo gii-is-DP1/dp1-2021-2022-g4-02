@@ -131,7 +131,9 @@ public class GameControllerTest {
 		st.setCards(new ArrayList<>());	
 		sts.add(st2);
 		
-		Mockito.when(this.statusService.findStatusOfPlayer(this.playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
+		Mockito.when(this.userService.findUserById(TEST_USER_ID)).thenReturn(Optional.of(user));
+		Mockito.when(this.userService.findCurrentUser()).thenReturn(Optional.of(user));
+		//Mockito.when(this.statusService.findStatusOfPlayer(this.playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
 		
 	}
 	
