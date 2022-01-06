@@ -84,9 +84,9 @@
     	<div class="col-md-8">
     		<nav aria-label="Pagination">
   				<ul class="pagination-justify-content-center">
-    				<c:forEach items="${pages}" var="page">
+    				<c:forEach items="${paginas}" var="page">
     					<li class="page-item"> 
-    						<a class="page-link" href="admin/page/users?page=${page}">
+    						<a class="page-link" href="?page=${page}">
     						<c:out value="${page}"> </c:out>
     						</a>
     					</li>
