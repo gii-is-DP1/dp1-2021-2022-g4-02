@@ -19,7 +19,7 @@
 					</petclinic:menuItem>
 				
 					<sec:authorize access="hasAuthority('admin')">
-						<petclinic:menuItem active="${name eq 'users'}" url="/admin/users"
+						<petclinic:menuItem active="${name eq 'users'}" url="/admin/page/users?page=1"
 								title="Ver usuarios">
 								<span class="glyphicon" aria-hidden="true"></span>
 								<span>Usuarios</span>
