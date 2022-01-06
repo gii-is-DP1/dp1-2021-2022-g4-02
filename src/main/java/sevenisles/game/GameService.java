@@ -3,6 +3,7 @@ package sevenisles.game;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -317,8 +318,17 @@ public class GameService extends ScoreCountImpl{
 		Integer max = 0;
 		for(int i=0;i<game.getStatus().size();i++) {
 			Status s = game.getStatus().get(i);
-			Map<String, List<Card>> map = normalGameMode(s);
-			System.out.println(map);
+			Map<String, List<Card>> map = new HashMap<String, List<Card>>();
+			switch(game.getGameMode()) {
+			case 0:
+				map = normalGameMode(s);
+				break;
+			case 1:
+				map = secondaryGameMode(s);
+				break;
+			default:
+				map = normalGameMode(s);
+			}
 			Integer score = countPoints(map);
 			s.setScore(score);
 			if(score>max) max=score;

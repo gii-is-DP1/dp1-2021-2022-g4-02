@@ -53,6 +53,7 @@ public class Game extends BaseEntity {
 	private LocalTime endHour;
 	
 	private String code = RandomChain.randomChain(6);
+	private Integer gameMode; // 0 = normal, 1= secondary
 
 	@Override
 	public String toString() {
