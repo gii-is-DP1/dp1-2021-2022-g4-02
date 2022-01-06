@@ -63,8 +63,8 @@ public class UserControllerTest {
 	
 	@BeforeEach
 	public void setup() { 
-//		mockMvc = MockMvcBuilders.webAppContextSetup(context) 
-//				.apply(SecurityMockMvcConfigurers.springSecurity()).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup(context) 
+				.apply(SecurityMockMvcConfigurers.springSecurity()).build();
 
 		User user = new User();
 		user.setId(TEST_USER_ID);
@@ -136,16 +136,39 @@ public class UserControllerTest {
 	}
 	
 	@Test
+	@WithMockUser(value="anonymous")
 	void initCreationUserForm() throws Exception{
+		mockMvc.perform(get("/users/new"))
+				.andExpect(status().isOk())
+				.andExpect(model().attributeExists("user"))
+				.andExpect(view().name("users/createOrUpdateUserForm"));
+	}
+	
+	@Test
+	@WithMockUser(value="anonymous")
+	void processCreationUserForm() throws Exception{
 		mockMvc.perform(post("/users/new")
 						.with(csrf())
 						.param("firstName", "Juan")
                         .param("lastName", "Palomo")
                         .param("username", "Juanito")
                         .param("password", "123"))
-		.andExpect(status().is(401))
-				.andExpect(model().attributeExists("user"))
-				.andExpect(view().name("users/createOrUpdateUserForm"));
+		.andExpect(status().is(302))
+		.andExpect(view().name("redirect:/"));
 	}
+	
+	@Test
+	@WithMockUser(value="anonymous")
+	void processCreationUserFormError() throws Exception{
+		mockMvc.perform(post("/users/new")
+						.with(csrf())
+                        .param("lastName", "Palomo")
+                        .param("username", "Juanito")
+                        .param("password", "123"))
+		.andExpect(status().isOk())
+		.andExpect(model().attributeExists("user"))
+		.andExpect(view().name("users/createOrUpdateUserForm"));
+	}
+	
 	
 }

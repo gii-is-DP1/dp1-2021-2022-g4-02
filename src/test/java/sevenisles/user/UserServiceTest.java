@@ -1,10 +1,12 @@
 package sevenisles.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -16,7 +18,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class UserServiceTest {
@@ -116,5 +123,26 @@ public class UserServiceTest {
 		int count = userServices.userCount();
 		assertEquals(count,countinicial-1);
 	}
+	
+	@Test
+	@WithMockUser(username="userprueba",authorities="player")
+	public void testFindCurrentUser(){
+		System.out.println(SecurityContextHolder.getContext());
+		System.out.println(User.getCurrentUser());
+		Optional<User> user = userServices.findCurrentUser();
+		assertTrue(user.isPresent());
+		assertEquals(user.get().getUsername(), "userprueba");
+	}
+	
+	@Test
+	public void testFindCurrentUserNoUser(){
+		Optional<User> user = userServices.findCurrentUser();
+		assertTrue(user.isEmpty());
+	}
+	
+//	@Test
+//	public void testFindByUsernamePageable(){
+//		
+//	}
 
 }

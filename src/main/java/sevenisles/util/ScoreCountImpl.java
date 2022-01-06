@@ -59,13 +59,20 @@ public class ScoreCountImpl implements ScoreCount{
 		Integer i=1;
 		Map<String, List<Card>> map = new HashMap<String, List<Card>>();
 		List<Card> hand = status.getCards();
-		List<Card> copy = new ArrayList<Card>(hand);
+		List<Card> aux = new ArrayList<Card>(hand);
 		List<Card> doubloons = cardService.findDoubloonsInHand(hand);
 		map.put("doblones", doubloons);
-		copy.removeAll(doubloons);
-		
-		map.put(i.toString(), copy);
-		//hand.removeAll(copy);
+		aux.removeAll(doubloons);
+		map.put(i.toString(), new ArrayList<Card>());
+		List<CardType> types = cardService.findAllCardType();
+		for(Card c:aux) {
+			if(types.contains(c.getCardType())) {
+				List<Card> set = map.get(i.toString());
+				set.add(c);
+				types.remove(c.getCardType());
+			}
+		}
+		i++;
 		return map;
 	}
 	
