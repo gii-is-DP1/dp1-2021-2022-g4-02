@@ -6,7 +6,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
-<petclinic:layout pageName="payCard">
+<petclinic:layout pageName="gameMode">
 
     <h1 align="center">¿Qué modo de juego quieres?</h1>
     

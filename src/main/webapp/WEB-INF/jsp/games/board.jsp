@@ -29,27 +29,50 @@
 	    </div>
     </div>
     <br></br>
-
+    <div class="col-md-6" align="left">
 	<table id="Game" class="table table-striped">
 		<thead>
 			<tr>
 				<th>Número de isla</th>
 				<th>Carta asociada</th>
-				
+
 				<!-- <th>Acción</th>-->
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${game.islandStatus}" var="islandstatus">
-				<tr>
-					<td><c:out value="${islandstatus.island.id}" /></td>
-					<td><img width=8% src="<spring:url value="${islandstatus.card.urlCardImg}" htmlEscape="true" />" /></td>
-				</tr>
+				<c:if test="${islandstatus.island.id%2==1}">
+					<tr>
+						<td><c:out value="${islandstatus.island.id}" /></td>
+						<td><img width=12% src="<spring:url value="${islandstatus.card.urlCardImg}" htmlEscape="true" />"/></td>
+					</tr>
+				</c:if>
 			</c:forEach>
 		</tbody>
-		
 	</table>
-
+	</div>
+	<div class="col-md-6" align="right">
+	<table id="Game" class="table table-striped">
+		<thead>
+			<tr>
+				<th>Número de isla</th>
+				<th>Carta asociada</th>
+				<!-- <th>Acción</th>-->
+			</tr>
+		</thead>
+		<tbody>
+		<tr></tr>
+			<c:forEach items="${game.islandStatus}" var="islandstatus">
+				<c:if test="${islandstatus.island.id%2==0}">
+					<tr>
+						<td><c:out value="${islandstatus.island.id}" /></td>
+						<td><img width=12% src="<spring:url value="${islandstatus.card.urlCardImg}" htmlEscape="true" />"/></td>
+					</tr>
+				</c:if>
+			</c:forEach>
+		</tbody>
+	</table>
+	</div>
 	<div align="center" style="margin-bottom:1.25em;">
     	<c:if test="${game.finishedTurn==0}">
     		<c:if test="${loggedUserId==playerUserId}">

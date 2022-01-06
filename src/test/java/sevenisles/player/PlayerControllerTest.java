@@ -86,6 +86,7 @@ public class PlayerControllerTest {
 	
 	}
 	
+
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
 	void playerListTest() throws Exception{
@@ -101,4 +102,5 @@ public class PlayerControllerTest {
 			.andExpect(model().attributeExists("player"))
 			.andExpect(view().name("player/playerDetails"));
 	}
+
 }
