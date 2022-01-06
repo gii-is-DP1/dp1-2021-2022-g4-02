@@ -81,9 +81,9 @@
     <div class="row">
     	<div class="col-md-2">
     	</div>
-    	<div class="col-md-8">
+    	<div class="col-md-8 text-center">
     		<nav aria-label="Pagination">
-  				<ul class="pagination-justify-content-center">
+  				<ul class="pagination">
     				<c:forEach items="${paginas}" var="page">
     					<li class="page-item"> 
     						<a class="page-link" href="?page=${page}">
