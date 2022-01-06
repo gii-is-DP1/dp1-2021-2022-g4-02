@@ -99,6 +99,6 @@ public class PlayerControllerTest {
 	void playerListByIdTest() throws Exception{
 		mockMvc.perform(get("/players/{playerId}",TEST_PLAYER_ID)).andExpect(status().isOk())
 			.andExpect(model().attributeExists("player"))
-			.andExpect(view().name("players/playersDetails"));
+			.andExpect(view().name("player/playerDetails"));
 	}
 }
