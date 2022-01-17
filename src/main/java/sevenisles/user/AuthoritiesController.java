@@ -134,7 +134,7 @@ public class AuthoritiesController {
 	        auth.setAuthority("player");
 	        auth.setUser(user);
 	        authoritiesService.saveAuthorities(auth);                  
-            return "redirect:/admin/users";
+            return "redirect:/admin/page/users?page=1";
 		}
 	}
 
@@ -171,7 +171,7 @@ public class AuthoritiesController {
 				this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
 				this.userService.saveUser(userToUpdate);
 			}
-			return "redirect:/admin/users";
+			return "redirect:/admin/page/users?page=1";
 		}
 		
 	}
@@ -195,7 +195,7 @@ public class AuthoritiesController {
 			model.addAttribute("message", "Usuario no encontrado!");
 		}
 		
-		 return "redirect:/admin/users";
+		 return "redirect:/admin/page/users?page=1";
 	}
 	
 	//Creación de permisos
