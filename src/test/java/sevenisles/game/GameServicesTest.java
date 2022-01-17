@@ -1,6 +1,5 @@
 package sevenisles.game;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,10 +17,11 @@ import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -33,7 +33,6 @@ import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.island.Island;
 import sevenisles.island.IslandService;
 import sevenisles.islandStatus.IslandStatus;
-import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
@@ -42,7 +41,6 @@ import sevenisles.user.Authorities;
 import sevenisles.user.AuthoritiesService;
 import sevenisles.user.User;
 import sevenisles.user.UserService;
-import sevenisles.util.ManualLogin;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -66,6 +64,8 @@ public class GameServicesTest {
 	private AuthoritiesService authService;
 	
 	Game game;
+	Integer playerId;
+	List<Status> status;
 	
 	@Autowired
 	public GameServicesTest(GameService gameService, PlayerService playerService, CardService cardService, StatusService statusService,
@@ -80,7 +80,6 @@ public class GameServicesTest {
 		this.authService=authService;
 	}
 	
-	List<Status> status;
 	
 	@BeforeEach
 	public void init() {
@@ -102,6 +101,7 @@ public class GameServicesTest {
         
         Player player = new Player();
         player.setUser(user);
+        playerId=player.getId();
         playerService.savePlayer(player);
         user.setPlayer(player);
         
@@ -324,27 +324,6 @@ public class GameServicesTest {
 		});
 	}
 	
-	/*@Test
-	public void testUtilAttributes() {
-		ModelMap model = new ModelMap();
-		User user = new User();
-		user.setUsername("Manolito");
-		Player player = new Player();
-		player.setUser(user);
-		gameService.enterGame(game, player);
-		Integer currentPlayer = 0;
-		game.setCurrentPlayer(currentPlayer);
-		
-		gameService.utilAttributes(game, model);
-		
-		Status status = game.getStatus().get(currentPlayer);
-		Integer playerUserId = status.getPlayer().getUser().getId();
-		//Necesitamos añadirle el currentUser al modelo
-		//Integer loggedUserId = ;
-		assertTrue(model.getAttribute("currentPlayerStatus").equals(status));
-		assertTrue(model.getAttribute("playerUserId").equals(playerUserId));
-		//assertTrue(model.getAttribute("loggedUserId").equals(loggedUserId));
-	}*/
 	
 	@Test
 	public void testStartGame() {
@@ -517,5 +496,100 @@ public class GameServicesTest {
 		
 		List<Status> statusordered = gameService.orderStatusByScore(status);
 		assertEquals(statuschecktwo.getScore(),statusordered.get(0).getScore());
+	}
+	
+	@Test
+	@WithMockUser(value="test",authorities="player")
+	public void testUtilAttributes() {
+		this.game.setCurrentPlayer(0);
+		
+		ModelMap model = new ModelMap();
+		gameService.utilAttributes(game, model);
+		assertTrue(model.containsAttribute("currentPlayerStatus") && model.containsAttribute("playerUserId")
+				&& model.containsAttribute("loggedUserId"));
+	}
+	
+	//Tests de chooseIslandCondition
+	@Test
+	public void testChooseIslandCondition() throws GameControllerException{
+		status.get(0).setDiceNumber(3);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		assertTrue(gameService.chooseIslandCondition(game, 3, status.get(0)));
+	}
+	
+	@Test
+	public void testChooseIslandConditionNoCardOnIsland() throws GameControllerException{
+		status.get(0).setDiceNumber(3);
+		gameService.asignacionInicialIslas(game);
+		assertThrows(GameControllerException.class,()->{
+			gameService.chooseIslandCondition(game, 3, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testChooseIslandConditionNoIsland() throws GameControllerException{
+		status.get(0).setDiceNumber(3);
+		assertThrows(GameControllerException.class,()->{
+			gameService.chooseIslandCondition(game, 3, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testChooseIslandConditionOtherIslandAlreadyChosen() throws GameControllerException{
+		status.get(0).setDiceNumber(3);
+		status.get(0).setChosenIsland(2);
+		assertThrows(GameControllerException.class,()->{
+			gameService.chooseIslandCondition(game, 3, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testChooseIslandConditionCorrectIslandChosen() throws GameControllerException{
+		status.get(0).setDiceNumber(3);
+		status.get(0).setChosenIsland(3);
+		assertThrows(GameControllerException.class,()->{
+			gameService.chooseIslandCondition(game, 3, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testChooseIslandConditionNoDice() throws GameControllerException{
+		assertThrows(GameControllerException.class,()->{
+			gameService.chooseIslandCondition(game, 3, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testChooseIslandConditionAlreadyFinishedTurn() throws GameControllerException{
+		game.setFinishedTurn(1);
+		assertThrows(GameControllerException.class,()->{
+			gameService.chooseIslandCondition(game, 3, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testChooseIsland() throws GameControllerException{
+		Integer dice = 3;
+		Integer island = 3;
+		status.get(0).setDiceNumber(dice);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		Integer difference = Math.abs(dice-island);
+		gameService.chooseIsland(game, island, status.get(0));
+		assertEquals(game.getStatus().get(0).getNumberOfCardsToPay(),difference);
+		assertEquals(game.getStatus().get(0).getChosenIsland(),island);	
+	}
+	
+	@Test
+	public void testChooseIslandNotEnoughCards() throws GameControllerException{
+		Integer dice = 6;
+		Integer island = 1;
+		status.get(0).setDiceNumber(dice);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		assertThrows(GameControllerException.class,()->{
+			gameService.chooseIsland(game, island, status.get(0));
+		});
 	}
 }
