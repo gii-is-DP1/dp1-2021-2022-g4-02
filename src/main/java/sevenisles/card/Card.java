@@ -1,18 +1,13 @@
 package sevenisles.card;
 
 
-import java.util.List;
-import java.util.Objects;
+import java.util.List; 
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 
 import lombok.Getter;
@@ -28,7 +23,7 @@ import sevenisles.status.Status;
 @Table(name = "cards")
 public class Card extends BaseEntity{
 	@NotEmpty
-	private CardType cardType;//Crear tabla cardType que asocie codigo con String
+	private CardType cardType;
 	
 	@NotEmpty
 	private String urlCardImg;
@@ -40,24 +35,6 @@ public class Card extends BaseEntity{
 	private List<Status> status;
 	
 	@ManyToMany(targetEntity = Game.class,mappedBy="cards")
-	private List<Game> game;
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(cardType);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Card other = (Card) obj;
-		return cardType == other.cardType;
-	}
-	
+	private List<Game> game;	
 	
 }
