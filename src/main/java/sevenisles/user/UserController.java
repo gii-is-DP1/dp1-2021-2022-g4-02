@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.statistics.Statistics;
+import sevenisles.statistics.StatisticsService;
 import sevenisles.util.ManualLogin;
 
 
@@ -53,11 +55,14 @@ public class UserController {
 	
 	private AuthoritiesService authoritiesService;
 	
+	private StatisticsService statisticsService;
+	
 	@Autowired
-	public UserController(PlayerService playerService, UserService userService, AuthoritiesService authoritiesService) {
+	public UserController(PlayerService playerService, UserService userService, AuthoritiesService authoritiesService, StatisticsService statisticsService) {
 		this.playerService = playerService;
 		this.userService = userService;
 		this.authoritiesService  = authoritiesService;
+		this.statisticsService = statisticsService;
 	}
 	
 	//Get detalles de usuario
@@ -110,6 +115,10 @@ public class UserController {
 			Player player = new Player();
 			player.setUser(user);
 			this.playerService.savePlayer(player);
+			
+			Statistics statistics = new Statistics();
+			statistics.setPlayer(player);
+			this.statisticsService.saveStatistic(statistics);
 			
 			Authorities auth = new Authorities();
 	        auth.setAuthority("player");
