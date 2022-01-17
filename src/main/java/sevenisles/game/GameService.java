@@ -25,6 +25,8 @@ import sevenisles.islandStatus.IslandStatus;
 import sevenisles.islandStatus.IslandStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.statistics.Statistics;
+import sevenisles.statistics.StatisticsService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
 import sevenisles.user.UserService;
@@ -48,9 +50,12 @@ public class GameService extends ScoreCountImpl{
 	
 	private IslandStatusService islandStatusService;
 	
+	private StatisticsService statisticsService;
+	
 	@Autowired
 	public GameService(CardService cardService, GameRepository gameRepository, StatusService statusService,
-			PlayerService playerService, UserService userService, IslandService islandService, IslandStatusService islandStatusService) {
+			PlayerService playerService, UserService userService, IslandService islandService, IslandStatusService islandStatusService, 
+			StatisticsService statisticsService) {
 		super(cardService);
 		this.cardService = cardService;
 		this.gameRepository = gameRepository;
@@ -59,7 +64,7 @@ public class GameService extends ScoreCountImpl{
 		this.userService = userService;
 		this.islandService = islandService;
 		this.islandStatusService = islandStatusService;
-		
+		this.statisticsService = statisticsService;
 		
 	}
 
@@ -333,6 +338,9 @@ public class GameService extends ScoreCountImpl{
 			s.setScore(score);
 			if(score>max) max=score;
 			statusService.saveStatus(s);
+			statisticsService.setStatistics(s, game);
+			
+			
 		}
 		List<Status> ls = statusService.findStatusByGameAndScore(game.getId(), max).get();
 		if(ls.size()>1) {
@@ -340,7 +348,11 @@ public class GameService extends ScoreCountImpl{
 		}
 		for(Status st:ls) {
 			st.setWinner(1);
+			Player player = st.getPlayer();
+			Statistics playerStatistics =  statisticsService.findStatisticsById(player.getId());
 			statusService.saveStatus(st);
+			playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
+			statisticsService.saveStatistic(playerStatistics);
 		}
 		
 	}
