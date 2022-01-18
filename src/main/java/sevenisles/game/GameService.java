@@ -338,7 +338,7 @@ public class GameService extends ScoreCountImpl{
 			s.setScore(score);
 			if(score>max) max=score;
 			statusService.saveStatus(s);
-			statisticsService.setStatistics(s, game);
+			//statisticsService.setStatistics(s, game);
 			
 			
 		}
@@ -349,10 +349,10 @@ public class GameService extends ScoreCountImpl{
 		for(Status st:ls) {
 			st.setWinner(1);
 			Player player = st.getPlayer();
-			Statistics playerStatistics =  statisticsService.findStatisticsById(player.getId());
+			//Statistics playerStatistics =  statisticsService.findStatisticsById(player.getId());
 			statusService.saveStatus(st);
-			playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
-			statisticsService.saveStatistic(playerStatistics);
+			//playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
+			//statisticsService.saveStatistic(playerStatistics);
 		}
 		
 	}

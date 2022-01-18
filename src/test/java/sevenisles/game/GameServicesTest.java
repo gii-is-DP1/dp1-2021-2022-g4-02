@@ -36,6 +36,7 @@ import sevenisles.island.IslandService;
 import sevenisles.islandStatus.IslandStatus;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.statistics.StatisticsService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
 import sevenisles.user.Authorities;
@@ -64,13 +65,15 @@ public class GameServicesTest {
 	
 	private AuthoritiesService authService;
 	
+	private StatisticsService statisticsService;
+	
 	Game game;
 	Integer playerId;
 	List<Status> status;
 	
 	@Autowired
 	public GameServicesTest(GameService gameService, PlayerService playerService, CardService cardService, StatusService statusService,
-			IslandService islandService, IslandService islandStatusService, UserService userService,AuthoritiesService authService) {
+			IslandService islandService, IslandService islandStatusService, UserService userService,AuthoritiesService authService, StatisticsService statisticsService) {
 		this.gameService = gameService;
 		this.playerService = playerService;
 		this.cardService = cardService;

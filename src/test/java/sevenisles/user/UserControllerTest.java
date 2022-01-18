@@ -31,6 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import sevenisles.configuration.SecurityConfiguration;
 import sevenisles.player.PlayerService;
+import sevenisles.statistics.StatisticsService;
 
 //locations={"file:src/main/webapp/WEB-INF/jetty-web.xml"}
 @ExtendWith(SpringExtension.class)
@@ -56,6 +57,10 @@ public class UserControllerTest {
 	
 	@MockBean
 	private AuthoritiesService authoritiesService;
+	
+	@MockBean
+	private StatisticsService statisticsService;
+	
 	
 	
 	@Autowired
