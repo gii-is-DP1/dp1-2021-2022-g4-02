@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import sevenisles.model.BaseEntity;
+import sevenisles.statistics.Statistics;
 import sevenisles.status.Status;
 import sevenisles.user.User;
 
@@ -26,8 +27,10 @@ public class Player extends BaseEntity{
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User user;
 	
-	@OneToMany(cascade = CascadeType.ALL,targetEntity=Status.class)
+	@OneToMany(cascade = CascadeType.ALL,targetEntity=Status.class, mappedBy="player")
 	private List<Status> status;
-
+	
+	@OneToOne(cascade=CascadeType.ALL,targetEntity=Statistics.class, mappedBy="player")
+	private Statistics statistics;
 	
 }

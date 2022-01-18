@@ -1,6 +1,7 @@
 package sevenisles.statistics;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -16,6 +17,7 @@ import sevenisles.player.Player;
 public class Statistics extends BaseEntity{
 	
 	@OneToOne
+	@JoinColumn(name = "player_id", referencedColumnName = "id")
 	private Player player;
 	
 	private Integer gamesPlayed = 0;
