@@ -6,7 +6,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import sevenisles.achievements.Achievement;
+//import sevenisles.achievements.Achievement;
 import sevenisles.model.BaseEntity;
 import sevenisles.player.Player;
 
@@ -37,6 +37,7 @@ public class Statistics extends BaseEntity{
 	private Integer mapCount = 0;
 	private Integer crownCount = 0;
 	
+	/*
 	private List<Achievement> achievement;
-
+*/
 }

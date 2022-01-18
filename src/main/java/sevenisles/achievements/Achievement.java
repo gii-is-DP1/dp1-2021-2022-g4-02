@@ -16,11 +16,12 @@ import sevenisles.statistics.Statistics;
 public class Achievement extends BaseEntity{
 	
 	private AchievementType achievement;
-	private String name = achievement.name();
-	private String description = achievement.getDescription();
+	//private String name = achievement.name();
+	//private String description = achievement.getDescription();
 	private Boolean achieved = false;
 	
+	/*
 	@ManyToOne
 	private Statistics statistics;
-	
+	*/
 }
