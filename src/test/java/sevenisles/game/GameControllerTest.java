@@ -1,6 +1,7 @@
 package sevenisles.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -83,13 +84,18 @@ public class GameControllerTest {
 	private static final Integer TEST_USER_ID = 1;
 	private static final String TEST_GAME_CODE = "B3KLRM";
 	
+	private Game game;
+	private Player p1;
+	private List<Status> sts;
+	
 	@BeforeEach
 	public void setup() { 
 		
 		//Creación del game
-		Game game = new Game();
+		game = new Game();
 		game.setId(TEST_GAME_ID);
 		game.setCode(TEST_GAME_CODE);
+		game.setCurrentPlayer(0);
 		game.setCards((List<Card>) cardService.cardFindAll());
 		List<Status> status = new ArrayList<Status>();
 		game.setStatus(status);
@@ -108,7 +114,7 @@ public class GameControllerTest {
 		user.setAuthorities(auth);
 		
 		//Entrada de 2 jugadores a la partida y comienzo de la misma
-		Player p1 = new Player();
+		p1 = new Player();
 		p1.setId(1);
 		p1.setUser(user);
 		
@@ -121,7 +127,7 @@ public class GameControllerTest {
 		gameService.enterGame(game, p2);
 		gameService.startGame(game);*/
 		
-		List<Status> sts = new ArrayList<>();
+		sts = new ArrayList<>();
 		
 		Status st = new Status();
 		st.setId(1);
@@ -131,21 +137,23 @@ public class GameControllerTest {
 		sts.add(st);
 		
 		Status st2 = new Status();
-		st.setId(2);
-		st.setPlayer(p1);
-		st.setGame(game);
-		st.setCards(new ArrayList<>());	
+		st2.setId(2);
+		st2.setPlayer(p1);
+		st2.setGame(game);
+		st2.setCards(new ArrayList<>());	
 		sts.add(st2);
+		
+		game.setStatus(sts);
 		
 		//Devuelve una partida por código de partida
 		Mockito.when(this.gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.of(game));
 		
 		//Hacer que el usuario de la prueba pertenezca a la partida
 		Mockito.when(this.gameService.loggedUserBelongsToGame(game)).thenReturn(true);
-		
+		Mockito.when(playerService.findCurrentPlayer()).thenReturn(Optional.of(p1));
 		Mockito.when(this.userService.findUserById(TEST_USER_ID)).thenReturn(Optional.of(user));
 		Mockito.when(this.userService.findCurrentUser()).thenReturn(Optional.of(user));
-		//Mockito.when(this.statusService.findStatusOfPlayer(this.playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
+		
 		
 	}
 	
@@ -174,14 +182,45 @@ public class GameControllerTest {
 	}
 	
 	//Da error "No value present" por el Mockito.when del setUp()
-	/*@Test
+	@Test
 	@WithMockUser(value="spring", authorities=("player"))
 	void startedGameTest() throws Exception{
-		System.out.println(SecurityContextHolder.getContext().getAuthentication());
+		
+		
+		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
+		
 		mockMvc.perform(get("/games/startedGame")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("game"))
 				.andExpect(view().name("games/startedGame"));
-	}*/
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void startedGameNotPlayedYetTest() throws Exception{
+		
+		
+		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.ofNullable(null));
+		
+		mockMvc.perform(get("/games/startedGame"))
+		.andExpect(status().isBadRequest())
+	      .andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("No has jugado ninguna partida.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void startedGameNotStartedGameTest() throws Exception{
+		List<Status> sts = new ArrayList<Status>();
+		Status st = new Status();
+		st.setScore(30);
+		sts.add(st);
+		
+		
+		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
+		mockMvc.perform(get("/games/startedGame")).andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("No tienes ninguna partida empezada.", result.getResolvedException().getMessage()));
+	}
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
@@ -212,37 +251,79 @@ public class GameControllerTest {
 	void gameDetailsByCodeTest() throws Exception{
 		mockMvc.perform(get("/games/{code}",TEST_GAME_CODE))
 			.andExpect(status().isOk())
-			.andExpect(model().attributeExists("game"));
+			.andExpect(model().attributeExists("game"))
+			.andExpect(view().name("games/gameDetails"));
+			
 	}
 	
-	/*FALTA CAPTURAR LA EXCEPCIÓN
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
 	void gameDetailsByCodeNotFoundTest() throws Exception{
-		
-			mockMvc.perform(get("/games/{code}","HYUYT"))
-				.andExpect(status().is5xxServerError());
-		
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/games/{code}",TEST_GAME_CODE))
+			.andExpect(status().isBadRequest())
+			.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+		      .andExpect(result -> assertEquals("Partida no encontrada", result.getResolvedException().getMessage()));
 	}
 	
-	*/
-	/*
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
 	void gameBoardByCodeTest() throws Exception{
 		mockMvc.perform(get("/games/{code}/board",TEST_GAME_CODE))
 			.andExpect(status().isOk())
-			.andExpect(model().attributeExists("game"));
+			.andExpect(model().attributeExists("game"))
+			.andExpect(view().name("games/board"));
 	}
 	
-	*/
-	/* CAPTURAR LA EXCEPCIÓN
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void gameBoardByCodeNotBelongTest() throws Exception{
+	void gameBoardByCodeNotFoundTest() throws Exception{
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
 		mockMvc.perform(get("/games/{code}/board",TEST_GAME_CODE))
-			.andExpect(status().isOk())
-			.andExpect(model().attributeExists("game"));
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Partida no encontrada", result.getResolvedException().getMessage()));
 	}
-	*/
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void gameBoardByCodeNotBelongingTest() throws Exception{
+		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/board",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("No perteneces a esta partida.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void initCreateGameTest() throws Exception{
+		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
+		mockMvc.perform(get("/games/create"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("game"))
+			.andExpect(view().name("games/gameMode"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void initCreateGameNotLoggedTest() throws Exception{
+		Mockito.when(playerService.findCurrentPlayer()).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/games/create"))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Necesitas estar logueado como jugador para crear una partida.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void initCreateGameAlreadyInOtherGameTest() throws Exception{
+		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(true);
+		mockMvc.perform(get("/games/create"))
+			.andExpect(status().isBadRequest())
+			.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+		      .andExpect(result -> assertEquals("Ya estás dentro de una partida.", result.getResolvedException().getMessage()));
+	}
+	
+	
 }

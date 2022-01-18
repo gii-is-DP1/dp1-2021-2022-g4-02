@@ -250,10 +250,10 @@ public class GameController {
     					return "redirect:/games/{code}/robIsland/{islandId}/payCard";
     				}		
     			}else {
-    				return "exception";
+    				return "";
     			}   				       			
     		}else {
-    			return "exception";
+    			return "";
     		}   				 	
     	}else {
     		throw new GameControllerException("Partida no encontrada");
@@ -270,20 +270,23 @@ public class GameController {
     		Game game = optGame.get();
 			if(gameService.loggedPlayerCheckTurn(game)){
 				Status status = game.getStatus().get(game.getCurrentPlayer());
-				System.out.println(status + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        		if(status.getNumberOfCardsToPay()==0) {
-        			gameService.robIsland(game, islandId, status);
-        			gameService.nextTurn(game);
-					if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
-						return "redirect:/games/{code}/endGame";
-					}else return "redirect:/games/{code}/board";
-        			//return "redirect:../../board";
-        		}else {
-        			model.addAttribute("game", game);
-        			model.addAttribute("status", status);
-        			gameService.utilAttributes(game, model);
-        			return "games/payCard";
-        		}
+				if(islandId==status.getChosenIsland()) {
+					if(status.getNumberOfCardsToPay()==0) {
+	        			gameService.robIsland(game, islandId, status);
+	        			gameService.nextTurn(game);
+						if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
+							return "redirect:/games/{code}/endGame";
+						}else return "redirect:/games/{code}/board";
+	        			//return "redirect:../../board";
+	        		}else {
+	        			model.addAttribute("game", game);
+	        			model.addAttribute("status", status);
+	        			gameService.utilAttributes(game, model);
+	        			return "games/payCard";
+	        		}
+				}else {
+					throw new GameControllerException("Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
+				}
 			}else {
 				return "error";
 			}
