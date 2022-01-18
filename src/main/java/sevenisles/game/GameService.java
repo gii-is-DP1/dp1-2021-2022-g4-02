@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
+import sevenisles.achievement.AchievementService;
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.game.exceptions.GameControllerException;
@@ -52,10 +53,12 @@ public class GameService extends ScoreCountImpl{
 	
 	private StatisticsService statisticsService;
 	
+	private AchievementService achievementService;
+	
 	@Autowired
 	public GameService(CardService cardService, GameRepository gameRepository, StatusService statusService,
 			PlayerService playerService, UserService userService, IslandService islandService, IslandStatusService islandStatusService, 
-			StatisticsService statisticsService) {
+			StatisticsService statisticsService, AchievementService achievementService) {
 		super(cardService);
 		this.cardService = cardService;
 		this.gameRepository = gameRepository;
@@ -65,7 +68,7 @@ public class GameService extends ScoreCountImpl{
 		this.islandService = islandService;
 		this.islandStatusService = islandStatusService;
 		this.statisticsService = statisticsService;
-		
+		this.achievementService = achievementService;
 	}
 
 	
@@ -337,11 +340,15 @@ public class GameService extends ScoreCountImpl{
 			Integer score = countPoints(map);
 			s.setScore(score);
 			if(score>max) max=score;
+			//achievementService.ScoreAchievement(s.getPlayer(), score);
 			statusService.saveStatus(s);
+
 			statisticsService.setStatistics(s,game);
 			
-			
+			//achievementService.setAchievements(s.getPlayer());
+
 		}
+    
 		List<Status> ls = statusService.findStatusByGameAndScore(game.getId(), max).get();
 		if(ls.size()>1) {
 			ls = tiebreaker(ls);
@@ -353,7 +360,10 @@ public class GameService extends ScoreCountImpl{
 			statusService.saveStatus(st);
 			playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
 			statisticsService.saveStatistic(playerStatistics);
+
+			//achievementService.WonGamesAchievement(player);
 		}
+		
 		
 	}
 	

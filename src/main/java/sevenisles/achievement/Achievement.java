@@ -13,11 +13,11 @@ import sevenisles.model.BaseEntity;
 @Entity
 @Table(name = "achievements")
 public class Achievement extends BaseEntity{
-
-    @NotNull
-    private AchievementType achievementType;
-
-    @NotNull
-    private Boolean achieved = false;
-    
+	
+	@NotNull
+	private AchievementType achievementType;
+	
+	@NotNull
+	private Boolean achieved = false;
+   
 }

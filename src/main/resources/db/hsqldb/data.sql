@@ -138,23 +138,6 @@ INSERT INTO status(id, winner, game_id, player_id) VALUES (2,0,1,2);
 INSERT INTO status(id, winner, game_id, player_id) VALUES (3,0,1,3);
 INSERT INTO status(id, winner, game_id, player_id) VALUES (4,0,1,4);
 
---INSERT INTO players_status(player_id,status_id) VALUES (1,1);
---INSERT INTO players_status(player_id,status_id) VALUES (1,2);
---INSERT INTO players_status(player_id,status_id) VALUES (1,3);
---INSERT INTO players_status(player_id,status_id) VALUES (1,4);
-
---INSERT INTO games_status(game_id,status_id) VALUES (1,1);
---INSERT INTO games_status(game_id,status_id) VALUES (1,2);
---INSERT INTO games_status(game_id,status_id) VALUES (1,3);
---INSERT INTO games_status(game_id,status_id) VALUES (1,4);
-
---INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,1);
---INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,2);
---INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,3);
---INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,4);
---INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,5);
---INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,6);
-
 INSERT INTO hand(status_id,cards_id) VALUES (1,1);
 INSERT INTO hand(status_id,cards_id) VALUES (1,2);
 INSERT INTO hand(status_id,cards_id) VALUES (1,3);
@@ -188,11 +171,13 @@ INSERT INTO hand(status_id,cards_id) VALUES (4,64);
 INSERT INTO hand(status_id,cards_id) VALUES (4,66);
 
 
+
 INSERT INTO statistics(id, player_id, games_played, games_won, average_score, average_time, total_score, total_time, doubloon_count, chalice_count, diamond_count, ruby_count, rum_count, gun_count, necklace_count, sword_count, map_count, crown_count) VALUES (1, 1, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO statistics(id, player_id, games_played, games_won, average_score, average_time, total_score, total_time, doubloon_count, chalice_count, diamond_count, ruby_count, rum_count, gun_count, necklace_count, sword_count, map_count, crown_count) VALUES (2, 2, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO statistics(id, player_id, games_played, games_won, average_score, average_time, total_score, total_time, doubloon_count, chalice_count, diamond_count, ruby_count, rum_count, gun_count, necklace_count, sword_count, map_count, crown_count) VALUES (3, 3, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO statistics(id, player_id, games_played, games_won, average_score, average_time, total_score, total_time, doubloon_count, chalice_count, diamond_count, ruby_count, rum_count, gun_count, necklace_count, sword_count, map_count, crown_count) VALUES (4, 4, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
--- Achievements
-INSERT INTO achievements(id, achievement_type, achieved) VALUES (1, 1, true);
 
+INSERT INTO achievements(id, achievement_type, achieved) VALUES (1, 0, true);
+
+INSERT INTO statistics_achievement(statistics_id, achievement_id) VALUES (1,1);
