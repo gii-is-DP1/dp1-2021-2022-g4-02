@@ -23,7 +23,7 @@ import sevenisles.player.Player;
 @Table(name= "status")
 public class Status extends BaseEntity{
 	
-	@ManyToOne(targetEntity = Game.class)
+	@ManyToOne(cascade=CascadeType.ALL, targetEntity = Game.class)
 	private Game game;
 	
 	@ManyToOne(cascade = CascadeType.REFRESH,targetEntity = Player.class)

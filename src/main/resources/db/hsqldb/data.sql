@@ -138,22 +138,22 @@ INSERT INTO status(id, winner, game_id, player_id) VALUES (2,0,1,2);
 INSERT INTO status(id, winner, game_id, player_id) VALUES (3,0,1,3);
 INSERT INTO status(id, winner, game_id, player_id) VALUES (4,0,1,4);
 
-INSERT INTO players_status(player_id,status_id) VALUES (1,1);
-INSERT INTO players_status(player_id,status_id) VALUES (1,2);
-INSERT INTO players_status(player_id,status_id) VALUES (1,3);
-INSERT INTO players_status(player_id,status_id) VALUES (1,4);
+--INSERT INTO players_status(player_id,status_id) VALUES (1,1);
+--INSERT INTO players_status(player_id,status_id) VALUES (1,2);
+--INSERT INTO players_status(player_id,status_id) VALUES (1,3);
+--INSERT INTO players_status(player_id,status_id) VALUES (1,4);
 
-INSERT INTO games_status(game_id,status_id) VALUES (1,1);
-INSERT INTO games_status(game_id,status_id) VALUES (1,2);
-INSERT INTO games_status(game_id,status_id) VALUES (1,3);
-INSERT INTO games_status(game_id,status_id) VALUES (1,4);
+--INSERT INTO games_status(game_id,status_id) VALUES (1,1);
+--INSERT INTO games_status(game_id,status_id) VALUES (1,2);
+--INSERT INTO games_status(game_id,status_id) VALUES (1,3);
+--INSERT INTO games_status(game_id,status_id) VALUES (1,4);
 
-INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,1);
-INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,2);
-INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,3);
-INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,4);
-INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,5);
-INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,6);
+--INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,1);
+--INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,2);
+--INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,3);
+--INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,4);
+--INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,5);
+--INSERT INTO games_island_status(game_id,island_status_id) VALUES (1,6);
 
 INSERT INTO hand(status_id,cards_id) VALUES (1,1);
 INSERT INTO hand(status_id,cards_id) VALUES (1,2);

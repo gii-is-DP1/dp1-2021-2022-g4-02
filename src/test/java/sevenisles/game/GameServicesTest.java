@@ -2,6 +2,7 @@ package sevenisles.game;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,6 +36,7 @@ import sevenisles.island.IslandService;
 import sevenisles.islandStatus.IslandStatus;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.statistics.StatisticsService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
 import sevenisles.user.Authorities;
@@ -63,13 +65,15 @@ public class GameServicesTest {
 	
 	private AuthoritiesService authService;
 	
+	private StatisticsService statisticsService;
+	
 	Game game;
 	Integer playerId;
 	List<Status> status;
 	
 	@Autowired
 	public GameServicesTest(GameService gameService, PlayerService playerService, CardService cardService, StatusService statusService,
-			IslandService islandService, IslandService islandStatusService, UserService userService,AuthoritiesService authService) {
+			IslandService islandService, IslandService islandStatusService, UserService userService,AuthoritiesService authService, StatisticsService statisticsService) {
 		this.gameService = gameService;
 		this.playerService = playerService;
 		this.cardService = cardService;
@@ -590,6 +594,47 @@ public class GameServicesTest {
 		gameService.repartoInicial(game);
 		assertThrows(GameControllerException.class,()->{
 			gameService.chooseIsland(game, island, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testRobIsland() throws GameControllerException{
+		Integer dice = 3;
+		Integer island = 3;
+		status.get(0).setDiceNumber(dice);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		gameService.chooseIsland(game, island, status.get(0));
+		Card before = game.getIslandStatus().get(island-1).getCard();
+		gameService.robIsland(game, island, status.get(0));
+		Card after = game.getIslandStatus().get(island-1).getCard();
+		assertNotEquals(before, after);
+		assertEquals(1,game.getFinishedTurn());
+		assertNull(status.get(0).getNumberOfCardsToPay());
+	}
+	
+	@Test
+	public void testRobIslandNoChosenIsland() throws GameControllerException{
+		Integer dice = 3;
+		Integer island = 3;
+		status.get(0).setDiceNumber(dice);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		assertThrows(GameControllerException.class, ()->{
+			gameService.robIsland(game, island, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testRobIslandAnotherIslandChosen() throws GameControllerException{
+		Integer dice = 3;
+		Integer island = 3;
+		status.get(0).setDiceNumber(dice);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		gameService.chooseIsland(game, island, status.get(0));
+		assertThrows(GameControllerException.class, ()->{
+			gameService.robIsland(game, 2, status.get(0)); //Habiendo elegido saquear la 3, intentamos saquear la 2
 		});
 	}
 }

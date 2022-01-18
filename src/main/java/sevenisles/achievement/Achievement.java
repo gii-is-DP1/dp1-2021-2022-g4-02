@@ -19,5 +19,5 @@ public class Achievement extends BaseEntity{
 	
 	@NotNull
 	private Boolean achieved = false;
-	
+   
 }

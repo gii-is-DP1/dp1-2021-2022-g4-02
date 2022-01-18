@@ -37,12 +37,10 @@ public class Game extends BaseEntity {
 	@JoinTable(name="deck", uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "cards_id" }) })
 	private List<Card> cards;
 		
-	@OneToMany(cascade= CascadeType.ALL, targetEntity = Status.class)
-	@JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "status_id" }) })
+	@OneToMany(cascade= CascadeType.ALL, targetEntity = Status.class,mappedBy="game")
 	private List<Status> status;
 	
-	@OneToMany(cascade= CascadeType.ALL, targetEntity = IslandStatus.class)
-	@JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "island_status_id" }) })
+	@OneToMany(cascade= CascadeType.ALL, targetEntity = IslandStatus.class,mappedBy="game")
 	private List<IslandStatus> islandStatus;
 
 
@@ -59,22 +57,6 @@ public class Game extends BaseEntity {
 	public String toString() {
 		return "Game [currentPlayer=" + currentPlayer + " startHour=" + startHour + ", endHour=" + endHour + ", code=" + code + "]";
 	}
-	
-
-//	public Card lootIsland(Integer islandNumber) {
-//		Card card;
-//		if(islandNumber>=1 && islandNumber<=6) {
-//			Island island = islandService.findIslandById(islandNumber);
-//			try {
-//				card = island.getCard();
-//			}catch(Exception e) {
-//				throw new IllegalArgumentException("This island is empty, choose another one.");
-//			}
-//		}else {
-//			throw new IllegalArgumentException("You have to choose an island between 1 and 6.");
-//		}
-//		return card;
-//	}
 	
 	 
 }
