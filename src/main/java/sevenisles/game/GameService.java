@@ -342,8 +342,11 @@ public class GameService extends ScoreCountImpl{
 			if(score>max) max=score;
 			//achievementService.ScoreAchievement(s.getPlayer(), score);
 			statusService.saveStatus(s);
-			statisticsService.setStatistics(s, game);
+
+			statisticsService.setStatistics(s,game);
+			
 			//achievementService.setAchievements(s.getPlayer());
+
 		}
     
 		List<Status> ls = statusService.findStatusByGameAndScore(game.getId(), max).get();
@@ -357,8 +360,8 @@ public class GameService extends ScoreCountImpl{
 			statusService.saveStatus(st);
 			playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
 			statisticsService.saveStatistic(playerStatistics);
-			//achievementService.WonGamesAchievement(player);
 
+			//achievementService.WonGamesAchievement(player);
 		}
 		
 		

@@ -45,10 +45,12 @@ public class StatisticsService {
         return statisticsRepository.getStatsByPlayer(playerId);
     }
 	
+	@Transactional
 	public void setStatistics(Status s, Game game) {
 		
 		Integer score = s.getScore();
 		Player player =  s.getPlayer();
+		
 		Statistics playerStatistics =  findStatisticsById(player.getId());
 		playerStatistics.setGamesPlayed(playerStatistics.getGamesPlayed()+1);
 		playerStatistics.setTotalScore(playerStatistics.getTotalScore()+score);
@@ -90,6 +92,7 @@ public class StatisticsService {
 		playerStatistics.setAverageTime(averageTime);
 		
 		saveStatistic(playerStatistics);
+		System.out.println("++++++++++++++++"+playerStatistics.getGamesPlayed());
 	}
 
 }
