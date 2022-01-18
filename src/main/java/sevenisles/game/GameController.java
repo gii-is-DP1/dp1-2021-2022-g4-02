@@ -170,12 +170,8 @@ public class GameController {
     		Player player = gameService.enterGameUtil(game);
     		if(!statusService.isInAnotherGame(player)) {
     			if(game.getStartHour()==null) {
-    				if(game.getEndHour()==null) {
-    					gameService.enterGame(game, player);
-            			return "redirect:/games/{code}";
-    				}else {
-        				throw new GameControllerException("La partida ya ha terminado.");
-        			}
+    				gameService.enterGame(game, player);
+            		return "redirect:/games/{code}";
     			}else {
     				throw new GameControllerException("La partida ya ha empezado.");
     			}
@@ -226,7 +222,7 @@ public class GameController {
         			throw new GameControllerException("Ya has tirado el dado este turno.");
             	}
     		}else {
-        		return "";
+        		return "exception";
         	}    				       		
     	}else {
     		throw new GameControllerException("Partida no encontrada");
