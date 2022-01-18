@@ -1,4 +1,4 @@
-package sevenisles.achievements;
+package sevenisles.achievement;
 
 import java.util.Optional;
 

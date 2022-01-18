@@ -193,3 +193,6 @@ INSERT INTO statistics(id, player_id, games_played, games_won, average_score, av
 INSERT INTO statistics(id, player_id, games_played, games_won, average_score, average_time, total_score, total_time, doubloon_count, chalice_count, diamond_count, ruby_count, rum_count, gun_count, necklace_count, sword_count, map_count, crown_count) VALUES (3, 3, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO statistics(id, player_id, games_played, games_won, average_score, average_time, total_score, total_time, doubloon_count, chalice_count, diamond_count, ruby_count, rum_count, gun_count, necklace_count, sword_count, map_count, crown_count) VALUES (4, 4, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
+-- Achievements
+INSERT INTO achievements(id, achievement_type, achieved) VALUES (1, 1, true);
+
