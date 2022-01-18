@@ -2,6 +2,7 @@ package sevenisles.game;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -590,6 +591,47 @@ public class GameServicesTest {
 		gameService.repartoInicial(game);
 		assertThrows(GameControllerException.class,()->{
 			gameService.chooseIsland(game, island, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testRobIsland() throws GameControllerException{
+		Integer dice = 3;
+		Integer island = 3;
+		status.get(0).setDiceNumber(dice);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		gameService.chooseIsland(game, island, status.get(0));
+		Card before = game.getIslandStatus().get(island-1).getCard();
+		gameService.robIsland(game, island, status.get(0));
+		Card after = game.getIslandStatus().get(island-1).getCard();
+		assertNotEquals(before, after);
+		assertEquals(1,game.getFinishedTurn());
+		assertNull(status.get(0).getNumberOfCardsToPay());
+	}
+	
+	@Test
+	public void testRobIslandNoChosenIsland() throws GameControllerException{
+		Integer dice = 3;
+		Integer island = 3;
+		status.get(0).setDiceNumber(dice);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		assertThrows(GameControllerException.class, ()->{
+			gameService.robIsland(game, island, status.get(0));
+		});
+	}
+	
+	@Test
+	public void testRobIslandAnotherIslandChosen() throws GameControllerException{
+		Integer dice = 3;
+		Integer island = 3;
+		status.get(0).setDiceNumber(dice);
+		gameService.asignacionInicialIslas(game);
+		gameService.repartoInicial(game);
+		gameService.chooseIsland(game, island, status.get(0));
+		assertThrows(GameControllerException.class, ()->{
+			gameService.robIsland(game, 2, status.get(0)); //Habiendo elegido saquear la 3, intentamos saquear la 2
 		});
 	}
 }

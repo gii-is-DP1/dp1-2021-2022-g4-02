@@ -87,7 +87,6 @@ public class UserControllerTest {
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
 	void userDetailsTest() throws Exception{
-		//System.out.println(SecurityContextHolder.getContext().getAuthentication());
 		mockMvc.perform(get("/profile")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("user"))
 				.andExpect(view().name("users/userDetails"));

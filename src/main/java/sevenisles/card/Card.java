@@ -35,6 +35,7 @@ public class Card extends BaseEntity{
 	private List<Status> status;
 	
 	@ManyToMany(targetEntity = Game.class,mappedBy="cards")
-	private List<Game> game;	
-	
+
+	private List<Game> game;
+
 }
