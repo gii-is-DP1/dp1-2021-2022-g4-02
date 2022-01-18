@@ -1,12 +1,11 @@
 package sevenisles.statistics;
 
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
-import sevenisles.achievement.Achievement;
 import sevenisles.model.BaseEntity;
 import sevenisles.player.Player;
 

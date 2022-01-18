@@ -359,7 +359,7 @@ public class AuthoritiesControllerTests {
                         .param("username", "Juanito")
                         .param("password", "123"))
 		.andExpect(status().is(302))
-		.andExpect(view().name("redirect:/admin/users"));
+		.andExpect(view().name("redirect:/admin/page/users?page=1"));
 	}
 	
 	@Test
