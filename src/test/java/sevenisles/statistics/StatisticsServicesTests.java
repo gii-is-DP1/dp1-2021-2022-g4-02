@@ -2,6 +2,7 @@ package sevenisles.statistics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -96,11 +97,12 @@ public class StatisticsServicesTests {
 	    Card cardcorona = CardService.findCardById(48).get();
 	    Card cardpistola = CardService.findCardById(53).get();
 	    Card cardespada = CardService.findCardById(59).get();
+	    Card cardmapa = CardService.findCardById(44).get();
 	    Card cardron = CardService.findCardById(65).get();
 	    List<Card> cardspl1 = new ArrayList<>();
 	    cardspl1.add(card); cardspl1.add(cardcaliz);cardspl1.add(cardrubi);cardspl1.add(carddiamante);
 	    cardspl1.add(cardcollar);cardspl1.add(cardcorona);cardspl1.add(cardpistola);cardspl1.add(cardespada);
-	    cardspl1.add(cardron);
+	    cardspl1.add(cardron);cardspl1.add(cardmapa);
 	    
 	    Card cardpl2 = CardService.findCardById(2).get();
 	    List<Card> cardspl2 = new ArrayList<>();
@@ -123,6 +125,7 @@ public class StatisticsServicesTests {
 	    newgame.setStatus(statusgame);
 	    newgame.setCards(deck);
 	    newgame.setStartHour(LocalTime.of(13,5, 10));
+	    newgame.setGameMode(1);
 	    newgame.setEndHour(LocalTime.now());
 	    gamesService.saveGame(newgame);
 	}
@@ -157,19 +160,22 @@ public class StatisticsServicesTests {
 		assertEquals(stat.getId(),statid);
 	}
 	
-	//No funciona
-	/*@Test
+	
+	@Test
 	public void setStatisticsTest() {
 		
 		//Obtenemos las estadísticas previas del jugador
 		Integer playerId = player.getId();
 		Statistics statsplonebef = statisticServices.getStatsByPlayer(playerId);
-		//Statistics statspltwo = statisticServices.getStatsByPlayer(newtwoplayer.getId());
-		Status statuspl = statsplonebef.getPlayer().getStatus().get(0);
-		statisticServices.setStatistics(statuspl,newgame);
+		Integer gamesPlayed = statsplonebef.getGamesPlayed();
+		Integer ChaliceCount = statsplonebef.getChaliceCount();
+		
+		
+		statisticServices.setStatistics(newstatus,newgame);
+		
 		Statistics statsploneaft = statisticServices.getStatsByPlayer(playerId);
-		System.out.println("-----------------------------------"+statsplonebef.getGamesPlayed());
-		System.out.println(statsploneaft.getGamesPlayed());
-		assertEquals(statsplonebef.getGamesPlayed()+1,statsploneaft.getGamesPlayed());
-	}*/
+		assertEquals(statsploneaft.getTotalTime(), Duration.between(newgame.getStartHour(), newgame.getEndHour()).toMinutes());
+		assertEquals(statsploneaft.getChaliceCount(),ChaliceCount+1);
+		assertEquals(gamesPlayed+1,statsploneaft.getGamesPlayed());
+	}
 }
