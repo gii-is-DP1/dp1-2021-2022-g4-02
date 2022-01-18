@@ -57,6 +57,8 @@ public class UserController {
 	
 	private StatisticsService statisticsService;
 	
+	
+	
 	@Autowired
 	public UserController(PlayerService playerService, UserService userService, AuthoritiesService authoritiesService, StatisticsService statisticsService) {
 		this.playerService = playerService;
