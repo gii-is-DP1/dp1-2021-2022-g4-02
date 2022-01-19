@@ -35,7 +35,7 @@ public class PlayerController {
 		
 		Optional<Player> player = playerService.findPlayerById(playerId);
 		if(player.isPresent())
-		modelMap.addAttribute("player", player);
+		modelMap.addAttribute("player", player.get());
 		else modelMap.addAttribute("message", "Jugador no encontrado");
 		return vista;
 	}

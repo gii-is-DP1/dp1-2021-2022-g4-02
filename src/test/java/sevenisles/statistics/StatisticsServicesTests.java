@@ -157,7 +157,7 @@ public class StatisticsServicesTests {
 	@Test
 	public void findStatisticsByIdTest() {
 		Integer statid = stats.getId();
-		Statistics stat = statisticServices.findStatisticsById(statid);
+		Statistics stat = statisticServices.findStatisticsById(statid).get();
 		assertEquals(stat.getId(),statid);
 	}
 	

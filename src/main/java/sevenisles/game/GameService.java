@@ -356,7 +356,7 @@ public class GameService extends ScoreCountImpl{
 		for(Status st:ls) {
 			st.setWinner(1);
 			Player player = st.getPlayer();
-			Statistics playerStatistics =  statisticsService.findStatisticsById(player.getId());
+			Statistics playerStatistics =  statisticsService.findStatisticsById(player.getId()).get();
 			statusService.saveStatus(st);
 			playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
 			statisticsService.saveStatistic(playerStatistics);
