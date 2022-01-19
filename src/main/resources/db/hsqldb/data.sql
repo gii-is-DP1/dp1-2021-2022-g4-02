@@ -180,4 +180,4 @@ INSERT INTO statistics(id, player_id, games_played, games_won, average_score, av
 
 INSERT INTO achievements(id, achievement_type, achieved) VALUES (1, 0, true);
 
-INSERT INTO statistics_achievement(statistics_id, achievement_id) VALUES (1,1);
+INSERT INTO statistics_achievements(statistics_id, achievements_id) VALUES (1,1);

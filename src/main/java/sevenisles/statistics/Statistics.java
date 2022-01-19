@@ -8,12 +8,16 @@ import javax.persistence.OneToMany;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.Setter;
 import sevenisles.achievement.Achievement;
+import sevenisles.card.Card;
 import sevenisles.model.BaseEntity;
 import sevenisles.player.Player;
 import sevenisles.status.Status;
@@ -46,7 +50,8 @@ public class Statistics extends BaseEntity{
 	private Integer mapCount = 0;
 	private Integer crownCount = 0;
 	
-	@OneToMany(cascade = CascadeType.ALL,targetEntity=Status.class)
-	private List<Achievement> achievement;
+	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Achievement.class)
+	@JoinTable(uniqueConstraints = { @UniqueConstraint(columnNames = { "statistics_id", "achievements_id" }) })
+	private List<Achievement> achievements;
 
 }
