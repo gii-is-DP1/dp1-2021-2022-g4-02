@@ -34,6 +34,11 @@ public class PlayerService {
 		return playerRepository.findById(id);
 	}
 	
+	@Transactional(readOnly = true)
+	public Optional<Player> findPlayerByUsername(String username) throws IllegalArgumentException { 
+		return playerRepository.findPlayerByUsername(username);
+	}
+	
 	@Transactional
 	public void savePlayer(Player playerToUpdate) throws DataAccessException {
 		playerRepository.save(playerToUpdate);
