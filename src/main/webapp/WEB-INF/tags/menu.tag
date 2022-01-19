@@ -25,10 +25,16 @@
 								<span>Usuarios</span>
 						</petclinic:menuItem>
 							
-						<petclinic:menuItem active="${name eq 'gamesList'}" url="/games"
-								title="Ver partidas">
+						<petclinic:menuItem active="${name eq 'gamesList'}" url="/games/unfinishedGames"
+								title="Ver partidas en curso">
 								<span class="glyphicon" aria-hidden="true"></span>
-								<span>Partidas</span>
+								<span>Partidas en curso</span>
+						</petclinic:menuItem> 
+						
+						<petclinic:menuItem active="${name eq 'gamesList'}" url="/games/finishedGames"
+								title="Ver partidas terminadas">
+								<span class="glyphicon" aria-hidden="true"></span>
+								<span>Partidas finalizadas</span>
 						</petclinic:menuItem>  
 					</sec:authorize>
 				
@@ -57,6 +63,12 @@
 							title="Volver al tablero de la partida empezada">
 							<span class="glyphicon" aria-hidden="true"></span>
 							<span>Partida Empezada</span>
+						</petclinic:menuItem>
+						
+						<petclinic:menuItem active="${name eq 'rules'}" url="/games/playerHistory"
+							title="Ver mi historial">
+							<span class="glyphicon" aria-hidden="true"></span>
+							<span>Historial</span>
 						</petclinic:menuItem>
 						
 						<petclinic:menuItem active="${name eq 'rules'}" url="/rules"

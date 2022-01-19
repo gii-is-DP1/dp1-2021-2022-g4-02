@@ -53,6 +53,30 @@ public class GameController {
 		return vista;
 	}
 	
+	@GetMapping(value = "/games/unfinishedGames")
+	public String unfinishedGamesList(ModelMap modelMap) {
+		String vista = "games/gamesList";
+		Iterable<Game> games = gameService.findUnfinishedGames();
+		modelMap.addAttribute("games", games);
+		return vista;
+	}
+	
+	@GetMapping(value = "/games/finishedGames")
+	public String finishedGamesList(ModelMap modelMap) {
+		String vista = "games/playedGameList";
+		Iterable<Game> games = gameService.findFinishedGames();
+		modelMap.addAttribute("games", games);
+		return vista;
+	}
+	
+	@GetMapping(value = "/games/playerHistory")
+	public String historyGamesList(ModelMap modelMap) {
+		String vista = "games/playedGameList";
+		Iterable<Game> games = gameService.findFinishedGames();
+		modelMap.addAttribute("games", games);
+		return vista;
+	}
+	
 	@GetMapping(value = "/games/availableGames")
 	public String availableGamesList(ModelMap modelMap, HttpServletResponse response) {
 		response.addHeader("Refresh", "5");
