@@ -94,5 +94,9 @@ public class StatisticsService {
 		saveStatistic(playerStatistics);
 		System.out.println("++++++++++++++++"+playerStatistics.getGamesPlayed());
 	}
-
+	
+	@Transactional
+	public List<Statistics> getRanking(){
+		return statisticsRepository.getRanking();
+	}
 }

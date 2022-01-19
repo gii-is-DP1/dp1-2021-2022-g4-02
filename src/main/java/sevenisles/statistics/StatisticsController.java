@@ -1,5 +1,12 @@
 package sevenisles.statistics;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class StatisticsController {
 	
 	private static final String VIEWS_STATISTICS_CREATE_OR_UPDATE_FORM = "statistics/editStatistics";
-
+	private static final String VIEW_RANKING = "statistics/ranking";
+	
 	@Autowired
 	private StatisticsService statisticsService;
 	
@@ -26,6 +34,16 @@ public class StatisticsController {
 		modelMap.addAttribute("statistics", statistics);
 		return vista;
 	}
+	
+	
+	@GetMapping(value = "/statistics/ranking")
+	public String statisticsRankingList(ModelMap modelMap) {
+		List<Statistics> statistics = statisticsService.getRanking();
+		modelMap.addAttribute("statistics", statistics);
+		return VIEW_RANKING;
+	}
+	
+	
 	
 	@GetMapping(value = "/statistics/{statisticsId}")
 	public String cardsListById(ModelMap modelMap, @PathVariable("cardId") int statisticsId){

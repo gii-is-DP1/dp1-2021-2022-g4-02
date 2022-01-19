@@ -1,6 +1,7 @@
 package sevenisles.statistics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -177,5 +178,13 @@ public class StatisticsServicesTests {
 		assertEquals(statsploneaft.getTotalTime(), Duration.between(newgame.getStartHour(), newgame.getEndHour()).toMinutes());
 		assertEquals(statsploneaft.getChaliceCount(),ChaliceCount+1);
 		assertEquals(gamesPlayed+1,statsploneaft.getGamesPlayed());
+	}
+	
+	@Test
+	public void getRankingTest() {
+		List<Statistics> stats = statisticServices.getRanking();
+		Statistics statfirstplayer = stats.get(0);
+		Statistics statsecondfirstplayer = stats.get(1);
+		assertTrue(statfirstplayer.getTotalScore()>=statsecondfirstplayer.getTotalTime());
 	}
 }
