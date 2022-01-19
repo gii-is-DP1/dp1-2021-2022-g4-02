@@ -24,7 +24,7 @@ public interface GameRepository extends CrudRepository<Game, Integer>{
 	@Query("SELECT game FROM Game game WHERE game.startHour IS NOT NULL AND game.endHour IS NULL")
 	List<Game> findStartedGames();
 	
-	/*@Query("SELECT player.id FROM Game g1 NATURAL JOIN games_players g2 WHERE g2 = ?1")
-	List<Integer> findPlayersIdByGameId(Integer id);*/
+	@Query("SELECT g FROM Game g JOIN Status s WHERE s.game = g.id AND s.player.id = ?1 AND g.endHour IS NOT NULL")
+	public Optional<List<Game>> findFinishedGamesOfPlayer(int playerId);
 	
 }

@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import sevenisles.game.Game;
+
 public interface StatusRepository extends CrudRepository<Status, Integer>{
 	
 	@Query("SELECT COUNT(s) FROM Status s where s.game.id = ?1")
@@ -25,5 +27,6 @@ public interface StatusRepository extends CrudRepository<Status, Integer>{
 	
 	@Query("SELECT s FROM Status s WHERE s.player.id = ?1")
 	public Optional<List<Status>> findStatusOfPlayer(int playerId);
+	
 
 }
