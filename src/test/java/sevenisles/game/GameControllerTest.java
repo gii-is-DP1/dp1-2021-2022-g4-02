@@ -179,6 +179,30 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
+	void unfinishedGamesListTest() throws Exception{
+		mockMvc.perform(get("/games/unfinishedGames")).andExpect(status().isOk())
+				.andExpect(model().attributeExists("games"))
+				.andExpect(view().name("games/gamesList"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities={"player","admin"})
+	void finishedGamesListTest() throws Exception{
+		mockMvc.perform(get("/games/finishedGames")).andExpect(status().isOk())
+				.andExpect(model().attributeExists("games"))
+				.andExpect(view().name("games/playedGameList"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities={"player","admin"})
+	void historyGamesListTest() throws Exception{
+		mockMvc.perform(get("/games/playerHistory")).andExpect(status().isOk())
+				.andExpect(model().attributeExists("games"))
+				.andExpect(view().name("games/playedGameList"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities={"player","admin"})
 	void availableGamesListTest() throws Exception{
 		mockMvc.perform(get("/games/availableGames")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("games"))

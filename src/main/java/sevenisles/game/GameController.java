@@ -107,7 +107,7 @@ public class GameController {
 		if(opt.isPresent()) {
 			List<Status> statuses = opt.get();
 			Optional<Status> status = statuses.stream().filter(s->s.getScore()==null).findFirst();
-			if(status.isPresent()) {
+			if(status.isPresent() && status.get().getGame().getStartHour()!=null) {
 				modelMap.addAttribute("game", status.get().getGame());
 				return vista;
 			}else{
