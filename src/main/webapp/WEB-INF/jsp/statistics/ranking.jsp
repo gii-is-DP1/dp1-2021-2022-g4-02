@@ -18,10 +18,10 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${statistics}" var="statistic">
+        <c:forEach items="${statistics}" var="statistic" varStatus="loop">
             <tr>
             	<td >
-                    <c:out value="posición"/>
+                    <c:out value="${loop.index+1}º"/>
                 </td>
                 <td >
 					 <c:out value="${statistic.player.user.username}"/>
