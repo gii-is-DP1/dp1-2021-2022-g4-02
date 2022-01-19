@@ -72,9 +72,15 @@ public class GameController {
 	@GetMapping(value = "/games/playerHistory")
 	public String historyGamesList(ModelMap modelMap) {
 		String vista = "games/playedGameList";
-		Iterable<Game> games = gameService.findFinishedGames();
-		modelMap.addAttribute("games", games);
-		return vista;
+		Optional<Player> opt = playerService.findCurrentPlayer();
+		if(opt.isPresent()) {
+			Integer playerId = playerService.findCurrentPlayer().get().getId();
+			Iterable<Game> games = gameService.findFinishedGamesOfPlayer(playerId);
+			modelMap.addAttribute("games", games);
+			return vista;
+		}else{
+			throw new GameControllerException("No has iniciado sesión.");
+		}
 	}
 	
 	@GetMapping(value = "/games/availableGames")
