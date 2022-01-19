@@ -19,7 +19,7 @@
 	<br><br><br><br>
 	<h2 >El Modo de Juego Normal calcula las puntuaciones como viene en las reglas: fijándose en el número de sets de tesoros distintos que se tiene.<br></br>
 	El Modo de Juego Secundario calcula calcula las puntuaciones fijándose solo en el set con mayor número de tesoros distintos.<br></br>
-	En ambos casos, se desmpata con el número de doblones.</h2>
+	En ambos casos, se desempata con el número de doblones.</h2>
    
     
     
