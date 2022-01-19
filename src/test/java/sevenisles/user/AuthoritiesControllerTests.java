@@ -21,18 +21,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import sevenisles.achievementStatus.AchievementStatusService;
 import sevenisles.configuration.SecurityConfiguration;
 import sevenisles.game.GameService;
 import sevenisles.player.PlayerService;
+import sevenisles.statistics.StatisticsService;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes=AuthoritiesController.class)
@@ -66,6 +65,12 @@ public class AuthoritiesControllerTests {
 	
 	@MockBean
 	private PlayerService playerService;
+	
+	@MockBean
+	private StatisticsService statsService;
+	
+	@MockBean
+	private AchievementStatusService achievementStatusService;
 	
 	@Autowired
 	private WebApplicationContext context;

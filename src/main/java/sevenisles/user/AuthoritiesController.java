@@ -19,10 +19,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import sevenisles.achievementStatus.AchievementStatusService;
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.statistics.Statistics;
+import sevenisles.statistics.StatisticsService;
 import sevenisles.util.ManualLogin;
 
 @Controller
@@ -41,12 +45,19 @@ public class AuthoritiesController {
 	
 	private PlayerService playerService;
 	
+	private StatisticsService statisticsService;
+	
+	private AchievementStatusService achievementStatusService;
+	
 	@Autowired
-	public AuthoritiesController(AuthoritiesService authoritiesService, UserService userService, GameService gameService, PlayerService playerService) {
+	public AuthoritiesController(AuthoritiesService authoritiesService, UserService userService, GameService gameService, PlayerService playerService,
+			StatisticsService statisticsService,AchievementStatusService achievementStatusService) {
 		this.authoritiesService = authoritiesService;
 		this.userService = userService;
 		this.gameService = gameService;
 		this.playerService = playerService;
+		this.statisticsService=statisticsService;
+		this.achievementStatusService=achievementStatusService;
 	}
 	
 	@GetMapping(value = "admin/users")
@@ -129,6 +140,11 @@ public class AuthoritiesController {
 			Player player = new Player();
 			player.setUser(user);
 			this.playerService.savePlayer(player);
+			
+			Statistics statistics = new Statistics();
+			statistics.setPlayer(player);
+			achievementStatusService.asignacionInicialDeLogros(statistics);
+			this.statisticsService.saveStatistic(statistics);
 			
 			Authorities auth = new Authorities();
 	        auth.setAuthority("player");

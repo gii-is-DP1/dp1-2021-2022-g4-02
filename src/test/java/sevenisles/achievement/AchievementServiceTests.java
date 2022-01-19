@@ -22,7 +22,7 @@ public class AchievementServiceTests {
 	@Test
 	public void testCountWithInitialData() {
 		int count = achievementService.achievementCount();
-		assertEquals(1,count);
+		assertEquals(24,count);
 	}
 	
 	@Test
@@ -62,22 +62,6 @@ public class AchievementServiceTests {
 		achievementService.saveAchievement(achievement);
 		achievement = achievementService.findAchievementById(id).get();
 		assertEquals(at,achievement.getAchievementType());
-	}
-	
-	@Test
-	public void testDeleteAchievement() {
-		Achievement achievement = new Achievement();
-		achievement.setId(2);
-		achievement.setAchievementType(AchievementType.CORONAS_CONSEGUIDAS_10);
-		achievement.setAchieved(true);
-		
-		achievementService.saveAchievement(achievement);
-		int countBefore = achievementService.achievementCount();
-		
-		achievementService.deleteAchievement(achievement);
-		int countAfter = achievementService.achievementCount();
-		
-		assertEquals(countAfter,countBefore-1);
 	}
 	
 }

@@ -43,7 +43,7 @@ public class StatisticsService {
 	}
 	
 	@Transactional
-    public Statistics getStatsByPlayer(Integer playerId) {
+    public Optional<Statistics> getStatsByPlayer(Integer playerId) {
         return statisticsRepository.getStatsByPlayer(playerId);
     }
 	
