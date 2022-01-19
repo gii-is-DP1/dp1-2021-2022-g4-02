@@ -70,19 +70,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.PARTIDAS_JUGADAS_1);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(GamesPlayed == 5) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.PARTIDAS_JUGADAS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -97,19 +97,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.PARTIDAS_GANADAS_1);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(WonGames == 5 /*&& achievementRepo.checkAchievement(AchievementType.PARTIDAS_GANADAS_5, p)*/) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.PARTIDAS_GANADAS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -121,19 +121,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.PUNTOS_CONSEGUIDOS_40);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(score >= 60) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.PUNTOS_CONSEGUIDOS_60);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -146,19 +146,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.CALICES_CONSEGUIDOS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(chalices == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.CALICES_CONSEGUIDOS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -171,19 +171,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.RUBIES_CONSEGUIDOS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(rubies == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.RUBIES_CONSEGUIDOS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -196,19 +196,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.DIAMANTES_CONSEGUIDOS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(diamonds == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.DIAMANTES_CONSEGUIDOS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -221,19 +221,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.COLLARES_CONSEGUIDOS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(necklaces == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.COLLARES_CONSEGUIDOS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -246,19 +246,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.MAPAS_CONSEGUIDOS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(maps == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.MAPAS_CONSEGUIDOS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -271,19 +271,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.CORONAS_CONSEGUIDAS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(crowns == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.CORONAS_CONSEGUIDAS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -296,19 +296,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.PISTOLAS_CONSEGUIDAS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(guns == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.PISTOLAS_CONSEGUIDAS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -321,19 +321,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.ESPADAS_CONSEGUIDAS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(swords == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.ESPADAS_CONSEGUIDAS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
@@ -346,19 +346,19 @@ public class AchievementService {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.RONES_CONSEGUIDOS_5);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 			
 		}else if(rums == 10) {
 			Achievement achieve =  new Achievement();
 			achieve.setAchieved(true);
 			achieve.setAchievementType(AchievementType.RONES_CONSEGUIDOS_10);
-			List<Achievement> achievements = stats.getAchievement();
+			List<Achievement> achievements = stats.getAchievements();
 			achievements.add(achieve);
 			achievementRepo.save(achieve);
-			stats.setAchievement(achievements);
+			stats.setAchievements(achievements);
 		}
 		statisticsRepo.save(stats);
 	}
