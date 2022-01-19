@@ -83,6 +83,7 @@ public class GameControllerTest {
 	
 	private static final Integer TEST_GAME_ID = 1;
 	private static final Integer TEST_USER_ID = 1;
+	private static final Integer TEST_CARD_ID = 1;
 	private static final String TEST_GAME_CODE = "B3KLRM";
 	
 	private Game game;
@@ -100,6 +101,13 @@ public class GameControllerTest {
 		game.setCards((List<Card>) cardService.cardFindAll());
 		List<Status> status = new ArrayList<Status>();
 		game.setStatus(status);
+		
+		Card card = new Card();
+		card.setId(TEST_CARD_ID);
+		
+		List<Card> cards = new ArrayList<Card>();
+		cards.add(card);
+		
 		
 		//Creación del player con sesión iniciada actualmente
 		User user = new User();
@@ -146,6 +154,8 @@ public class GameControllerTest {
 		
 		game.setStatus(sts);
 		
+		Mockito.when(cardService.findCardById(TEST_CARD_ID)).thenReturn(Optional.of(card));
+		
 		//Devuelve una partida por código de partida
 		Mockito.when(this.gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.of(game));
 		Mockito.when(this.gameService.findGameById(TEST_GAME_ID)).thenReturn(Optional.of(game));
@@ -165,6 +175,30 @@ public class GameControllerTest {
 		mockMvc.perform(get("/games")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("games"))
 				.andExpect(view().name("games/gamesList"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities={"player","admin"})
+	void unfinishedGamesListTest() throws Exception{
+		mockMvc.perform(get("/games/unfinishedGames")).andExpect(status().isOk())
+				.andExpect(model().attributeExists("games"))
+				.andExpect(view().name("games/gamesList"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities={"player","admin"})
+	void finishedGamesListTest() throws Exception{
+		mockMvc.perform(get("/games/finishedGames")).andExpect(status().isOk())
+				.andExpect(model().attributeExists("games"))
+				.andExpect(view().name("games/playedGameList"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities={"player","admin"})
+	void historyGamesListTest() throws Exception{
+		mockMvc.perform(get("/games/playerHistory")).andExpect(status().isOk())
+				.andExpect(model().attributeExists("games"))
+				.andExpect(view().name("games/playedGameList"));
 	}
 	
 	@Test
@@ -471,20 +505,324 @@ public class GameControllerTest {
 	      .andExpect(result -> assertEquals("Ya has tirado el dado este turno.", result.getResolvedException().getMessage()));
 	}
 	
-	
-	
-	/* NO FUNCIONA  
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void processCreateGameTest() throws Exception{
-		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
-		mockMvc.perform(post("/games/create")
-				.with(csrf())
-				.param("gameMode", "0")
-				.param("id","1"))
-			.andExpect(status().isOk())
-			.andExpect(model().attributeExists("game"))
-			.andExpect(view().name("games/gameMode"));
+	public void robIslandTest() throws Exception{
+		Integer islandId=3;
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		Mockito.when(gameService.chooseIslandCondition(game,islandId,sts.get(0))).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}",TEST_GAME_CODE, islandId))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:/games/{code}/robIsland/{islandId}/payCard"));
 	}
-	*/
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void robIslandNotExistingGameTest() throws Exception{
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
+		Integer islandId=3;
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}",TEST_GAME_CODE, islandId))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Partida no encontrada", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void robIslandNotYourTurnTest() throws Exception{
+		Integer islandId=3;
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(false);
+		Mockito.when(gameService.chooseIslandCondition(game,islandId,sts.get(0))).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}",TEST_GAME_CODE, islandId))
+		.andExpect(status().isOk())
+		.andExpect(view().name("exception"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void robIslandNotCorrectIslandConditionTest() throws Exception{
+		Integer islandId=3;
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		Mockito.when(gameService.chooseIslandCondition(game,islandId,sts.get(0))).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}",TEST_GAME_CODE, islandId))
+		.andExpect(status().isOk())
+		.andExpect(view().name("exception"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void robIslandAlreadyChosenTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setNumberOfCardsToPay(3);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		Mockito.when(gameService.chooseIslandCondition(game,islandId,sts.get(0))).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}",TEST_GAME_CODE, islandId))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:/games/{code}/robIsland/{islandId}/payCard"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void initPayCardTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId);
+		sts.get(0).setNumberOfCardsToPay(0);
+		game.setMaxRounds(10);
+		game.setCurrentRound(11);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard",TEST_GAME_CODE, islandId))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:/games/{code}/endGame"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void initPayCardNotLastRoundTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId);
+		sts.get(0).setNumberOfCardsToPay(0);
+		game.setMaxRounds(10);
+		game.setCurrentRound(1);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard",TEST_GAME_CODE, islandId))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:/games/{code}/board"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void initPayCardNotLastTurnTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId);
+		sts.get(0).setNumberOfCardsToPay(0);
+		game.setMaxRounds(10);
+		game.setCurrentRound(11);
+		List<Card> cards = new ArrayList<Card>();
+		Card card = new Card(); cards.add(card);
+		game.setCards(cards);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard",TEST_GAME_CODE, islandId))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:/games/{code}/board"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void initPayCardNotFinishedPayingTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId);
+		sts.get(0).setNumberOfCardsToPay(1);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard",TEST_GAME_CODE, islandId))
+		.andExpect(status().isOk())
+		.andExpect(model().attributeExists("game"))
+		.andExpect(model().attributeExists("status"))
+		.andExpect(view().name("games/payCard"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void initPayCardAnotherIslandChosenTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId+1);
+		sts.get(0).setNumberOfCardsToPay(1);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard",TEST_GAME_CODE, islandId))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Ya has elegido saquear la isla " + (islandId+1) + ". No puedes cambiarla.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void initPayCardNotYourTurnTest() throws Exception{
+		Integer islandId=3;
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard",TEST_GAME_CODE, islandId))
+		.andExpect(status().isOk())
+		.andExpect(view().name("exception"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void initPayCardNotExistingGameTest() throws Exception{
+		Integer islandId=3;
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard",TEST_GAME_CODE, islandId))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Partida no encontrada!", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void processPayCardNotFinishedPayingTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId);
+		sts.get(0).setNumberOfCardsToPay(1);
+		game.setMaxRounds(10);
+		game.setCurrentRound(1);
+		Mockito.when(statusService.cardInHand(sts.get(0), cardService.findCardById(TEST_CARD_ID).get())).thenReturn(true);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard/{cardId}",TEST_GAME_CODE, islandId, TEST_CARD_ID))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void processPayCardAllPayedLastTurnTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId);
+		sts.get(0).setNumberOfCardsToPay(0);
+		game.setMaxRounds(10);
+		game.setCurrentRound(11);
+		Mockito.when(statusService.cardInHand(sts.get(0), cardService.findCardById(TEST_CARD_ID).get())).thenReturn(true);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard/{cardId}",TEST_GAME_CODE, islandId, TEST_CARD_ID))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:/games/{code}/endGame"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void processPayCardNotLastRoundTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId);
+		sts.get(0).setNumberOfCardsToPay(0);
+		game.setMaxRounds(10);
+		game.setCurrentRound(1);
+		Mockito.when(statusService.cardInHand(sts.get(0), cardService.findCardById(TEST_CARD_ID).get())).thenReturn(true);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard/{cardId}",TEST_GAME_CODE, islandId, TEST_CARD_ID))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:/games/{code}/board"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void processPayCardNotLastTurnTest() throws Exception{
+		Integer islandId=3;
+		sts.get(0).setChosenIsland(islandId);
+		sts.get(0).setNumberOfCardsToPay(0);
+		game.setMaxRounds(10);
+		game.setCurrentRound(11);
+		List<Card> cards = new ArrayList<Card>();
+		Card card = new Card(); cards.add(card);
+		game.setCards(cards);
+		Mockito.when(statusService.cardInHand(sts.get(0), cardService.findCardById(TEST_CARD_ID).get())).thenReturn(true);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard/{cardId}",TEST_GAME_CODE, islandId, TEST_CARD_ID))
+		.andExpect(status().is3xxRedirection())
+		.andExpect(view().name("redirect:/games/{code}/board"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void processPayCardNotOwningCardTest() throws Exception{
+		Integer islandId=3;		
+		Mockito.when(statusService.cardInHand(sts.get(0), cardService.findCardById(TEST_CARD_ID).get())).thenReturn(false);
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard/{cardId}",TEST_GAME_CODE, islandId, TEST_CARD_ID))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("No posees esa carta. Elige otra", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void processPayCardNotExistingCardTest() throws Exception{
+		Integer islandId=3;		
+		Mockito.when(cardService.findCardById(TEST_CARD_ID)).thenReturn(Optional.ofNullable(null));
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard/{cardId}",TEST_GAME_CODE, islandId, TEST_CARD_ID))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Carta no encontrada.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void processPayCardNotYourTurnTest() throws Exception{
+		Integer islandId=3;		
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard/{cardId}",TEST_GAME_CODE, islandId, TEST_CARD_ID))
+		.andExpect(status().isOk())
+		.andExpect(view().name("exception"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void processPayCardNotExistingGameTest() throws Exception{
+		Integer islandId=3;		
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/games/{code}/robIsland/{islandId}/payCard/{cardId}",TEST_GAME_CODE, islandId, TEST_CARD_ID))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Partida no encontrada!", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void finishGameTest() throws Exception{
+		Mockito.when(statusService.findWinnerStatusByGame(game.getId())).thenReturn(Optional.of(sts));
+		game.setMaxRounds(10);
+		game.setCurrentRound(11);
+		sts.get(0).setWinner(1);
+		mockMvc.perform(get("/games/{code}/endGame",TEST_GAME_CODE))
+		.andExpect(status().isOk())
+		.andExpect(model().attributeExists("game","number","ranking","winners"))
+		.andExpect(view().name("games/scoreBoard"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void finishGameNotLastTurnTest() throws Exception{
+		Mockito.when(statusService.findWinnerStatusByGame(game.getId())).thenReturn(Optional.of(sts));
+		game.setMaxRounds(10);
+		game.setCurrentRound(11);
+		List<Card> cards = new ArrayList<Card>();
+		Card card = new Card(); cards.add(card);
+		game.setCards(cards);
+		sts.get(0).setWinner(1);
+		mockMvc.perform(get("/games/{code}/endGame",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Aún no se puede terminar la partida", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void finishGameNotLastRoundTest() throws Exception{
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		Mockito.when(statusService.findWinnerStatusByGame(game.getId())).thenReturn(Optional.of(sts));
+		game.setMaxRounds(10);
+		game.setCurrentRound(1);
+		sts.get(0).setWinner(1);
+		mockMvc.perform(get("/games/{code}/endGame",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Aún no se puede terminar la partida", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void finishGameNotBelongingToGameTest() throws Exception{
+		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/endGame",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("No perteneces a la partida", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	public void finishGameNotExistingGameTest() throws Exception{
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/games/{code}/endGame",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Partida no encontrada", result.getResolvedException().getMessage()));
+	}
+	
 }

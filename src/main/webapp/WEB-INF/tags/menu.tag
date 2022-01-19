@@ -39,10 +39,10 @@
 					</sec:authorize>
 				
 					<sec:authorize access="!hasAuthority('admin')">
+
 			
 						<petclinic:menuItem active="${name eq 'rules'}" url="/rules"
 							title="Ver reglas del juego">
-							<span class="glyphicon" aria-hidden="true"></span>
 							<span>Reglas</span>
 						</petclinic:menuItem>
 						
@@ -69,7 +69,8 @@
 							<span class="glyphicon" aria-hidden="true"></span>
 							<span>Ranking</span>
 						</petclinic:menuItem>
-
+					
+				
 	                </sec:authorize>
 			</ul>
 

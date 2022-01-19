@@ -1,4 +1,5 @@
 package sevenisles.game;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -18,10 +19,8 @@ import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
@@ -59,13 +58,9 @@ public class GameServicesTest {
 	
 	private IslandService islandService;
 	
-	private IslandService islandStatusService;
-	
 	private UserService userService;
 	
 	private AuthoritiesService authService;
-	
-	private StatisticsService statisticsService;
 	
 	Game game;
 	Integer playerId;
@@ -79,7 +74,6 @@ public class GameServicesTest {
 		this.cardService = cardService;
 		this.statusService = statusService;
 		this.islandService = islandService;
-		this.islandStatusService = islandStatusService;
 		this.userService=userService;
 		this.authService=authService;
 	}
@@ -201,6 +195,19 @@ public class GameServicesTest {
 	@Test
 	public void testFindFinishedGames() {
 		List<Game> finishedGames = gameService.findFinishedGames();
+		for(Integer i=0;i<finishedGames.size();i++) {
+			assertNotEquals(finishedGames.get(i).getEndHour(),null);
+		}
+	}
+	
+	@Test
+	public void testFindFinishedGamesOfPlayer() {
+		Player player  = new Player();
+		player.setId(4);
+		Game game = new Game();
+		gameService.enterGame(game, player);
+		game.setEndHour(LocalTime.now());
+		List<Game> finishedGames = gameService.findFinishedGamesOfPlayer(player.getId());
 		for(Integer i=0;i<finishedGames.size();i++) {
 			assertNotEquals(finishedGames.get(i).getEndHour(),null);
 		}
