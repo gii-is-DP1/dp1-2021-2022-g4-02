@@ -1,13 +1,18 @@
 package sevenisles.statistics;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,6 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import sevenisles.configuration.SecurityConfiguration;
+import sevenisles.game.exceptions.GameControllerException;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes=StatisticsController.class)
@@ -37,11 +43,18 @@ public class StatisticsControllerTests {
 	@Autowired
 	private StatisticsController statisticsController;
 	
-	/*@Autowired
-	private WebApplicationContext context;*/
-	
 	@MockBean
 	private StatisticsService statisticsService;
+	
+	@BeforeEach
+	public void setup() { 
+
+		Statistics st = new Statistics();
+		st.setId(TEST_STATISTICS_ID);
+		
+		Mockito.when(this.statisticsService.findStatisticsById(TEST_STATISTICS_ID)).thenReturn(Optional.of(st));
+	
+	}
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
@@ -59,7 +72,7 @@ public class StatisticsControllerTests {
 			.andExpect(view().name("statistics/ranking"));
 	}
 	
-	/*@Test
+	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
 	void statisticsFoundByIdTest() throws Exception{
 		mockMvc.perform(get("/statistics/{statisticsId}", TEST_STATISTICS_ID))
@@ -68,8 +81,6 @@ public class StatisticsControllerTests {
 			.andExpect(view().name("statistics/statisticsDetails"));
 	}
 	
-	
-	//Caso negativo del de arriba
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
 	void statisticsNotFoundByIdTest() throws Exception{
@@ -78,7 +89,7 @@ public class StatisticsControllerTests {
 			.andExpect(status().isBadRequest())
 			.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
 			.andExpect(result -> assertEquals("Estadísticas no encontradas", result.getResolvedException().getMessage()));;
-	}*/
+	}
 	
 	
 }

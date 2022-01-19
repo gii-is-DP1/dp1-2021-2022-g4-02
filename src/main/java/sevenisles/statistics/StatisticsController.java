@@ -9,7 +9,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import sevenisles.game.Game;
 import sevenisles.game.exceptions.GameControllerException;
 
 @Controller
