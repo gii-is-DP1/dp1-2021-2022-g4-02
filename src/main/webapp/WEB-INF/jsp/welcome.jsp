@@ -13,18 +13,18 @@
 	<img src="${pirateShipImage}" style="width:100%; border-radius: 10px;"/>-->
 	
 	<div class="row">
-	<div class="col-md-6">
+	<div class="col-md-6 text-center">
 	<a href="/games/create">
 		<spring:url value="/resources/images/crear-partida.png"
 				var="crearPartidaImg" />
-		<img src="${crearPartidaImg}" style="width:100%; border-radius: 20%; margin-right:5%; margin-top:10%"/>
+		<img src="${crearPartidaImg}" style="width:32em; border-radius: 20%; margin-right:5%; margin-top:7%"/>
 	</a>
 	</div>
-	<div class="col-md-6">
+	<div class="col-md-6 text-center">
 	<a href="/games/searchGame">
 		<spring:url value="/resources/images/buscar-partida.png"
 			var="buscarPartidaImg" />
-		<img src="${buscarPartidaImg}" style="width:100%; border-radius: 20%; margin-left: 5%; margin-top:10%"/>
+		<img src="${buscarPartidaImg}" style="width:32em; border-radius: 20%; margin-left: 5%; margin-top:7%"/>
 	</a>
 	</div>
 	</div>

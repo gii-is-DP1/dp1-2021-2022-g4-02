@@ -222,7 +222,6 @@ public class GameControllerTest {
 	@WithMockUser(value="spring", authorities=("player"))
 	void startedGameTest() throws Exception{
 		
-		
 		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
 		
 		mockMvc.perform(get("/games/startedGame")).andExpect(status().isOk())
