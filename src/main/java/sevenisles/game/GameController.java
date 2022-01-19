@@ -270,10 +270,10 @@ public class GameController {
     					return "redirect:/games/{code}/robIsland/{islandId}/payCard";
     				}		
     			}else {
-    				return "";
+    				return "exception";
     			}   				       			
     		}else {
-    			return "";
+    			return "exception";
     		}   				 	
     	}else {
     		throw new GameControllerException("Partida no encontrada");
@@ -308,7 +308,7 @@ public class GameController {
 					throw new GameControllerException("Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
 				}
 			}else {
-				return "error";
+				return "exception";
 			}
 		}else {
 			throw new GameControllerException("Partida no encontrada!");
@@ -318,56 +318,38 @@ public class GameController {
 	@GetMapping(value = "games/{code}/robIsland/{islandId}/payCard/{cardId}")
 	public String processPayCardForm(@PathVariable("code") String code,@PathVariable("islandId") Integer islandId,
 			@PathVariable("cardId") Integer cardId, ModelMap model) throws GameControllerException {
-		Optional<Card> cardopt = cardService.findCardById(cardId);
-		if(cardopt.isPresent()) {
-			Card card = cardopt.get();
-			Game game = gameService.findGameByCode(code).get();
-			Status status = game.getStatus().get(game.getCurrentPlayer());
-			if(statusService.cardInHand(status,card)) {
-				statusService.deleteCardFromHand(game, card);
-				if(status.getNumberOfCardsToPay()>=1) {
-					return "redirect:";
+		Optional<Game> optGame = gameService.findGameByCode(code);
+    	if(optGame.isPresent()) {
+    		Game game = optGame.get();
+			if(gameService.loggedPlayerCheckTurn(game)){
+				Optional<Card> cardopt = cardService.findCardById(cardId);
+				if(cardopt.isPresent()) {
+					Card card = cardopt.get();
+					Status status = game.getStatus().get(game.getCurrentPlayer());
+					if(statusService.cardInHand(status,card)) {
+						statusService.deleteCardFromHand(game, card);
+						if(status.getNumberOfCardsToPay()>=1) {
+							return "redirect:";
+						}else {
+							gameService.robIsland(game, islandId, status);
+							gameService.nextTurn(game);
+							if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
+								return "redirect:/games/{code}/endGame";
+							}else return "redirect:/games/{code}/board";
+						}
+					}else {
+						throw new GameControllerException("No posees esa carta. Elige otra");
+					}			
 				}else {
-					gameService.robIsland(game, islandId, status);
-					//4 líneas de pasar turno
-					gameService.nextTurn(game);
-					if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
-						return "redirect:/games/{code}/endGame";
-					}else return "redirect:/games/{code}/board";
-					//return "redirect:/games/{code}/board";
+					throw new GameControllerException("Carta no encontrada.");
 				}
 			}else {
-				throw new GameControllerException("No posees esa carta. Elige otra");
-			}			
+				return "exception";
+			}
 		}else {
-			throw new GameControllerException("Carta no encontrada.");
+			throw new GameControllerException("Partida no encontrada!");
 		}
 	}
-    
-//    //Pasar turno
-//    @GetMapping(value = "/games/{code}/turn")
-//    public String nextTurn(
-//    		@PathVariable("code") String code, ModelMap model) throws GameControllerException{
-//    	Optional<Game> optGame = gameService.findGameByCode(code);
-//    	if(optGame.isPresent()) {
-//    		Game game = optGame.get();
-//    		if(gameService.loggedPlayerCheckTurn(game)) {
-//    				if(game.getFinishedTurn()==1) {
-//    					gameService.nextTurn(game);
-//    					if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
-//    						return "redirect:/games/{code}/endGame";
-//    					}else return "redirect:/games/{code}/board";
-//        			}else {
-//        				throw new GameControllerException("No has acabado el turno.");
-//            		} 
-//    				
-//    			}else {
-//        			return "error";
-//        		}    				       			
-//    	}else {
-//    		throw new GameControllerException("Partida no encontrada");
-//        }	
-//    }
     
     @GetMapping(value = "/games/{code}/endGame")
     public String finishGame(
