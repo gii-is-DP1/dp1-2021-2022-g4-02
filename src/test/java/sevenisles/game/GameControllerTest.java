@@ -473,4 +473,18 @@ public class GameControllerTest {
 	
 	
 	
+	/* NO FUNCIONA  
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void processCreateGameTest() throws Exception{
+		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
+		mockMvc.perform(post("/games/create")
+				.with(csrf())
+				.param("gameMode", "0")
+				.param("id","1"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("game"))
+			.andExpect(view().name("games/gameMode"));
+	}
+	*/
 }

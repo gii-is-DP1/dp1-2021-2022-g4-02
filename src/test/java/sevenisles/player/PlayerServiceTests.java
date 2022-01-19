@@ -52,6 +52,15 @@ public class PlayerServiceTests {
 		assertEquals("player2",player.getUser().getUsername());
 	}
 	
+
+	@Test
+	public void testFindPlayerByUsername() {
+		/* Sabemos que el id= 2 es el player2, con username = player2*/
+		String name = "player2";
+		Player player = playerService.findPlayerByUsername(name).get();
+		assertEquals("player2",player.getUser().getUsername());
+	}
+	
 	
 	@Test
 	public void TestSavePlayer() {

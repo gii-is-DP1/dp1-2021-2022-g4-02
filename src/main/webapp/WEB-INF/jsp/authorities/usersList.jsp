@@ -11,7 +11,7 @@
     <table id="usersTable" class="table table-striped">
         <thead>
         <tr>
-        	<th>ID</th>
+        	
             <th>Nombre de usuario</th>
             <th>Autoridad</th>
             <th> Acciones de usuario </th>
@@ -21,10 +21,7 @@
         <tbody>
         
         <c:forEach items="${users}" var="user">
-            <tr>
-            	<td>
-                    <c:out value="${user.id}"/>
-                </td> 
+            <tr> 
                 <td>
                     <c:out value="${user.username}"/>
                 </td>
