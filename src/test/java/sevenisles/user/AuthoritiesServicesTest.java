@@ -164,7 +164,7 @@ public class AuthoritiesServicesTest {
 		
 		authoritiesServices.insertdataAuditory(newuser, user2);
 		
-		assertTrue(newuser.getCreatedDate().compareTo(newuser.getLastModifiedDate()) <= 0);
+		assertTrue(newuser.getLastModifiedDate().isAfter(newuser.getCreatedDate()));
 		assertEquals(newuser.getModifier(),user2.getUsername());
 		assertEquals(newuser.getCreator(),user2.getUsername());
 	}
