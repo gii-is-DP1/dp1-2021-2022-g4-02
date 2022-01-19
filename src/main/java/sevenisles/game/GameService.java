@@ -55,6 +55,7 @@ public class GameService extends ScoreCountImpl{
 	
 	private AchievementService achievementService;
 	
+	
 	@Autowired
 	public GameService(CardService cardService, GameRepository gameRepository, StatusService statusService,
 			PlayerService playerService, UserService userService, IslandService islandService, IslandStatusService islandStatusService, 
@@ -117,6 +118,14 @@ public class GameService extends ScoreCountImpl{
 	public List<Game> findStartedGames(){ 
 		return gameRepository.findStartedGames();
 	}
+	
+	@Transactional(readOnly = true)
+    public List<Game> findFinishedGamesOfPlayer(int playerId) throws IllegalArgumentException { 
+        Optional<List<Status>> ls = statusService.findStatusOfPlayer(playerId);
+        if(ls.isPresent()) {
+            return ls.get().stream().filter(s->s.getGame().getEndHour()!=null).map(s->s.getGame()).collect(Collectors.toList());
+        }else return null;
+    }
 	
 	@Transactional
 	public void saveGame(Game gameToUpdate) throws DataAccessException {
