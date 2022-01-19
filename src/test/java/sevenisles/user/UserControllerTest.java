@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import sevenisles.achievementStatus.AchievementStatusService;
 import sevenisles.configuration.SecurityConfiguration;
 import sevenisles.player.PlayerService;
 import sevenisles.statistics.StatisticsService;
@@ -60,6 +61,9 @@ public class UserControllerTest {
 	
 	@MockBean
 	private StatisticsService statisticsService;
+	
+	@MockBean
+	private AchievementStatusService achievementStatusService;
 	
 	
 	

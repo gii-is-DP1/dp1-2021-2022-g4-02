@@ -69,14 +69,10 @@
 							<span class="glyphicon" aria-hidden="true"></span>
 							<span>Ranking</span>
 						</petclinic:menuItem>
-<<<<<<< HEAD
-					
+
 				
 	                </sec:authorize>
-=======
 
-	          </sec:authorize>
->>>>>>> f981a29225369f915eafc5f6f14e24dd368a0a57
 			</ul>
 
 

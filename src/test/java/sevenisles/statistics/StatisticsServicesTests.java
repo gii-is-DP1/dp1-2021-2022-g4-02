@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -150,8 +151,8 @@ public class StatisticsServicesTests {
 	@Test
 	public void findStatisticsByPlayerTest() {
 		Integer playerId = player.getId();
-		Statistics stat = statisticServices.getStatsByPlayer(playerId);
-		assertEquals(playerId,stat.getPlayer().getId());
+		Optional<Statistics> stat = statisticServices.getStatsByPlayer(playerId);
+		assertEquals(playerId,stat.get().getPlayer().getId());
 	}
 	
 	@Test
@@ -167,14 +168,14 @@ public class StatisticsServicesTests {
 		
 		//Obtenemos las estadísticas previas del jugador
 		Integer playerId = player.getId();
-		Statistics statsplonebef = statisticServices.getStatsByPlayer(playerId);
+		Statistics statsplonebef = statisticServices.getStatsByPlayer(playerId).get();
 		Integer gamesPlayed = statsplonebef.getGamesPlayed();
 		Integer ChaliceCount = statsplonebef.getChaliceCount();
 		
 		
 		statisticServices.setStatistics(newstatus,newgame);
 		
-		Statistics statsploneaft = statisticServices.getStatsByPlayer(playerId);
+		Statistics statsploneaft = statisticServices.getStatsByPlayer(playerId).get();
 		assertEquals(statsploneaft.getTotalTime(), Duration.between(newgame.getStartHour(), newgame.getEndHour()).toMinutes());
 		assertEquals(statsploneaft.getChaliceCount(),ChaliceCount+1);
 		assertEquals(gamesPlayed+1,statsploneaft.getGamesPlayed());

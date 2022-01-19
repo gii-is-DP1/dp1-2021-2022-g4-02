@@ -2,21 +2,19 @@ package sevenisles.statistics;
 
 
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-
-import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
-import sevenisles.achievement.Achievement;
+import sevenisles.achievementStatus.AchievementStatus;
 import sevenisles.model.BaseEntity;
 import sevenisles.player.Player;
-import sevenisles.status.Status;
 
 @Getter
 @Setter
@@ -46,7 +44,7 @@ public class Statistics extends BaseEntity{
 	private Integer mapCount = 0;
 	private Integer crownCount = 0;
 	
-	@OneToMany(cascade = CascadeType.ALL,targetEntity=Status.class)
-	private List<Achievement> achievement;
+	@OneToMany(cascade= CascadeType.ALL, targetEntity = AchievementStatus.class,mappedBy="statistics")
+	private List<AchievementStatus> achievementsStatus;
 
 }
