@@ -39,20 +39,13 @@
 					</sec:authorize>
 				
 					<sec:authorize access="!hasAuthority('admin')">
-
-		
-						<petclinic:menuItem active="${name eq 'create'}" url="/games/create"
-							title="create new game">
-							<span aria-hidden="true"></span>
-							<span>Crear Partida</span>
-						</petclinic:menuItem>
-		
-						<petclinic:menuItem active="${name eq 'searchGame'}" url="/games/searchGame"
-							title="Buscar partidas">
+			
+						<petclinic:menuItem active="${name eq 'rules'}" url="/rules"
+							title="Ver reglas del juego">
 							<span class="glyphicon" aria-hidden="true"></span>
-							<span>Buscar Partida</span>
+							<span>Reglas</span>
 						</petclinic:menuItem>
-		
+						
 						<petclinic:menuItem active="${name eq 'availableGames'}" url="/games/availableGames"
 							title="Ver partidas disponibles">
 							<span class="glyphicon" aria-hidden="true"></span>
@@ -65,17 +58,18 @@
 							<span>Partida Empezada</span>
 						</petclinic:menuItem>
 						
-						<petclinic:menuItem active="${name eq 'rules'}" url="/games/playerHistory"
+						<petclinic:menuItem active="${name eq 'history'}" url="/games/playerHistory"
 							title="Ver mi historial">
 							<span class="glyphicon" aria-hidden="true"></span>
 							<span>Historial</span>
 						</petclinic:menuItem>
 						
-						<petclinic:menuItem active="${name eq 'rules'}" url="/rules"
-							title="Ver reglas del juego">
+						<petclinic:menuItem active="${name eq 'ranking'}" url="/statistics/ranking"
+							title="Ver ranking del juego">
 							<span class="glyphicon" aria-hidden="true"></span>
-							<span>Reglas</span>
+							<span>Ranking</span>
 						</petclinic:menuItem>
+
 	                </sec:authorize>
 			</ul>
 
