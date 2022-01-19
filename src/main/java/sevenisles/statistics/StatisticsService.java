@@ -2,6 +2,7 @@ package sevenisles.statistics;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sevenisles.card.Card;
 import sevenisles.card.CardType;
 import sevenisles.game.Game;
+import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.player.Player;
 import sevenisles.status.Status;
 
@@ -31,8 +33,8 @@ public class StatisticsService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Statistics findStatisticsById(int id) throws IllegalArgumentException { 
-		return statisticsRepository.findById(id).get();
+	public Optional<Statistics> findStatisticsById(int id) throws GameControllerException { 
+		return statisticsRepository.findById(id);
 	}
 	
 	@Transactional
@@ -51,7 +53,7 @@ public class StatisticsService {
 		Integer score = s.getScore();
 		Player player =  s.getPlayer();
 		
-		Statistics playerStatistics =  findStatisticsById(player.getId());
+		Statistics playerStatistics =  findStatisticsById(player.getId()).get();
 		playerStatistics.setGamesPlayed(playerStatistics.getGamesPlayed()+1);
 		playerStatistics.setTotalScore(playerStatistics.getTotalScore()+score);
 		Integer numGamesPlayed = playerStatistics.getGamesPlayed();
