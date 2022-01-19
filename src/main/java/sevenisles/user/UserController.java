@@ -29,6 +29,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import sevenisles.achievementStatus.AchievementStatusService;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.statistics.Statistics;
@@ -57,14 +58,18 @@ public class UserController {
 	
 	private StatisticsService statisticsService;
 	
+	private AchievementStatusService achievementStatusService;
+	
 	
 	
 	@Autowired
-	public UserController(PlayerService playerService, UserService userService, AuthoritiesService authoritiesService, StatisticsService statisticsService) {
+	public UserController(PlayerService playerService, UserService userService, AuthoritiesService authoritiesService, StatisticsService statisticsService,
+			AchievementStatusService achievementStatusService) {
 		this.playerService = playerService;
 		this.userService = userService;
 		this.authoritiesService  = authoritiesService;
 		this.statisticsService = statisticsService;
+		this.achievementStatusService=achievementStatusService;
 	}
 	
 	//Get detalles de usuario
@@ -120,6 +125,7 @@ public class UserController {
 			
 			Statistics statistics = new Statistics();
 			statistics.setPlayer(player);
+			achievementStatusService.asignacionInicialDeLogros(statistics);
 			this.statisticsService.saveStatistic(statistics);
 			
 			Authorities auth = new Authorities();

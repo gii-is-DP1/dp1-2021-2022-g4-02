@@ -104,4 +104,32 @@
            </tr>
        </tbody>
     </table>
+    
+    <table id="Achievements" class="table table-striped">
+        <thead>
+        <tr>
+            <th>Logro</th>
+            <th>Conseguido</th>
+            
+        </tr>
+        </thead>
+        <tbody>
+            <c:forEach items="${achievements}" var="achievement">
+            <tr>
+            	<td>
+                    <c:out value="${achievement.achievement.achievementType.description}"/>
+                </td>
+                <td>
+                	<c:if test="${achievement.achieved}">
+                		Sí
+                   	 </c:if>
+                   	 <c:if test="${!achievement.achieved}">
+                   	 	No
+                   	 </c:if>
+                </td> 
+                
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
 </petclinic:layout>

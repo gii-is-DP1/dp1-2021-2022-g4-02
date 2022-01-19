@@ -25,7 +25,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -34,7 +33,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
-import sevenisles.card.CardType;
 import sevenisles.configuration.SecurityConfiguration;
 import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.player.Player;
@@ -44,7 +42,6 @@ import sevenisles.status.StatusService;
 import sevenisles.user.Authorities;
 import sevenisles.user.AuthoritiesService;
 import sevenisles.user.User;
-import sevenisles.user.UserController;
 import sevenisles.user.UserService;
 
 @ExtendWith(SpringExtension.class)
@@ -224,7 +221,7 @@ public class GameControllerTest {
 		
 		
 		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
-		
+		game.setStartHour(LocalTime.now());
 		mockMvc.perform(get("/games/startedGame")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("game"))
 				.andExpect(view().name("games/startedGame"));
@@ -252,6 +249,15 @@ public class GameControllerTest {
 		sts.add(st);
 		
 		
+		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
+		mockMvc.perform(get("/games/startedGame")).andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("No tienes ninguna partida empezada.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void startedGameNotStartedGame2Test() throws Exception{
 		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
 		mockMvc.perform(get("/games/startedGame")).andExpect(status().isBadRequest())
 		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))

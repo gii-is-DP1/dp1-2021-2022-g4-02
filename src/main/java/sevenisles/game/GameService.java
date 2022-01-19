@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
-import sevenisles.achievement.AchievementService;
+import sevenisles.achievementStatus.AchievementStatusService;
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.game.exceptions.GameControllerException;
@@ -53,13 +53,13 @@ public class GameService extends ScoreCountImpl{
 	
 	private StatisticsService statisticsService;
 	
-	private AchievementService achievementService;
+	private AchievementStatusService achievementStatusService;
 	
 	
 	@Autowired
 	public GameService(CardService cardService, GameRepository gameRepository, StatusService statusService,
 			PlayerService playerService, UserService userService, IslandService islandService, IslandStatusService islandStatusService, 
-			StatisticsService statisticsService, AchievementService achievementService) {
+			StatisticsService statisticsService, AchievementStatusService achievementStatusService) {
 		super(cardService);
 		this.cardService = cardService;
 		this.gameRepository = gameRepository;
@@ -69,7 +69,7 @@ public class GameService extends ScoreCountImpl{
 		this.islandService = islandService;
 		this.islandStatusService = islandStatusService;
 		this.statisticsService = statisticsService;
-		this.achievementService = achievementService;
+		this.achievementStatusService = achievementStatusService;
 	}
 
 	
@@ -349,19 +349,12 @@ public class GameService extends ScoreCountImpl{
 			Integer score = countPoints(map);
 			s.setScore(score);
 			if(score>max) max=score;
-			//achievementService.ScoreAchievement(s.getPlayer(), score);
 			statusService.saveStatus(s);
-
 			statisticsService.setStatistics(s,game);
-			
-			//achievementService.setAchievements(s.getPlayer());
-
+			achievementStatusService.setAchievements(s.getPlayer());
 		}
-    
 		List<Status> ls = statusService.findStatusByGameAndScore(game.getId(), max).get();
-		if(ls.size()>1) {
-			ls = tiebreaker(ls);
-		}
+		if(ls.size()>1) ls = tiebreaker(ls);
 		for(Status st:ls) {
 			st.setWinner(1);
 			Player player = st.getPlayer();
@@ -370,10 +363,8 @@ public class GameService extends ScoreCountImpl{
 			playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
 			statisticsService.saveStatistic(playerStatistics);
 
-			//achievementService.WonGamesAchievement(player);
+			achievementStatusService.WonGamesAchievement(player);
 		}
-		
-		
 	}
 	
 	public List<Status> orderStatusByScore(List<Status> statuses){
