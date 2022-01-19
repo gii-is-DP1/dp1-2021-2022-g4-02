@@ -80,6 +80,6 @@ public class AuthoritiesService {
 		userToUpdate.setModifier(userLogged.getUsername());
 		userToUpdate.setLastModifiedDate(LocalDateTime.now());
 		userToUpdate.setCreator(userLogged.getUsername());
-		userToUpdate.setCreatedDate(LocalDateTime.now());
+		userToUpdate.setCreatedDate(userToUpdate.getCreatedDate());
 	}
 }
