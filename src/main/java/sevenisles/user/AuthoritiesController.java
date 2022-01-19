@@ -143,8 +143,9 @@ public class AuthoritiesController {
 			
 			Statistics statistics = new Statistics();
 			statistics.setPlayer(player);
-			achievementStatusService.asignacionInicialDeLogros(statistics);
 			this.statisticsService.saveStatistic(statistics);
+			achievementStatusService.asignacionInicialDeLogros(statistics);
+			
 			
 			Authorities auth = new Authorities();
 	        auth.setAuthority("player");

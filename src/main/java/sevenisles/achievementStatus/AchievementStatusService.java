@@ -57,6 +57,7 @@ public class AchievementStatusService {
 			ls.add(as);
 		}
 		stats.setAchievementsStatus(ls);
+		statisticsService.saveStatistic(stats);
 	}
 	
 	@Transactional
