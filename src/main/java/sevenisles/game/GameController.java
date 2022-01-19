@@ -53,6 +53,36 @@ public class GameController {
 		return vista;
 	}
 	
+	@GetMapping(value = "/games/unfinishedGames")
+	public String unfinishedGamesList(ModelMap modelMap) {
+		String vista = "games/gamesList";
+		Iterable<Game> games = gameService.findUnfinishedGames();
+		modelMap.addAttribute("games", games);
+		return vista;
+	}
+	
+	@GetMapping(value = "/games/finishedGames")
+	public String finishedGamesList(ModelMap modelMap) {
+		String vista = "games/playedGameList";
+		Iterable<Game> games = gameService.findFinishedGames();
+		modelMap.addAttribute("games", games);
+		return vista;
+	}
+	
+	@GetMapping(value = "/games/playerHistory")
+	public String historyGamesList(ModelMap modelMap) {
+		String vista = "games/playedGameList";
+		Optional<Player> opt = playerService.findCurrentPlayer();
+		if(opt.isPresent()) {
+			Integer playerId = playerService.findCurrentPlayer().get().getId();
+			Iterable<Game> games = gameService.findFinishedGamesOfPlayer(playerId);
+			modelMap.addAttribute("games", games);
+			return vista;
+		}else{
+			throw new GameControllerException("No has iniciado sesión.");
+		}
+	}
+	
 	@GetMapping(value = "/games/availableGames")
 	public String availableGamesList(ModelMap modelMap, HttpServletResponse response) {
 		response.addHeader("Refresh", "5");
@@ -170,12 +200,8 @@ public class GameController {
     		Player player = gameService.enterGameUtil(game);
     		if(!statusService.isInAnotherGame(player)) {
     			if(game.getStartHour()==null) {
-    				if(game.getEndHour()==null) {
-    					gameService.enterGame(game, player);
-            			return "redirect:/games/{code}";
-    				}else {
-        				throw new GameControllerException("La partida ya ha terminado.");
-        			}
+    				gameService.enterGame(game, player);
+            		return "redirect:/games/{code}";
     			}else {
     				throw new GameControllerException("La partida ya ha empezado.");
     			}
@@ -226,7 +252,7 @@ public class GameController {
         			throw new GameControllerException("Ya has tirado el dado este turno.");
             	}
     		}else {
-        		return "";
+        		return "exception";
         	}    				       		
     	}else {
     		throw new GameControllerException("Partida no encontrada");

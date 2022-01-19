@@ -97,6 +97,13 @@ public class GameServicesTest {
         user.setLastName("El de los palotes");
         user.setPassword("prueba");
         
+        User user2 = new User();
+        user2.setUsername("username2");
+        user2.setFirstName("periquito");
+        user2.setLastName("palotes");
+        user2.setPassword("prueba2");
+        
+        
         Authorities auth = new Authorities();
         auth.setAuthority("player");
         auth.setUser(user);
@@ -109,7 +116,13 @@ public class GameServicesTest {
         playerService.savePlayer(player);
         user.setPlayer(player);
         
+        Player player2 = new Player();
+        player2.setUser(user2);
+        playerService.savePlayer(player2);
+        user2.setPlayer(player2);
+        
         userService.saveUser(user);
+        userService.saveUser(user2);
         
         Status status1 = new Status();
         status1.setPlayer(player);
@@ -117,6 +130,13 @@ public class GameServicesTest {
         status1.setScore(10);
         statusService.saveStatus(status1);
         status.add(status1);
+        
+        Status status2 = new Status();
+        status2.setPlayer(player2);
+        status2.setGame(game);
+        status2.setScore(15);
+        statusService.saveStatus(status2);
+        status.add(status2);
         
         game.setStatus(status);
         game.setCards(deck);
@@ -511,6 +531,68 @@ public class GameServicesTest {
 		gameService.utilAttributes(game, model);
 		assertTrue(model.containsAttribute("currentPlayerStatus") && model.containsAttribute("playerUserId")
 				&& model.containsAttribute("loggedUserId"));
+	}
+	
+	
+	@Test
+	@WithMockUser(value="test",authorities="player")
+	public void testloggedPlayerCheckTurn() {
+		this.game.setCurrentPlayer(0);
+		this.game.setCurrentRound(1);
+		this.game.setMaxRounds(66);;
+		
+		gameService.loggedPlayerCheckTurn(game);
+		Status st = status.get(0);
+		assertTrue(st.getPlayer().getId() == playerService.findCurrentPlayer().get().getId());
+	}
+	
+	@Test
+	@WithMockUser(value="test",authorities="player")
+	public void testloggedPlayerCheckTurnEndGame() throws GameControllerException{
+		this.game.setCurrentPlayer(0);
+		this.game.setCurrentRound(67);
+		this.game.setMaxRounds(66);;
+		try {
+			gameService.loggedPlayerCheckTurn(game);
+			Status st = status.get(0);
+			assertTrue(st.getPlayer().getId() == playerService.findCurrentPlayer().get().getId());
+		}catch (GameControllerException e){
+			assertTrue(e.getMessage().contains("La partida ha terminado."));
+		}
+		
+	}
+	
+	@Test
+	@WithMockUser(value="test2",authorities="player")
+	public void testloggedPlayerCheckTurnNotBelongsGame() throws GameControllerException{
+		this.game.setCurrentPlayer(0);
+		this.game.setCurrentRound(67);
+		this.game.setMaxRounds(66);;
+		try {
+			gameService.loggedPlayerCheckTurn(game);
+			Status st = status.get(0);
+			assertTrue(st.getPlayer().getId() == playerService.findCurrentPlayer().get().getId());
+		}catch (GameControllerException e){
+			assertTrue(e.getMessage().contains("No perteneces a esta partida."));
+		}
+		
+	}
+	
+	
+	@Test
+	@WithMockUser(value="test",authorities="player")
+	public void testloggedPlayerCheckTurnNotTurn() throws GameControllerException{
+		this.game.setCurrentPlayer(1);
+		this.game.setCurrentRound(2);
+		this.game.setMaxRounds(66);;
+		try {
+			gameService.loggedPlayerCheckTurn(game);
+			Status st = status.get(0);
+			assertTrue(st.getPlayer().getId() == playerService.findCurrentPlayer().get().getId());
+		}catch (GameControllerException e){
+			assertTrue(e.getMessage().contains("No es tu turno."));
+		}
+		
 	}
 	
 	//Tests de chooseIslandCondition

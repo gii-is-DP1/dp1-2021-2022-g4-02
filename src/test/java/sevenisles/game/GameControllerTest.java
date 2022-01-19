@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -147,6 +148,7 @@ public class GameControllerTest {
 		
 		//Devuelve una partida por código de partida
 		Mockito.when(this.gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.of(game));
+		Mockito.when(this.gameService.findGameById(TEST_GAME_ID)).thenReturn(Optional.of(game));
 		
 		//Hacer que el usuario de la prueba pertenezca a la partida
 		Mockito.when(this.gameService.loggedUserBelongsToGame(game)).thenReturn(true);
@@ -325,5 +327,164 @@ public class GameControllerTest {
 		      .andExpect(result -> assertEquals("Ya estás dentro de una partida.", result.getResolvedException().getMessage()));
 	}
 	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void processCreateGameTest() throws Exception{
+		mockMvc.perform(post("/games/create")
+				.with(csrf())
+				.param("id", TEST_GAME_ID.toString())
+				.param("gameMode", "0"))
+			.andExpect(status().is3xxRedirection());
+	}
 	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void processCreateGameWithErrorTest() throws Exception{
+		mockMvc.perform(post("/games/create")
+				.with(csrf())
+				.param("id", TEST_GAME_ID.toString())
+				.param("gameMode", "notNum"))
+			.andExpect(status().isOk())
+			.andExpect(view().name("games/gameMode"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void enterGameTest() throws Exception{
+		Mockito.when(gameService.enterGameUtil(game)).thenReturn(p1);
+		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/enter",TEST_GAME_CODE))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/games/{code}"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void enterGameNotExistingGameTest() throws Exception{
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/games/{code}/enter",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Lo sentimos, pero dicha partida no existe.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void enterGameAlreadyInOtherGameTest() throws Exception{
+		Mockito.when(gameService.enterGameUtil(game)).thenReturn(p1);
+		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/enter",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Ya estás dentro de una partida.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void enterGameAlreadyStartedTest() throws Exception{
+		game.setStartHour(LocalTime.now());
+		Mockito.when(gameService.enterGameUtil(game)).thenReturn(p1);
+		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/enter",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("La partida ya ha empezado.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void startGameTest() throws Exception{
+		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(true);
+		Mockito.when(statusService.isReadyToStart(TEST_GAME_ID)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/start",TEST_GAME_CODE))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/games/{code}/board"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void startGameNotExistingGameTest() throws Exception{
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/games/{code}/start",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Partida no encontrada", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void startGameNotBelongingToGameTest() throws Exception{
+		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/start",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("No perteneces a esta partida.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void startGameNotReadyTest() throws Exception{
+		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(true);
+		Mockito.when(statusService.isReadyToStart(TEST_GAME_ID)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/start",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Necesitas al menos 2 jugadores para empezar.", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void playerThrowDiceTest() throws Exception{
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		mockMvc.perform(get("/games/{code}/dice",TEST_GAME_CODE))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/games/{code}/board"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void playerThrowDiceNotExistingGameTest() throws Exception{
+		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/games/{code}/dice",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Partida no encontrada", result.getResolvedException().getMessage()));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void playerThrowDiceNotYourTurnTest() throws Exception{
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(false);
+		mockMvc.perform(get("/games/{code}/dice",TEST_GAME_CODE))
+		.andExpect(status().isOk())
+		.andExpect(view().name("exception"));
+	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void playerThrowDiceAlreadyThrownTest() throws Exception{
+		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
+		game.getStatus().get(0).setDiceNumber(3);
+		mockMvc.perform(get("/games/{code}/dice",TEST_GAME_CODE))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	      .andExpect(result -> assertEquals("Ya has tirado el dado este turno.", result.getResolvedException().getMessage()));
+	}
+	
+	
+	
+	/* NO FUNCIONA  
+	@Test
+	@WithMockUser(value="spring", authorities= {"player"})
+	void processCreateGameTest() throws Exception{
+		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
+		mockMvc.perform(post("/games/create")
+				.with(csrf())
+				.param("gameMode", "0")
+				.param("id","1"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("game"))
+			.andExpect(view().name("games/gameMode"));
+	}
+	*/
 }

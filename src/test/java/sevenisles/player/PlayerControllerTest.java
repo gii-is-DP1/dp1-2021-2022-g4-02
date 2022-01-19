@@ -102,5 +102,13 @@ public class PlayerControllerTest {
 			.andExpect(model().attributeExists("player"))
 			.andExpect(view().name("player/playerDetails"));
 	}
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void playerListByIdSecondTest() throws Exception{
+		mockMvc.perform(get("/players/{playerId}",90)).andExpect(status().isOk())
+			.andExpect(model().attributeExists("message"))
+			.andExpect(view().name("player/playerDetails"));
+	}
 
 }

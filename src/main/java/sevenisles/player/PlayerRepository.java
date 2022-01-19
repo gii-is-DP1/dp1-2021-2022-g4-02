@@ -11,4 +11,7 @@ public interface PlayerRepository extends CrudRepository<Player, Integer>{
 	
 	@Query("SELECT p FROM Player p WHERE p.user.username = ?1")
 	Optional<Player> findCurrentPlayer(String currentUsername) throws DataAccessException;
+	
+	@Query("SELECT p FROM Player p WHERE p.user.username = ?1")
+	Optional<Player> findPlayerByUsername(String Username);
 }
