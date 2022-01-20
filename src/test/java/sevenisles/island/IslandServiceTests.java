@@ -98,7 +98,6 @@ public class IslandServiceTests {
 	public void finish() {
 		IslandService.deleteIsland(newisland);
 		IslandStatusService.deleteIslandStatus(newstatus);
-		//GameService.deleteGame(newgame);
 	}
 	
 	@Test
@@ -113,19 +112,6 @@ public class IslandServiceTests {
 		assertEquals(aftercount, beforecount-1);
 		
 	}
-
-	// TODO testAsignacionIicialIslas
-	/* @Test
-	public void testAsignacionInicialIslas() {
-		int beforecount = IslandService.islandCount();
-
-		IslandStatusService.deleteIslandStatus(newstatus);
-		IslandService.deleteIsland(newisland);
-		
-		int aftercount = IslandService.islandCount();
-		
-		assertEquals(aftercount, beforecount-1);
-	} */
 }
 	
 	

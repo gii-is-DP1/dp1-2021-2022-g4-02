@@ -168,7 +168,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void gamesListTest() throws Exception{
+	public void gamesListTest() throws Exception{
 		mockMvc.perform(get("/games")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("games"))
 				.andExpect(view().name("games/gamesList"));
@@ -176,7 +176,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void unfinishedGamesListTest() throws Exception{
+	public void unfinishedGamesListTest() throws Exception{
 		mockMvc.perform(get("/games/unfinishedGames")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("games"))
 				.andExpect(view().name("games/gamesList"));
@@ -184,7 +184,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void finishedGamesListTest() throws Exception{
+	public void finishedGamesListTest() throws Exception{
 		mockMvc.perform(get("/games/finishedGames")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("games"))
 				.andExpect(view().name("games/playedGameList"));
@@ -192,7 +192,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void historyGamesListTest() throws Exception{
+	public void historyGamesListTest() throws Exception{
 		mockMvc.perform(get("/games/playerHistory")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("games"))
 				.andExpect(view().name("games/playedGameList"));
@@ -200,7 +200,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void availableGamesListTest() throws Exception{
+	public void availableGamesListTest() throws Exception{
 		mockMvc.perform(get("/games/availableGames")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("games"))
 				.andExpect(view().name("games/availableGames"));
@@ -208,16 +208,15 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void startedGamesListTest() throws Exception{
+	public void startedGamesListTest() throws Exception{
 		mockMvc.perform(get("/games/startedGames")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("games"))
 				.andExpect(view().name("games/startedGames"));
 	}
 	
-	//Da error "No value present" por el Mockito.when del setUp()
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
-	void startedGameTest() throws Exception{
+	public void startedGameTest() throws Exception{
 		
 		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
 		game.setStartHour(LocalTime.now());
@@ -228,7 +227,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
-	void startedGameNotPlayedYetTest() throws Exception{
+	public void startedGameNotPlayedYetTest() throws Exception{
 		
 		
 		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.ofNullable(null));
@@ -241,7 +240,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
-	void startedGameNotStartedGameTest() throws Exception{
+	public void startedGameNotStartedGameTest() throws Exception{
 		List<Status> sts = new ArrayList<Status>();
 		Status st = new Status();
 		st.setScore(30);
@@ -256,7 +255,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
-	void startedGameNotStartedGame2Test() throws Exception{
+	public void startedGameNotStartedGame2Test() throws Exception{
 		Mockito.when(this.statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId())).thenReturn(Optional.of(sts));
 		mockMvc.perform(get("/games/startedGame")).andExpect(status().isBadRequest())
 		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
@@ -265,14 +264,14 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void initSearchByCodeViewTest() throws Exception{
+	public void initSearchByCodeViewTest() throws Exception{
 		mockMvc.perform(get("/games/searchGame")).andExpect(status().isOk())
 				.andExpect(view().name("games/searchGame"));
 	}
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player"})
-	void processSearchByCodeViewTest() throws Exception{
+	public void processSearchByCodeViewTest() throws Exception{
 		mockMvc.perform(post("/games/searchGame")
 				.with(csrf())
 				.param("code", "B3KLRM"))
@@ -282,14 +281,14 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void rulesViewTest() throws Exception{
+	public void rulesViewTest() throws Exception{
 		mockMvc.perform(get("/rules")).andExpect(status().isOk())
 				.andExpect(view().name("games/gameRules"));
 	}
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void gameDetailsByCodeTest() throws Exception{
+	public void gameDetailsByCodeTest() throws Exception{
 		mockMvc.perform(get("/games/{code}",TEST_GAME_CODE))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("game"))
@@ -299,7 +298,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void gameDetailsByCodeNotFoundTest() throws Exception{
+	public void gameDetailsByCodeNotFoundTest() throws Exception{
 		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
 		mockMvc.perform(get("/games/{code}",TEST_GAME_CODE))
 			.andExpect(status().isBadRequest())
@@ -309,7 +308,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void gameBoardByCodeTest() throws Exception{
+	public void gameBoardByCodeTest() throws Exception{
 		mockMvc.perform(get("/games/{code}/board",TEST_GAME_CODE))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("game"))
@@ -318,7 +317,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void gameBoardByCodeNotFoundTest() throws Exception{
+	public void gameBoardByCodeNotFoundTest() throws Exception{
 		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
 		mockMvc.perform(get("/games/{code}/board",TEST_GAME_CODE))
 		.andExpect(status().isBadRequest())
@@ -328,7 +327,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void gameBoardByCodeNotBelongingTest() throws Exception{
+	public void gameBoardByCodeNotBelongingTest() throws Exception{
 		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(false);
 		mockMvc.perform(get("/games/{code}/board",TEST_GAME_CODE))
 		.andExpect(status().isBadRequest())
@@ -338,7 +337,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void initCreateGameTest() throws Exception{
+	public void initCreateGameTest() throws Exception{
 		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
 		mockMvc.perform(get("/games/create"))
 			.andExpect(status().isOk())
@@ -348,7 +347,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void initCreateGameNotLoggedTest() throws Exception{
+	public void initCreateGameNotLoggedTest() throws Exception{
 		Mockito.when(playerService.findCurrentPlayer()).thenReturn(Optional.ofNullable(null));
 		mockMvc.perform(get("/games/create"))
 		.andExpect(status().isBadRequest())
@@ -358,7 +357,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void initCreateGameAlreadyInOtherGameTest() throws Exception{
+	public void initCreateGameAlreadyInOtherGameTest() throws Exception{
 		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(true);
 		mockMvc.perform(get("/games/create"))
 			.andExpect(status().isBadRequest())
@@ -368,7 +367,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void processCreateGameTest() throws Exception{
+	public void processCreateGameTest() throws Exception{
 		mockMvc.perform(post("/games/create")
 				.with(csrf())
 				.param("id", TEST_GAME_ID.toString())
@@ -378,7 +377,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void processCreateGameWithErrorTest() throws Exception{
+	public void processCreateGameWithErrorTest() throws Exception{
 		mockMvc.perform(post("/games/create")
 				.with(csrf())
 				.param("id", TEST_GAME_ID.toString())
@@ -389,7 +388,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void enterGameTest() throws Exception{
+	public void enterGameTest() throws Exception{
 		Mockito.when(gameService.enterGameUtil(game)).thenReturn(p1);
 		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
 		mockMvc.perform(get("/games/{code}/enter",TEST_GAME_CODE))
@@ -399,7 +398,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void enterGameNotExistingGameTest() throws Exception{
+	public void enterGameNotExistingGameTest() throws Exception{
 		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
 		mockMvc.perform(get("/games/{code}/enter",TEST_GAME_CODE))
 		.andExpect(status().isBadRequest())
@@ -409,7 +408,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void enterGameAlreadyInOtherGameTest() throws Exception{
+	public void enterGameAlreadyInOtherGameTest() throws Exception{
 		Mockito.when(gameService.enterGameUtil(game)).thenReturn(p1);
 		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(true);
 		mockMvc.perform(get("/games/{code}/enter",TEST_GAME_CODE))
@@ -420,7 +419,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void enterGameAlreadyStartedTest() throws Exception{
+	public void enterGameAlreadyStartedTest() throws Exception{
 		game.setStartHour(LocalTime.now());
 		Mockito.when(gameService.enterGameUtil(game)).thenReturn(p1);
 		Mockito.when(statusService.isInAnotherGame(p1)).thenReturn(false);
@@ -432,7 +431,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void startGameTest() throws Exception{
+	public void startGameTest() throws Exception{
 		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(true);
 		Mockito.when(statusService.isReadyToStart(TEST_GAME_ID)).thenReturn(true);
 		mockMvc.perform(get("/games/{code}/start",TEST_GAME_CODE))
@@ -442,7 +441,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void startGameNotExistingGameTest() throws Exception{
+	public void startGameNotExistingGameTest() throws Exception{
 		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
 		mockMvc.perform(get("/games/{code}/start",TEST_GAME_CODE))
 		.andExpect(status().isBadRequest())
@@ -452,7 +451,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void startGameNotBelongingToGameTest() throws Exception{
+	public void startGameNotBelongingToGameTest() throws Exception{
 		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(false);
 		mockMvc.perform(get("/games/{code}/start",TEST_GAME_CODE))
 		.andExpect(status().isBadRequest())
@@ -462,7 +461,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void startGameNotReadyTest() throws Exception{
+	public void startGameNotReadyTest() throws Exception{
 		Mockito.when(gameService.loggedUserBelongsToGame(game)).thenReturn(true);
 		Mockito.when(statusService.isReadyToStart(TEST_GAME_ID)).thenReturn(false);
 		mockMvc.perform(get("/games/{code}/start",TEST_GAME_CODE))
@@ -473,7 +472,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void playerThrowDiceTest() throws Exception{
+	public void playerThrowDiceTest() throws Exception{
 		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
 		mockMvc.perform(get("/games/{code}/dice",TEST_GAME_CODE))
 			.andExpect(status().is3xxRedirection())
@@ -482,7 +481,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void playerThrowDiceNotExistingGameTest() throws Exception{
+	public void playerThrowDiceNotExistingGameTest() throws Exception{
 		Mockito.when(gameService.findGameByCode(TEST_GAME_CODE)).thenReturn(Optional.ofNullable(null));
 		mockMvc.perform(get("/games/{code}/dice",TEST_GAME_CODE))
 		.andExpect(status().isBadRequest())
@@ -492,7 +491,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void playerThrowDiceNotYourTurnTest() throws Exception{
+	public void playerThrowDiceNotYourTurnTest() throws Exception{
 		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(false);
 		mockMvc.perform(get("/games/{code}/dice",TEST_GAME_CODE))
 		.andExpect(status().isOk())
@@ -501,7 +500,7 @@ public class GameControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities= {"player"})
-	void playerThrowDiceAlreadyThrownTest() throws Exception{
+	public void playerThrowDiceAlreadyThrownTest() throws Exception{
 		Mockito.when(gameService.loggedPlayerCheckTurn(game)).thenReturn(true);
 		game.getStatus().get(0).setDiceNumber(3);
 		mockMvc.perform(get("/games/{code}/dice",TEST_GAME_CODE))

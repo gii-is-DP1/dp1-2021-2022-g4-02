@@ -26,6 +26,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
+import sevenisles.achievementStatus.AchievementStatusService;
 import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.card.CardType;
@@ -35,6 +36,7 @@ import sevenisles.island.IslandService;
 import sevenisles.islandStatus.IslandStatus;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
+import sevenisles.statistics.Statistics;
 import sevenisles.statistics.StatisticsService;
 import sevenisles.status.Status;
 import sevenisles.status.StatusService;
@@ -42,7 +44,6 @@ import sevenisles.user.Authorities;
 import sevenisles.user.AuthoritiesService;
 import sevenisles.user.User;
 import sevenisles.user.UserService;
-
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class GameServicesTest {
@@ -62,13 +63,17 @@ public class GameServicesTest {
 	
 	private AuthoritiesService authService;
 	
+	private StatisticsService statsService;
+	
+	private AchievementStatusService achievementStatusService;
+	
 	Game game;
-	Integer playerId;
 	List<Status> status;
 	
 	@Autowired
 	public GameServicesTest(GameService gameService, PlayerService playerService, CardService cardService, StatusService statusService,
-			IslandService islandService, IslandService islandStatusService, UserService userService,AuthoritiesService authService, StatisticsService statisticsService) {
+			IslandService islandService, IslandService islandStatusService, UserService userService,AuthoritiesService authService,
+			StatisticsService statsService, AchievementStatusService achievementStatusService) {
 		this.gameService = gameService;
 		this.playerService = playerService;
 		this.cardService = cardService;
@@ -76,28 +81,33 @@ public class GameServicesTest {
 		this.islandService = islandService;
 		this.userService=userService;
 		this.authService=authService;
+		this.statsService=statsService;
+		this.achievementStatusService=achievementStatusService;
 	}
 	
 	
 	@BeforeEach
 	public void init() {
         game = new Game();
+        gameService.saveGame(game);
         status = new ArrayList<Status>();
         List<Card> deck =(List<Card>) cardService.cardFindAll();
         
         User user = new User();
+        
         user.setUsername("test");
         user.setFirstName("Perico");
         user.setLastName("El de los palotes");
         user.setPassword("prueba");
+        userService.saveUser(user);
         
         User user2 = new User();
         user2.setUsername("username2");
         user2.setFirstName("periquito");
         user2.setLastName("palotes");
         user2.setPassword("prueba2");
-        
-        
+        userService.saveUser(user2);
+
         Authorities auth = new Authorities();
         auth.setAuthority("player");
         auth.setUser(user);
@@ -106,17 +116,28 @@ public class GameServicesTest {
         
         Player player = new Player();
         player.setUser(user);
-        playerId=player.getId();
         playerService.savePlayer(player);
         user.setPlayer(player);
+        userService.saveUser(user);
+        Statistics stats1 = new Statistics();
+        stats1.setPlayer(player);
+        statsService.saveStatistic(stats1);  
+        achievementStatusService.asignacionInicialDeLogros(stats1);
+        player.setStatistics(stats1);
+        playerService.savePlayer(player);
+        statsService.saveStatistic(stats1);
         
         Player player2 = new Player();
         player2.setUser(user2);
         playerService.savePlayer(player2);
         user2.setPlayer(player2);
-        
-        userService.saveUser(user);
         userService.saveUser(user2);
+        Statistics stats2 = new Statistics();
+        stats2.setPlayer(player2);
+        statsService.saveStatistic(stats2);
+        player2.setStatistics(stats2);
+        achievementStatusService.asignacionInicialDeLogros(stats2);
+        playerService.savePlayer(player2);
         
         Status status1 = new Status();
         status1.setPlayer(player);
@@ -183,14 +204,6 @@ public class GameServicesTest {
 			assertEquals(unfinishedGames.get(i).getEndHour(),null);
 		}
 	}
-/*	
-	@BeforeEach
-	public void init() {
-		Game game = new Game();
-		gameService.saveGame(game);
-		System.out.println("Id del juego " + game.getId());
-	}
-	*/
 	
 	@Test
 	public void testFindFinishedGames() {
@@ -276,7 +289,6 @@ public class GameServicesTest {
 		int deckBefore = game.getCards().size();
 		Card cardToDelete = game.getCards().get(0);
 		gameService.deleteCardFromDeck(game.getId(), cardToDelete.getId());
-		System.out.println(game.getCards().get(0).getId());
 		gameService.saveGame(game);
 		assertEquals(game.getCards().size(),deckBefore-1);
 		for(Card c:game.getCards()) {
@@ -288,10 +300,8 @@ public class GameServicesTest {
 	public void testDeleteCardFromDeck() {
 		int deckBefore = game.getCards().size();
 		Card cardToDelete = cardService.findCardById(1).get();
-		System.out.println("mazo antes "+deckBefore);
 		gameService.deleteCardFromDeck(game, cardToDelete);
 		assertEquals(game.getCards().size(),deckBefore-1);
-		System.out.println("contiene la carta eliminada???"+game.getCards().contains(cardToDelete));
 		for(Card c:game.getCards()) {
             assertFalse(c.getId()==cardToDelete.getId());
         }	
@@ -329,7 +339,6 @@ public class GameServicesTest {
 			Player player = gameService.enterGameUtil(game);
 			assertEquals("test", player.getUser().getUsername());
 		} catch (GameControllerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -725,5 +734,45 @@ public class GameServicesTest {
 		assertThrows(GameControllerException.class, ()->{
 			gameService.robIsland(game, 2, status.get(0)); //Habiendo elegido saquear la 3, intentamos saquear la 2
 		});
+	}
+	
+	@Test
+	public void testEndGameNormalGameMode() {
+		List<Card> cards = new ArrayList<Card>();
+		game.setStartHour(LocalTime.NOON);
+		game.getStatus().get(0).setScore(null);
+		game.getStatus().get(1).setScore(null);
+		Card card = cardService.findCardById(1).get();
+		Card card2 = cardService.findCardById(2).get();
+		cards.add(card);cards.add(card2);
+		game.getStatus().get(1).setCards(cards);
+		game.getStatus().get(0).setCards(cards);
+		game.setGameMode(0);
+		gameService.endGame(game);
+		assertTrue(game.getEndHour()!=null); //La partida termina y tiene hora de fin
+		for(Status s:game.getStatus()) {
+			assertTrue(s.getScore()!=null); //Todos los jugadores tienen puntuación
+		}
+		assertTrue(game.getStatus().stream().filter(s->s.getWinner()==1).findAny().isPresent()); // Hay al menos un ganador
+	}
+	
+	@Test
+	public void testEndGameSecondaryGameMode() {
+		List<Card> cards = new ArrayList<Card>();
+		game.setStartHour(LocalTime.NOON);
+		game.getStatus().get(0).setScore(null);
+		game.getStatus().get(1).setScore(null);
+		Card card = cardService.findCardById(1).get();
+		Card card2 = cardService.findCardById(2).get();
+		cards.add(card);cards.add(card2);
+		game.getStatus().get(1).setCards(cards);
+		game.getStatus().get(0).setCards(cards);
+		game.setGameMode(1);
+		gameService.endGame(game);
+		assertTrue(game.getEndHour()!=null); //La partida termina y tiene hora de fin
+		for(Status s:game.getStatus()) {
+			assertTrue(s.getScore()!=null); //Todos los jugadores tienen puntuación
+		}
+		assertTrue(game.getStatus().stream().filter(s->s.getWinner()==1).findAny().isPresent()); // Hay al menos un ganador
 	}
 }

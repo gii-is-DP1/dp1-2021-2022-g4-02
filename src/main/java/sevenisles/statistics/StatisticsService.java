@@ -19,8 +19,12 @@ import sevenisles.status.Status;
 @Service
 public class StatisticsService {
 	
-	@Autowired
 	private StatisticsRepository statisticsRepository;
+	
+	@Autowired
+	public StatisticsService(StatisticsRepository statisticsRepository) {
+		this.statisticsRepository=statisticsRepository;
+	}
 	
 	@Transactional(readOnly = true)
 	public Integer statisticsCount() {
@@ -52,8 +56,8 @@ public class StatisticsService {
 		
 		Integer score = s.getScore();
 		Player player =  s.getPlayer();
-		
-		Statistics playerStatistics =  findStatisticsById(player.getId()).get();
+
+		Statistics playerStatistics =  player.getStatistics();
 		playerStatistics.setGamesPlayed(playerStatistics.getGamesPlayed()+1);
 		playerStatistics.setTotalScore(playerStatistics.getTotalScore()+score);
 		Integer numGamesPlayed = playerStatistics.getGamesPlayed();
@@ -94,7 +98,6 @@ public class StatisticsService {
 		playerStatistics.setAverageTime(averageTime);
 		
 		saveStatistic(playerStatistics);
-		System.out.println("++++++++++++++++"+playerStatistics.getGamesPlayed());
 	}
 	
 	@Transactional

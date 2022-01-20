@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.stereotype.Service;
 
 import sevenisles.card.Card;
@@ -29,7 +28,6 @@ import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.user.User;
 import sevenisles.user.UserService;
-import sevenisles.util.ManualLogin;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -373,7 +371,6 @@ public class StatusServicesTest {
 		assertEquals(aftercount, beforecount-1);
 	}
 	
-	/*------------------------REVISAR----------*/
 	@WithMockUser(username="prueba")	
 	@Test
 	public void testDeleteCardFromHand() {
