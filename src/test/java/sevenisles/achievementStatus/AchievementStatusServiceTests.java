@@ -92,12 +92,23 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testPlayedGames0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setGamesPlayed(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.PlayedGamesAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_1)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_5)).getAchieved());
+	}
+	
+	@Test
 	public void testPlayedGames1Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setGamesPlayed(1);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.PlayedGamesAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_1)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_5)).getAchieved());
 	}
 	
 	@Test
@@ -110,12 +121,25 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testWonGames0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setGamesWon(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.WonGamesAchievement(player);;
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_1)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_5)).getAchieved());
+
+	}
+	
+	@Test
 	public void testWonGames1Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setGamesWon(1);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.WonGamesAchievement(player);;
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_1)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_5)).getAchieved());
+
 	}
 	
 	@Test
@@ -128,11 +152,22 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testScore20() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		Integer score = 20;
+		achievementStatusService.ScoreAchievement(player, score);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_60)).getAchieved());
+	}
+	
+	@Test
 	public void testScore40Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		Integer score = 45;
 		achievementStatusService.ScoreAchievement(player, score);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_60)).getAchieved());
+
 	}
 	
 	@Test
@@ -145,12 +180,24 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testChalice0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setChaliceCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.ChaliceAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_10)).getAchieved());
+	}
+	
+	@Test
 	public void testChalice5Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setChaliceCount(5);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.ChaliceAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_10)).getAchieved());
+
 	}
 	
 	@Test
@@ -163,12 +210,23 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testRuby0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setRubyCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.RubiAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_10)).getAchieved());
+	}
+	
+	@Test
 	public void testRuby5Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setRubyCount(5);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.RubiAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_10)).getAchieved());
 	}
 	
 	@Test
@@ -181,12 +239,24 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testDiamond0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setDiamondCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.DiamondAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_10)).getAchieved());
+
+	}
+	
+	@Test
 	public void testDiamond5Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setDiamondCount(5);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.DiamondAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_10)).getAchieved());
 	}
 	
 	@Test
@@ -199,12 +269,25 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testNecklace0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setNecklaceCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.NecklaceAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_10)).getAchieved());
+
+	}
+	
+	@Test
 	public void testNecklace5Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setNecklaceCount(5);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.NecklaceAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_10)).getAchieved());
+
 	}
 	
 	@Test
@@ -214,6 +297,16 @@ public class AchievementStatusServiceTests {
 		statisticsService.saveStatistic(s);
 		achievementStatusService.NecklaceAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_10)).getAchieved());
+	}
+	
+	@Test
+	public void testMap0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setMapCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.MapAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_10)).getAchieved());
 	}
 	
 	@Test
@@ -235,6 +328,16 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testCrown0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setCrownCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.CrownAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_10)).getAchieved());
+	}
+	
+	@Test
 	public void testCrown5Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setCrownCount(5);
@@ -253,12 +356,23 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testGun0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setGunCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.GunAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_10)).getAchieved());
+	}
+	
+	@Test
 	public void testGun5Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setGunCount(5);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.GunAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_10)).getAchieved());
 	}
 	
 	@Test
@@ -271,12 +385,23 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testSword0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setSwordCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.SwordAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_10)).getAchieved());
+	}
+	
+	@Test
 	public void testSword5Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setSwordCount(5);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.SwordAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_10)).getAchieved());
 	}
 	
 	@Test
@@ -289,12 +414,23 @@ public class AchievementStatusServiceTests {
 	}
 	
 	@Test
+	public void testRum0() {
+		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
+		s.setRumCount(0);
+		statisticsService.saveStatistic(s);
+		achievementStatusService.RumAchievement(player);
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_10)).getAchieved());
+	}
+	
+	@Test
 	public void testRum5Achievement() {
 		Statistics s = statisticsService.getStatsByPlayer(player.getId()).get();
 		s.setRumCount(5);
 		statisticsService.saveStatistic(s);
 		achievementStatusService.RumAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_10)).getAchieved());
 	}
 	
 	@Test
