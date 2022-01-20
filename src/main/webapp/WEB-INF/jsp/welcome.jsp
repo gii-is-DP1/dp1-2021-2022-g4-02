@@ -6,7 +6,7 @@
 <!-- %@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %-->
 <petclinic:layout pageName="home">
 
-	<p style="text-align: center;font-size:350%; font-weight:bold; margin-top:2%;">¡Bienvenido a 7Islas!</p>
+	<p style="text-align: center;font-size:350%; font-weight:bold; margin-top:2%; color: #0769C6">¡Bienvenido a 7Islas!</p><br><br><br>
 	
 	<!--<spring:url value="/resources/images/barco-pantalla-principal.png"
 			var="pirateShipImage" />
