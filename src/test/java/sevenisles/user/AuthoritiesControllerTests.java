@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +22,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.format.support.FormattingConversionService;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import sevenisles.achievementStatus.AchievementStatusService;
@@ -53,6 +60,8 @@ public class AuthoritiesControllerTests {
 	@MockBean
 	private AuthoritiesService authoritiesService;
 	
+	@MockBean
+    private StringtoUserConverter stringToUserConverter;
 	
 	@Autowired
 	private AuthoritiesController authoritiesController;
@@ -79,14 +88,15 @@ public class AuthoritiesControllerTests {
 	public void setup() { 
 		//mockMvc = MockMvcBuilders.webAppContextSetup(context) 
 			//	.apply(SecurityMockMvcConfigurers.springSecurity()).build();
-
+		
+		List<User> lusers = new ArrayList<User>();
 		User user = new User();
 		user.setId(TEST_USER_ID);
 		user.setFirstName("Prueba");
 		user.setLastName("Uno");
 		user.setPassword("123");
 		user.setCreatedDate(LocalDateTime.now());
-		
+		lusers.add(user);
 		Authorities auth = new Authorities();
 		auth.setId(TEST_AUTH_ID);
 		auth.setAuthority("player");
@@ -103,6 +113,7 @@ public class AuthoritiesControllerTests {
 		useradmin.setLastName("Uno");
 		useradmin.setPassword("123");
 		useradmin.setCreatedDate(LocalDateTime.now());
+		lusers.add(useradmin);
 		
 		Authorities authadmin = new Authorities();
 		authadmin.setAuthority("admin");
@@ -115,6 +126,7 @@ public class AuthoritiesControllerTests {
 		userNoAuth.setLastName("Uno");
 		userNoAuth.setPassword("123");
 		userNoAuth.setCreatedDate(LocalDateTime.now());
+		lusers.add(userNoAuth);
 		
 		Mockito.when(this.userService.findUserById(TEST_USERNOAUTH_ID)).thenReturn(Optional.of(userNoAuth));
 		Mockito.when(this.authoritiesService.findAuthByUser(TEST_USER_ID)).thenReturn(Optional.of(auth));
@@ -122,9 +134,12 @@ public class AuthoritiesControllerTests {
 		Mockito.when(this.userService.findUserById(TEST_USER_ID)).thenReturn(Optional.of(user));
 		Mockito.when(this.userService.findUserById(TEST_USERADMIN_ID)).thenReturn(Optional.of(useradmin));
 		Mockito.when(this.userService.findCurrentUser()).thenReturn(Optional.of(useradmin));
-		//Mockito.when(this.userService.deleteUser(useradmin);
 		
-	
+		PageRequest request = PageRequest.of(0,5);
+		Page<User> users = new PageImpl<>(lusers) ;
+		Mockito.when(this.userService.findByUsernamePageable(request)).thenReturn(users);
+		
+		
 	}
 	
 	@Test
@@ -135,7 +150,7 @@ public class AuthoritiesControllerTests {
 			.andExpect(view().name("authorities/usersList"));
 	}
 	
-	/*Crear método de paginación que obtenga los usuarios con Mockito
+	
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
 	void usersListPageableTest() throws Exception{
@@ -144,12 +159,34 @@ public class AuthoritiesControllerTests {
 			.andExpect(model().attributeExists("paginas"))
 			.andExpect(view().name("authorities/usersList"));
 	}
+	
+	@Test
+	void usersListPageableTestErrorNotLog () throws Exception{
+		mockMvc.perform(get("/admin/page/users?page=1"))
+		.andExpect(status().isUnauthorized());
+	}
+	/*
+	@Test
+	@WithMockUser(value="spring", authorities=("player"))
+	void usersListPageableTestErrorPlayer() throws Exception{
+		mockMvc.perform(get("/admin/page/users?page=1"))
+		.andExpect(status().isUnauthorized());
+	}
+	
 	*/
+	@Test
+	@WithMockUser(value="spring", authorities=("admin"))
+	void usersListPageableTestNullPage() throws Exception{
+		mockMvc.perform(get("/admin/page/users"))
+			.andExpect(status().is3xxRedirection());
+			
+	}
+	
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
 	void gamesFinishedTest() throws Exception{
-		//System.out.println("AUTHHHHHHHHH"+SecurityContextHolder.getContext().getAuthentication());
+		
 		mockMvc.perform(get("/games/finished")).andExpect(status().isOk())
 			.andExpect(model().attributeDoesNotExist("attr"))
 			.andExpect(model().attributeExists("games"))
@@ -276,7 +313,16 @@ public class AuthoritiesControllerTests {
 	void processAuthCreationFormTest() throws Exception{
 		mockMvc.perform(post("/admin/authorities/{user}/new",TEST_USERNOAUTH_ID)
 				.with(csrf())
-				//.param("user","3")
+				.param("authority", "admin"))
+				.andExpect(status().is3xxRedirection());
+	}
+	
+	
+	@Test
+	@WithMockUser(value="spring", authorities=("admin"))
+	void processAuthCreationFormTestNotUserFound() throws Exception{
+		mockMvc.perform(post("/admin/authorities/{user}/new",56)
+				.with(csrf())
 				.param("authority", "admin"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("authorities/editAuth"));
@@ -309,14 +355,14 @@ public class AuthoritiesControllerTests {
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
 	void processAuthUpdateFormTest() throws Exception{
-		User user = userService.findUserById(TEST_USER_ID).get();
+    
 		mockMvc.perform(post("/admin/authorities/{user}/edit",TEST_USER_ID)
 				.with(csrf())
-				.param("user",user.toString())
 				.param("authority", "player"))
-				.andExpect(status().isOk())
-				.andExpect(view().name("authorities/editAuth"));
+				.andExpect(status().is3xxRedirection());
 	}
+	
+	
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))

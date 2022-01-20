@@ -72,6 +72,7 @@ public class AuthoritiesServicesTest {
 		assertEquals(count,authlist.size());
 	}
 	
+	
 	@Test
 	public void testFindAuthByUser() {
 		

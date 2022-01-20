@@ -63,24 +63,20 @@ public class AuthoritiesController {
 	@GetMapping(value = "admin/users")
 	public String usersList(ModelMap modelMap) {
 		String vista = "authorities/usersList";
-		System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		Iterable<User> users = userService.findAllOrderByUsername();
 		modelMap.addAttribute("users", users);
 		return vista;
 	}
-	/* -----------------------PRUEBA CONTROLADOR PAGINACIÓN ----------------------------------------------*/
+	
 	
 	@GetMapping(value = "admin/page/users")
 	public String usersListPagination(@RequestParam Map<String,Object> page, ModelMap modelMap) {
 		String vista = "authorities/usersList";
-		
+	
 		if(page.get("page") != null) {
 			int pageactual = Integer.valueOf(page.get("page").toString())-1;
 			
-			
 			PageRequest request = PageRequest.of(pageactual,5);
-					
-			//Pageable pageable = PageRequest.of(0,5, Sort.by(Order.asc("username")));
 			
 			Page<User> users = userService.findByUsernamePageable(request);
 			
@@ -91,6 +87,8 @@ public class AuthoritiesController {
 			
 			modelMap.addAttribute("users" , users.getContent());
 			
+		}else {
+			return "redirect:/admin/page/users?page=1";
 		}
 		
 		
@@ -226,7 +224,6 @@ public class AuthoritiesController {
 	@PostMapping(value = "admin/authorities/{user}/new")
 	public String processAuthCreationForm(@PathVariable("user") Integer id,@Valid Authorities auth , BindingResult result,Map<String, Object> model) {		
 		if (result.hasErrors()) {
-			System.out.println("knsapihgpergpuiaeghpuiaehrpg"+result.getAllErrors());
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
@@ -248,7 +245,7 @@ public class AuthoritiesController {
 	@GetMapping(value = "admin/authorities/{user}/edit")
 	public String initAuthUpdateForm(@PathVariable("user") Integer id, Model model ) {	
 		Optional<Authorities> authorities = this.authoritiesService.findAuthByUser(id);
-		System.out.println("Autoridadddddd"+authorities);
+		
 		if(authorities.isPresent()) {
 			if(!(User.getCurrentUser().equals(userService.findUserById(id).get().getUsername()))){
 				model.addAttribute(authorities.get());
@@ -269,7 +266,7 @@ public class AuthoritiesController {
 	public String processAuthUpdateUserForm(@Valid Authorities authorities, BindingResult result,
 			@PathVariable("user") Integer id, ModelMap model) {
 		if(result.hasErrors()) {
-			System.out.println("whUIFEF"+result.getAllErrors());
+			
 			model.put("authorities", authorities);
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}else {
