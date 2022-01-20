@@ -77,7 +77,7 @@ public class AchievementStatusService {
 	}
 	
 	@Transactional
-	private void PlayedGamesAchievement(Player p) {
+	public void PlayedGamesAchievement(Player p) {
 		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
 		Integer GamesPlayed = stats.getGamesPlayed();
 		if(GamesPlayed == 1) {
@@ -93,19 +93,18 @@ public class AchievementStatusService {
 		}
 	}
 	
-	//Hay que mirar que no tenga los logros ya en las condiciones
 	
 	@Transactional
 	public void WonGamesAchievement(Player p) {
 		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
 		Integer WonGames = stats.getGamesWon();
-		if(WonGames == 1 /*&& achievementRepo.checkAchievement(AchievementType.PARTIDAS_GANADAS_1, p)*/) {
+		if(WonGames == 1) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_1);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}else if(WonGames == 5 /*&& achievementRepo.checkAchievement(AchievementType.PARTIDAS_GANADAS_5, p)*/) {
+		}else if(WonGames == 5) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_5);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -116,14 +115,14 @@ public class AchievementStatusService {
 	@Transactional
 	public void ScoreAchievement(Player p, Integer score) {
 		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		if(score >= 40) {													 
-			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40);
+		if(score >= 60) {													 
+			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_60);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}else if(score >= 60) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_60);
+		}else if(score >= 40) {
+			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
 			saveAchievementStatus(as);
