@@ -282,6 +282,7 @@ public class GameServicesTest {
 		Player player = new Player();
 		gameService.enterGame(game, player);
 		assertEquals(game.getStatus().size(), 1);
+		assertEquals(game.getStatus().get(0), player.getStatus().get(0));
 	}
 	
 	@Test
