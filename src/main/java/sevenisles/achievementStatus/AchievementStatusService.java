@@ -62,7 +62,6 @@ public class AchievementStatusService {
 	
 	@Transactional
 	public void setAchievements(Player p) {
-		
 		PlayedGamesAchievement(p);
 		ChaliceAchievement(p);
 		RubiAchievement(p);
@@ -73,7 +72,6 @@ public class AchievementStatusService {
 		GunAchievement(p);
 		SwordAchievement(p);
 		RumAchievement(p);
-		ChaliceAchievement(p);
 	}
 	
 	@Transactional
@@ -121,7 +119,8 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}else if(score >= 40) {
+		}
+		if(score >= 40) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
