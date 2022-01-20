@@ -2,10 +2,8 @@ package sevenisles.auditory;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;

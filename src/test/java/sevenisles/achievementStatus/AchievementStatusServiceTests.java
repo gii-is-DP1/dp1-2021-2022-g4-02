@@ -316,6 +316,7 @@ public class AchievementStatusServiceTests {
 		statisticsService.saveStatistic(s);
 		achievementStatusService.MapAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_10)).getAchieved());
 	}
 	
 	@Test
@@ -344,6 +345,7 @@ public class AchievementStatusServiceTests {
 		statisticsService.saveStatistic(s);
 		achievementStatusService.CrownAchievement(player);
 		assertTrue(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_5)).getAchieved());
+		assertFalse(achievementStatusService.findAchievementStatusByStatsAndAchievement(s, achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_10)).getAchieved());
 	}
 	
 	@Test

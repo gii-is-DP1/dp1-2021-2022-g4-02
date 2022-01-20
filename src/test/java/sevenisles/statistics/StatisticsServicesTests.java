@@ -25,7 +25,6 @@ import sevenisles.card.Card;
 import sevenisles.card.CardService;
 import sevenisles.game.Game;
 import sevenisles.game.GameService;
-import sevenisles.game.GameServicesTest;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.status.Status;
@@ -88,6 +87,8 @@ public class StatisticsServicesTests {
 	    userService.saveUser(user);
 	    statisticServices.saveStatistic(stats);
 	    statisticServices.saveStatistic(statsp2);
+	    player.setStatistics(stats);
+	    newtwoplayer.setStatistics(statsp2);
 	    playerService.savePlayer(player);
 	    playerService.savePlayer(newtwoplayer);
 	    

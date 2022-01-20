@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface StatisticsRepository extends CrudRepository<Statistics, Integer>{
 
-	@Query("SELECT st FROM Statistics st WHERE st.player.id = :playerId")
+	@Query("SELECT st FROM Statistics st WHERE st.player.id = ?1")
     Optional<Statistics> getStatsByPlayer(Integer playerId);
 	
 	@Query("SELECT st FROM Statistics st ORDER BY st.totalScore ")

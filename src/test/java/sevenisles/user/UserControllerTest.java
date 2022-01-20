@@ -95,21 +95,21 @@ public class UserControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
-	void userDetailsTest() throws Exception{
+	public void userDetailsTest() throws Exception{
 		mockMvc.perform(get("/profile")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("user"))
 				.andExpect(view().name("users/userDetails"));
 	}
 	
 	@Test
-	void userDetailsTestNoUser() throws Exception{
+	public void userDetailsTestNoUser() throws Exception{
 		System.out.println(SecurityContextHolder.getContext().getAuthentication());
 		mockMvc.perform(get("/profile")).andExpect(status().isUnauthorized());
 	}
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
-	void initUpdateForm() throws Exception{
+	public void initUpdateForm() throws Exception{
 		mockMvc.perform(get("/profile/edit")).andExpect(status().isOk())
 				.andExpect(model().attributeExists("user"))
 				.andExpect(view().name("users/createOrUpdateUserForm"));
@@ -117,7 +117,7 @@ public class UserControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
-	void processUpdateForm() throws Exception{
+	public void processUpdateForm() throws Exception{
 		mockMvc.perform(post("/profile/edit")
 						.with(csrf())
 						.param("firstName", "Juan")
@@ -131,7 +131,7 @@ public class UserControllerTest {
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("player"))
-	void processUpdateFormError() throws Exception{
+	public void processUpdateFormError() throws Exception{
 		mockMvc.perform(post("/profile/edit")
 						.with(csrf())
 						.param("firstName", "Ju")
@@ -145,7 +145,7 @@ public class UserControllerTest {
 	
 	@Test
 	@WithMockUser(value="anonymous")
-	void initCreationUserForm() throws Exception{
+	public void initCreationUserForm() throws Exception{
 		mockMvc.perform(get("/users/new"))
 				.andExpect(status().isOk())
 				.andExpect(model().attributeExists("user"))
@@ -154,7 +154,7 @@ public class UserControllerTest {
 	
 	@Test
 	@WithMockUser(value="anonymous")
-	void processCreationUserForm() throws Exception{
+	public void processCreationUserForm() throws Exception{
 		mockMvc.perform(post("/users/new")
 						.with(csrf())
 						.param("firstName", "Juan")
@@ -167,7 +167,7 @@ public class UserControllerTest {
 	
 	@Test
 	@WithMockUser(value="anonymous")
-	void processCreationUserFormError() throws Exception{
+	public void processCreationUserFormError() throws Exception{
 		mockMvc.perform(post("/users/new")
 						.with(csrf())
                         .param("lastName", "Palomo")

@@ -165,15 +165,8 @@ public class AuthoritiesControllerTests {
 		mockMvc.perform(get("/admin/page/users?page=1"))
 		.andExpect(status().isUnauthorized());
 	}
-	/*
-	@Test
-	@WithMockUser(value="spring", authorities=("player"))
-	void usersListPageableTestErrorPlayer() throws Exception{
-		mockMvc.perform(get("/admin/page/users?page=1"))
-		.andExpect(status().isUnauthorized());
-	}
 	
-	*/
+	
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
 	void usersListPageableTestNullPage() throws Exception{
@@ -277,7 +270,8 @@ public class AuthoritiesControllerTests {
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
 	void processDeleteUserTest() throws Exception{
-		mockMvc.perform(get("/admin/users/{id}/delete",TEST_USER_ID)).andExpect(status().is3xxRedirection());
+		mockMvc.perform(get("/admin/users/{id}/delete",TEST_USER_ID))
+		.andExpect(status().is3xxRedirection());
 	    	
 	}
 	

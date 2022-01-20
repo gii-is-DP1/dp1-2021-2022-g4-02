@@ -63,16 +63,17 @@ public class ScoreCountImpl implements ScoreCount{
 		List<Card> doubloons = cardService.findDoubloonsInHand(hand);
 		map.put("doblones", doubloons);
 		aux.removeAll(doubloons);
-		map.put(i.toString(), new ArrayList<Card>());
-		List<CardType> types = cardService.findAllCardType();
-		for(Card c:aux) {
-			if(types.contains(c.getCardType())) {
-				List<Card> set = map.get(i.toString());
-				set.add(c);
-				types.remove(c.getCardType());
+		if(!(aux.size()==0)) {
+			map.put(i.toString(), new ArrayList<Card>());
+			List<CardType> types = cardService.findAllCardType();
+			for(Card c:aux) {
+				if(types.contains(c.getCardType())) {
+					List<Card> set = map.get(i.toString());
+					set.add(c);
+					types.remove(c.getCardType());
+				}
 			}
 		}
-		i++;
 		return map;
 	}
 	
@@ -98,8 +99,10 @@ public class ScoreCountImpl implements ScoreCount{
 	public Integer countPoints(Map<String,List<Card>> map) {
 		Integer res=0;
 		res+=map.get("doblones").size();
-		for(Integer i=1;i<map.keySet().size();i++) {
-			res+=points.get(map.get(i.toString()).size()-1);
+		if(!(map.get("1")==null)) {
+			for(Integer i=1;i<map.keySet().size();i++) {
+				res+=points.get(map.get(i.toString()).size()-1);
+			}
 		}
 		return res;
 	}
