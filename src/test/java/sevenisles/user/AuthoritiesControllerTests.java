@@ -276,7 +276,8 @@ public class AuthoritiesControllerTests {
 	void processAuthCreationFormTest() throws Exception{
 		mockMvc.perform(post("/admin/authorities/{user}/new",TEST_USERNOAUTH_ID)
 				.with(csrf())
-				.param("authority", "player"))
+				//.param("user","3")
+				.param("authority", "admin"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("authorities/editAuth"));
 	}
@@ -308,8 +309,10 @@ public class AuthoritiesControllerTests {
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
 	void processAuthUpdateFormTest() throws Exception{
+		User user = userService.findUserById(TEST_USER_ID).get();
 		mockMvc.perform(post("/admin/authorities/{user}/edit",TEST_USER_ID)
 				.with(csrf())
+				.param("user",user.toString())
 				.param("authority", "player"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("authorities/editAuth"));
@@ -381,6 +384,13 @@ public class AuthoritiesControllerTests {
 	}
 	
 	
-	
+	@Test
+	@WithMockUser(value="useradmin", authorities=("admin"))
+	void initAuthCreationUserForm() throws Exception{
+		mockMvc.perform(get("/admin/users/new"))
+				.andExpect(status().isOk())
+				.andExpect(model().attributeExists("user"))
+				.andExpect(view().name("authorities/editUser"));
+	}
 	
 }

@@ -226,6 +226,7 @@ public class AuthoritiesController {
 	@PostMapping(value = "admin/authorities/{user}/new")
 	public String processAuthCreationForm(@PathVariable("user") Integer id,@Valid Authorities auth , BindingResult result,Map<String, Object> model) {		
 		if (result.hasErrors()) {
+			System.out.println("knsapihgpergpuiaeghpuiaehrpg"+result.getAllErrors());
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
@@ -239,7 +240,7 @@ public class AuthoritiesController {
 				model.put("message", "Usuario no encontrado");
 				return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 			}              
-            return "redirect:/admin/users";
+            return "redirect:/admin/page/users?page=1";
 		}
 	}
 
@@ -268,6 +269,7 @@ public class AuthoritiesController {
 	public String processAuthUpdateUserForm(@Valid Authorities authorities, BindingResult result,
 			@PathVariable("user") Integer id, ModelMap model) {
 		if(result.hasErrors()) {
+			System.out.println("whUIFEF"+result.getAllErrors());
 			model.put("authorities", authorities);
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}else {
@@ -276,7 +278,7 @@ public class AuthoritiesController {
 			this.authoritiesService.saveAuthorities(authToUpdate);
 			model.addAttribute("message", "Permisos encontrados!");	
 			
-			return "redirect:/admin/users";
+			return "redirect:/admin/page/users?page=1";
 		}		
 	}
 	
@@ -305,7 +307,7 @@ public class AuthoritiesController {
 				return VIEWS_ERROR;
 			}
 			
-			 return "redirect:/admin/users";
+			 return "redirect:/admin/page/users?page=1";
 		}
 	
 	
