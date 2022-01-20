@@ -3,6 +3,7 @@ package sevenisles.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -35,6 +37,7 @@ public class UserServiceTest {
 	
 	User newuser = new User();
 	
+	
 	@BeforeEach
 	public void init() {
 		
@@ -48,6 +51,8 @@ public class UserServiceTest {
 		newuser.setLastName("prueba");
 		newuser.setAuthorities(auth);
 		userServices.saveUser(newuser);
+		
+		
 	}
 	
 	@AfterEach
@@ -79,13 +84,24 @@ public class UserServiceTest {
 	}
 
 	@Test
+	public void testfindByUsernamePageable() {
+		PageRequest request = PageRequest.of(0,5);
+		Page<User> page = userServices.findByUsernamePageable(request);
+		List<User> users = page.getContent();
+		
+		List<User> usersExpected = userServices.findAllOrderByUsername();
+		
+		assertEquals(usersExpected.subList(0, 5),users);
+	}
+	
+	
+	@Test
 	public void testFindUserById() {
 		/* Sabemos que el id= 1 es el del administrador, con username = admin1*/
 		int id = 1;
 		User user = userServices.findUserById(id).get();
 		assertEquals("admin1",user.getUsername());
 	}
-	
 	
 	@Test
 	public void TestSaveUser() {

@@ -63,7 +63,6 @@ public class AuthoritiesController {
 	@GetMapping(value = "admin/users")
 	public String usersList(ModelMap modelMap) {
 		String vista = "authorities/usersList";
-		System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		Iterable<User> users = userService.findAllOrderByUsername();
 		modelMap.addAttribute("users", users);
 		return vista;
@@ -73,7 +72,7 @@ public class AuthoritiesController {
 	@GetMapping(value = "admin/page/users")
 	public String usersListPagination(@RequestParam Map<String,Object> page, ModelMap modelMap) {
 		String vista = "authorities/usersList";
-		
+	
 		if(page.get("page") != null) {
 			int pageactual = Integer.valueOf(page.get("page").toString())-1;
 			
@@ -88,6 +87,8 @@ public class AuthoritiesController {
 			
 			modelMap.addAttribute("users" , users.getContent());
 			
+		}else {
+			return "redirect:/admin/page/users?page=1";
 		}
 		
 		
