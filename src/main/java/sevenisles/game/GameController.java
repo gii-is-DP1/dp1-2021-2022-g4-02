@@ -74,7 +74,7 @@ public class GameController {
 		String vista = "games/playedGameList";
 		Optional<Player> opt = playerService.findCurrentPlayer();
 		if(opt.isPresent()) {
-			Integer playerId = playerService.findCurrentPlayer().get().getId();
+			Integer playerId = opt.get().getId();
 			Iterable<Game> games = gameService.findFinishedGamesOfPlayer(playerId);
 			modelMap.addAttribute("games", games);
 			return vista;
@@ -103,18 +103,24 @@ public class GameController {
 	@GetMapping(value = "/games/startedGame")
 	public String startedGame(ModelMap modelMap) throws GameControllerException{
 		String vista = "games/startedGame";
-		Optional<List<Status>> opt = statusService.findStatusOfPlayer(playerService.findCurrentPlayer().get().getId());
+		Optional<Player> opt = playerService.findCurrentPlayer();
 		if(opt.isPresent()) {
-			List<Status> statuses = opt.get();
-			Optional<Status> status = statuses.stream().filter(s->s.getScore()==null).findFirst();
-			if(status.isPresent() && status.get().getGame().getStartHour()!=null) {
-				modelMap.addAttribute("game", status.get().getGame());
-				return vista;
+			Integer playerId = opt.get().getId();
+			Optional<List<Status>> opt2 = statusService.findStatusOfPlayer(playerId);
+			if(opt2.isPresent()) {
+				List<Status> statuses = opt2.get();
+				Optional<Status> status = statuses.stream().filter(s->s.getScore()==null).findFirst();
+				if(status.isPresent() && status.get().getGame().getStartHour()!=null) {
+					modelMap.addAttribute("game", status.get().getGame());
+					return vista;
+				}else{
+					throw new GameControllerException("No tienes ninguna partida empezada.");
+				}
 			}else{
-				throw new GameControllerException("No tienes ninguna partida empezada.");
+				throw new GameControllerException("No has jugado ninguna partida.");
 			}
 		}else{
-			throw new GameControllerException("No has jugado ninguna partida.");
+			throw new GameControllerException("No has iniciado sesión.");
 		}
 	}
 	
@@ -159,8 +165,9 @@ public class GameController {
     @GetMapping(value = "/games/create")
     public String initCreateGame(ModelMap modelMap) throws GameControllerException{
     	Game game = new Game();
-    	if(playerService.findCurrentPlayer().isPresent()) {
-    		Player player = playerService.findCurrentPlayer().get();
+    	Optional<Player> opt = playerService.findCurrentPlayer();
+    	if(opt.isPresent()) {
+    		Player player = opt.get();
     		if(!statusService.isInAnotherGame(player)) {
     			gameService.createGame(game, player);
     			modelMap.addAttribute("game", game);
@@ -294,7 +301,7 @@ public class GameController {
     		Game game = optGame.get();
 			if(gameService.loggedPlayerCheckTurn(game)){
 				Status status = game.getStatus().get(game.getCurrentPlayer());
-				if(islandId==status.getChosenIsland()) {
+				if(islandId.equals(status.getChosenIsland())) {
 					if(status.getNumberOfCardsToPay()==0) {
 	        			gameService.robIsland(game, islandId, status);
 	        			gameService.nextTurn(game);
