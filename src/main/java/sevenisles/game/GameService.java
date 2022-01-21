@@ -320,10 +320,15 @@ public class GameService extends ScoreCountImpl{
 				Integer pn = game.getCurrentPlayer();
 				Status status = game.getStatus().get(pn);
 				Optional<Player> opt = playerService.findCurrentPlayer();
-				if(status.getPlayer().getId().equals(opt.get().getId())) {
-					return true;		
+				if(opt.isPresent()) {
+					Player player = opt.get();
+					if(status.getPlayer().getId().equals(player.getId())) {
+						return true;		
+					}else {
+						throw new GameControllerException("No es tu turno.");
+		    		}
 				}else {
-					throw new GameControllerException("No es tu turno.");
+					throw new GameControllerException("Debes estar logueado como player.");
 	    		}
 			}else {
 				throw new GameControllerException("La partida ha terminado.");

@@ -175,37 +175,43 @@ public class AuthoritiesController {
 	}
 	
 	@PostMapping(value = "admin/{id}/edit")
-	public String processUpdateUserForm(@Valid User user, BindingResult result,
-			@PathVariable("id") Integer id, ModelMap model) {
+	public String processUpdateUserForm(@Valid User user, BindingResult result, @PathVariable("id") Integer id, ModelMap model) {
 		if(result.hasErrors()) {
 			model.put("user", user);
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}else {
-			User userToUpdate = this.userService.findUserById(id).get();
-			if(User.getCurrentUser().equals(userToUpdate.getUsername())) {
-				BeanUtils.copyProperties(user, userToUpdate,"id");
-				try {
+			Optional<User> opt = this.userService.findUserById(id);
+			if(opt.isPresent()) {
+				User userToUpdate = opt.get();
+				if(User.getCurrentUser().equals(userToUpdate.getUsername())) {
+					BeanUtils.copyProperties(user, userToUpdate,"id");
+					try {
+						
+						this.userService.saveUser(userToUpdate);
+						this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
+					}catch (DuplicatedUserNameException e) {
+						result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
+		                return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
+					}
+					ManualLogin.login(userToUpdate);
 					
-					this.userService.saveUser(userToUpdate);
-					this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
-				}catch (DuplicatedUserNameException e) {
-					result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
-	                return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
+				}else {
+					BeanUtils.copyProperties(user, userToUpdate,"id");
+					try {
+						
+						this.userService.saveUser(userToUpdate);
+						this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
+					}catch (DuplicatedUserNameException e) {
+						result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
+		                return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
+					}
 				}
-				ManualLogin.login(userToUpdate);
-				
+				return "redirect:/admin/page/users?page=1";
 			}else {
-				BeanUtils.copyProperties(user, userToUpdate,"id");
-				try {
-					
-					this.userService.saveUser(userToUpdate);
-					this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
-				}catch (DuplicatedUserNameException e) {
-					result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
-	                return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
-				}
+				model.put("message", "Usuario no encontrado");
+				return "error";
 			}
-			return "redirect:/admin/page/users?page=1";
+			
 		}
 		
 	}
@@ -288,16 +294,22 @@ public class AuthoritiesController {
 	public String processAuthUpdateUserForm(@Valid Authorities authorities, BindingResult result,
 			@PathVariable("user") Integer id, ModelMap model) {
 		if(result.hasErrors()) {
-			
 			model.put("authorities", authorities);
 			return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 		}else {
-			Authorities authToUpdate = this.authoritiesService.findAuthByUser(id).get();			
-			BeanUtils.copyProperties(authorities, authToUpdate,"id");
-			this.authoritiesService.saveAuthorities(authToUpdate);
-			model.addAttribute("message", "Permisos encontrados!");	
+			Optional<Authorities> opt = this.authoritiesService.findAuthByUser(id);
+			if(opt.isPresent()) {
+				Authorities authToUpdate = opt.get();			
+				BeanUtils.copyProperties(authorities, authToUpdate,"id");
+				this.authoritiesService.saveAuthorities(authToUpdate);
+				model.addAttribute("message", "Permisos encontrados!");	
+				
+				return "redirect:/admin/page/users?page=1";
+			}else {
+				model.put("message", "Permisos no encontrados");
+				return "error";
+			}
 			
-			return "redirect:/admin/page/users?page=1";
 		}		
 	}
 	
@@ -306,22 +318,23 @@ public class AuthoritiesController {
 		public String processDeleteAuth(@PathVariable("id") Integer id, ModelMap model) {
 			Optional<Authorities> auth =  authoritiesService.findAuthByUser(id);
 			if(auth.isPresent()) {
-				Optional<User> user = userService.findUserById(id);
-					if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
-						user.get().setAuthorities(null);
-						try {
-							this.userService.saveUser(user.get());
-						}catch (DuplicatedUserNameException e) {
-			                return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
-						}
-						authoritiesService.deleteAuth(auth.get());
-						model.addAttribute("message", "Permisos encontrados!");
+				Optional<User> opt = userService.findUserById(id);
+				User user = opt.get();
+				if(!(User.getCurrentUser().equals(user.getUsername()))) {
+					user.setAuthorities(null);
+					try {
+						this.userService.saveUser(user);
+					}catch (DuplicatedUserNameException e) {
+		                return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 					}
+					authoritiesService.deleteAuth(auth.get());
+					model.addAttribute("message", "Permisos encontrados!");
+				}
 
-					else {
-						model.addAttribute("message", "No te puedes borrar tus permisos");
-						return VIEWS_ERROR;
-					}
+				else {
+					model.addAttribute("message", "No te puedes borrar tus permisos");
+					return VIEWS_ERROR;
+				}
 			}else {
 				model.addAttribute("message", "Permisos no encontrados!");
 				return VIEWS_ERROR;
