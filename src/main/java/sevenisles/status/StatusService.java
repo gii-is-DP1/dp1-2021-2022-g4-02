@@ -145,7 +145,7 @@ public class StatusService {
 			if(statusopt.isPresent()) {
 				Status status = statusopt.get();
 				List<Card> ls = status.getCards();
-				status.setCards(ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList()));
+				status.setCards(ls.stream().filter(c->!c.getId().equals(cardId)).collect(Collectors.toList()));
 				Integer diff = status.getNumberOfCardsToPay()-1;
 				status.setNumberOfCardsToPay(diff);
 				saveStatus(status);
@@ -161,7 +161,7 @@ public class StatusService {
 	@Transactional
 	public Boolean cardInHand(Status status, Card card) {
 		List<Card> hand = status.getCards();
-		Optional<Card> cardopt = hand.stream().filter(c->c.getId()==card.getId()).findAny();
+		Optional<Card> cardopt = hand.stream().filter(c->c.getId().equals(card.getId())).findAny();
 		return cardopt.isPresent();
 	}
 	

@@ -43,14 +43,15 @@ public class StatisticsController {
 	public String statisticsDetails(ModelMap modelMap) throws GameControllerException{
 		String vista = "statistics/statisticsDetails";
 		Optional<Player> player = playerService.findCurrentPlayer();
-		if(!player.isPresent()) {
-			throw new GameControllerException("Necesitas estar logueado para ver tus estadísticas.");
-		}else {
+		if(player.isPresent()) {
 			Statistics st = statisticsService.getStatsByPlayer(player.get().getId()).get();
 			List<AchievementStatus> ls = achievementStatusService.findAchievementStatusByStats(st);
 			modelMap.addAttribute("statistics", st);
 			modelMap.addAttribute("achievements", ls);
 			return vista;
+		}else {
+			throw new GameControllerException("Necesitas estar logueado para ver tus estadísticas.");
+			
 		}
 		
 	}
