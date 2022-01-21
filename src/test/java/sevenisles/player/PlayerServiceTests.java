@@ -6,11 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import sevenisles.user.Authorities;
 import sevenisles.user.AuthoritiesService;
 import sevenisles.user.User;
 import sevenisles.user.UserService;
+import sevenisles.user.exceptions.DuplicatedUserNameException;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class PlayerServiceTests {
@@ -30,6 +33,36 @@ public class PlayerServiceTests {
 	
 	@Autowired
 	private AuthoritiesService authService;
+	
+	User user = new User();
+	
+	@BeforeEach
+	public void init() throws DataAccessException, DuplicatedUserNameException{
+		
+		user.setFirstName("prueba");
+		user.setLastName("prueba");
+		user.setUsername("username");
+		user.setPassword("password");
+		userService.saveUser(user);
+		
+		Authorities auth = new Authorities();
+		auth.setAuthority("player");
+		auth.setUser(user);
+		authService.saveAuthorities(auth);
+		
+		Player player = new Player();
+		player.setUser(user);
+		playerService.savePlayer(player);
+		user.setPlayer(player);
+		user.setAuthorities(auth);
+		userService.saveUser(user);
+	}
+	
+	@AfterEach
+	public void end() {
+		userService.deleteUser(user);
+	}
+	
 	
 	@Test
 	public void testCountWithInitialData() {
@@ -88,28 +121,7 @@ public class PlayerServiceTests {
 		int countAfter = playerService.playerCount();
 		
 		assertEquals(countAfter,countBefore-1);
-	}
-	
-	@BeforeEach
-	public void init(){
-		User user = new User();
-		user.setFirstName("prueba");
-		user.setLastName("prueba");
-		user.setUsername("username");
-		user.setPassword("password");
-		
-		Authorities auth = new Authorities();
-		auth.setAuthority("player");
-		auth.setUser(user);
-		authService.saveAuthorities(auth);
-		
-		Player player = new Player();
-		player.setUser(user);
-		playerService.savePlayer(player);
-		user.setPlayer(player);
-		user.setAuthorities(auth);
-		userService.saveUser(user);
-	}
+	}	
 	
 	@Test
 	@WithMockUser(username="username")

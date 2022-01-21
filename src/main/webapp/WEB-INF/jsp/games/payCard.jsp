@@ -29,7 +29,7 @@
 	    			<form class="form-inline">
 	        			
           				<c:forEach var="card" items="${status.cards}">
-            				<input id="cardId" type="radio" name="cardToPay" value="${card.id}"><img width=4% src="<spring:url value="${card.urlCardImg}" htmlEscape="true" />" /></input>
+            				<input id="cardId" type="radio" name="cardToPay" value="${card.id}"><img width=4% src="<spring:url value="${card.urlCardImg}" htmlEscape="true" />" />
           				</c:forEach>
 	       				 
 	        			<button type="button" class="btn btn-primary" onclick="window.location.href='/games/${code}/robIsland/${islandId}/payCard/'+cardId.value">Pagar con esta carta</button>
@@ -42,7 +42,6 @@
         <tr>
             <th>Jugador</th>
             <th>Cartas en el inventario</th>
-            <th>ID Carta</th>
         </tr>
         </thead>
         <tbody>
@@ -56,10 +55,7 @@
                    	 	<img width=4% src="<spring:url value="${card.urlCardImg}" htmlEscape="true" />" />
                    	</c:forEach>
                 </td> 
-                                <td>
-                	<c:forEach items="${status2.cards}" var="card">
-                   	 	<p><c:out value="${card.id}"/></p></c:forEach>
-                </td> 
+                               
             </tr>
         </c:forEach>
         </tbody>

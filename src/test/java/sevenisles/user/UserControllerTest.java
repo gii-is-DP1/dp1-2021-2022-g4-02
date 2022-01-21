@@ -1,5 +1,7 @@
 package sevenisles.user;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -31,8 +34,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import sevenisles.achievementStatus.AchievementStatusService;
 import sevenisles.configuration.SecurityConfiguration;
+import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.player.PlayerService;
 import sevenisles.statistics.StatisticsService;
+import sevenisles.user.exceptions.DuplicatedUserNameException;
 
 //locations={"file:src/main/webapp/WEB-INF/jetty-web.xml"}
 @ExtendWith(SpringExtension.class)
@@ -172,8 +177,8 @@ public class UserControllerTest {
                         .param("lastName", "Palomo")
                         .param("username", "Juanito")
                         .param("password", "123"))
-		.andExpect(status().isOk())
-		.andExpect(model().attributeExists("user"))
+		.andExpect(status().is(400))
+		.andExpect(model().attributeHasErrors("user"))
 		.andExpect(view().name("users/createOrUpdateUserForm"));
 	}
 	
