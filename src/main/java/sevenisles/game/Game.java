@@ -33,7 +33,7 @@ public class Game extends BaseEntity {
 	private Integer currentRound;
 	private Integer finishedTurn=0;
 	
-	@ManyToMany(cascade = CascadeType.ALL,targetEntity = Card.class)
+	@ManyToMany(cascade = CascadeType.DETACH,targetEntity = Card.class)
 	@JoinTable(name="deck", uniqueConstraints = { @UniqueConstraint(columnNames = { "game_id", "cards_id" }) })
 	private List<Card> cards;
 		

@@ -135,13 +135,14 @@ public class AuthoritiesController {
 			return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 		}
 		else {     	
-			this.authoritiesService.insertdataAuditory(user,this.userService.findCurrentUser().get());
+			
 			try {
 				this.userService.saveUser(user);
 			}catch (DuplicatedUserNameException e) {
 				result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
                 return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 			}
+			this.authoritiesService.insertdataAuditory(user,this.userService.findCurrentUser().get());
 			Player player = new Player();
 			player.setUser(user);
 			this.playerService.savePlayer(player);
@@ -186,15 +187,13 @@ public class AuthoritiesController {
 				if(User.getCurrentUser().equals(userToUpdate.getUsername())) {
 					BeanUtils.copyProperties(user, userToUpdate,"id");
 					try {
-						
 						this.userService.saveUser(userToUpdate);
+						ManualLogin.login(userToUpdate);
 						this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
 					}catch (DuplicatedUserNameException e) {
 						result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
 		                return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 					}
-					ManualLogin.login(userToUpdate);
-					
 				}else {
 					BeanUtils.copyProperties(user, userToUpdate,"id");
 					try {
@@ -318,8 +317,7 @@ public class AuthoritiesController {
 		public String processDeleteAuth(@PathVariable("id") Integer id, ModelMap model) {
 			Optional<Authorities> auth =  authoritiesService.findAuthByUser(id);
 			if(auth.isPresent()) {
-				Optional<User> opt = userService.findUserById(id);
-				User user = opt.get();
+				User user = userService.findUserById(id).get();
 				if(!(User.getCurrentUser().equals(user.getUsername()))) {
 					user.setAuthorities(null);
 					try {

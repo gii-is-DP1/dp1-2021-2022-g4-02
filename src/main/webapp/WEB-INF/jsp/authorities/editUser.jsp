@@ -14,7 +14,6 @@
     
         <form:form modelAttribute="user"
                    class="form-horizontal">
- 
             <h2> Choose an new user's username </h2>
                 <div class="control-group">
             		<petclinic:inputField label="Username" name="username" />	
