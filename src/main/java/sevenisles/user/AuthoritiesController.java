@@ -61,9 +61,9 @@ public class AuthoritiesController {
 		this.achievementStatusService=achievementStatusService;
 	}
 	
-	@GetMapping(value = "admin/users")
-	public String usersList(ModelMap modelMap) {
-		String vista = "authorities/usersList";
+	@GetMapping(value = "admin/users/auditory")
+	public String auditoryUsersList(ModelMap modelMap) {
+		String vista = "authorities/usersAuditory";
 		Iterable<User> users = userService.findAllOrderByUsername();
 		modelMap.addAttribute("users", users);
 		return vista;

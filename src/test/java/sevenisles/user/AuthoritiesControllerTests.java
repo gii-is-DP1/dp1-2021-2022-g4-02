@@ -143,10 +143,10 @@ public class AuthoritiesControllerTests {
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
-	void usersListTest() throws Exception{
-		mockMvc.perform(get("/admin/users")).andExpect(status().isOk())
+	void auditoryUsersListTest() throws Exception{
+		mockMvc.perform(get("/admin/users/auditory")).andExpect(status().isOk())
 			.andExpect(model().attributeExists("users"))
-			.andExpect(view().name("authorities/usersList"));
+			.andExpect(view().name("authorities/usersAuditory"));
 	}
 	
 	
