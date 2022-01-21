@@ -138,25 +138,25 @@ public class AuthoritiesController {
 			this.authoritiesService.insertdataAuditory(user,this.userService.findCurrentUser().get());
 			try {
 				this.userService.saveUser(user);
-				Player player = new Player();
-				player.setUser(user);
-				this.playerService.savePlayer(player);
-				
-				Statistics statistics = new Statistics();
-				statistics.setPlayer(player);
-				this.statisticsService.saveStatistic(statistics);
-				achievementStatusService.asignacionInicialDeLogros(statistics);
-				
-				
-				Authorities auth = new Authorities();
-		        auth.setAuthority("player");
-		        auth.setUser(user);
-		        authoritiesService.saveAuthorities(auth);                  
-	            return "redirect:/admin/page/users?page=1";
-			}catch(DuplicatedUserNameException e) {
-				 result.rejectValue("username", "duplicate", "already exists");
-                 return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
+			}catch (DuplicatedUserNameException e) {
+				result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
+                return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 			}
+			Player player = new Player();
+			player.setUser(user);
+			this.playerService.savePlayer(player);
+			
+			Statistics statistics = new Statistics();
+			statistics.setPlayer(player);
+			this.statisticsService.saveStatistic(statistics);
+			achievementStatusService.asignacionInicialDeLogros(statistics);
+			
+			
+			Authorities auth = new Authorities();
+	        auth.setAuthority("player");
+	        auth.setUser(user);
+	        authoritiesService.saveAuthorities(auth);                  
+            return "redirect:/admin/page/users?page=1";
 		}
 	}
 
@@ -184,23 +184,25 @@ public class AuthoritiesController {
 			User userToUpdate = this.userService.findUserById(id).get();
 			if(User.getCurrentUser().equals(userToUpdate.getUsername())) {
 				BeanUtils.copyProperties(user, userToUpdate,"id");
-				this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
 				try {
+					
 					this.userService.saveUser(userToUpdate);
-					ManualLogin.login(userToUpdate);
-				}catch(DuplicatedUserNameException e) {
-					 result.rejectValue("username", "duplicate", "already exists");
-	                 return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
+					this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
+				}catch (DuplicatedUserNameException e) {
+					result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
+	                return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 				}
+				ManualLogin.login(userToUpdate);
 				
 			}else {
 				BeanUtils.copyProperties(user, userToUpdate,"id");
-				this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
 				try {
+					
 					this.userService.saveUser(userToUpdate);
-				}catch(DuplicatedUserNameException e) {
-					 result.rejectValue("username", "duplicate", "already exists");
-	                 return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
+					this.authoritiesService.editdataAuditory(userToUpdate,this.userService.findCurrentUser().get());
+				}catch (DuplicatedUserNameException e) {
+					result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
+	                return VIEWS_USERS_CREATE_OR_UPDATE_FORM;
 				}
 			}
 			return "redirect:/admin/page/users?page=1";
@@ -249,9 +251,9 @@ public class AuthoritiesController {
 				user.get().setAuthorities(auth);
 				try {
 					this.userService.saveUser(user.get());
-				}catch(DuplicatedUserNameException e) {
-					 result.rejectValue("username", "duplicate", "already exists");
-	                 return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
+				}catch (DuplicatedUserNameException e) {
+					result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
+	                return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
 				}
 			}else {
 				model.put("message", "Usuario no encontrado");
@@ -308,10 +310,12 @@ public class AuthoritiesController {
 					if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
 						user.get().setAuthorities(null);
 						try {
-						userService.saveUser(user.get());
+							this.userService.saveUser(user.get());
+						}catch (DuplicatedUserNameException e) {
+			                return VIEWS_AUTH_CREATE_OR_UPDATE_FORM;
+						}
 						authoritiesService.deleteAuth(auth.get());
 						model.addAttribute("message", "Permisos encontrados!");
-						}catch(DuplicatedUserNameException e) {}
 					}
 
 					else {

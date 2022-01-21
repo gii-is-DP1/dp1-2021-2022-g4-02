@@ -44,16 +44,18 @@ public class UserService {
 		this.userRepository = userRepository;
 	}
 
-	@Transactional(rollbackFor = DuplicatedUserNameException.class)
+	@Transactional(rollbackFor=DuplicatedUserNameException.class)
 	public void saveUser(User user) throws DataAccessException, DuplicatedUserNameException {
+		
 		List<User> users = (List<User>) userFindAll();
 		users.remove(user);
-		if(users.stream().filter(x->x.getUsername().equals(user.getUsername())).findAny().isPresent()) {
+		if(users.stream().filter(u->u.getUsername().equals(user.getUsername())).findAny().isPresent()) {
 			throw new DuplicatedUserNameException();
 		}else {
 			user.setEnabled(true);
 			userRepository.save(user);
 		}
+		
 	}
 	
 	@Transactional(readOnly = true)

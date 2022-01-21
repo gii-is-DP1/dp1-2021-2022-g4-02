@@ -18,10 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-
-import sevenisles.user.exceptions.DuplicatedUserNameException;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -36,26 +33,21 @@ public class AuthoritiesServicesTest {
 	User newuser = new User();
 	
 	@BeforeEach
-	public void init() throws DataAccessException, DuplicatedUserNameException {
-		
-
-		newuser.setUsername("userprueba");
-		newuser.setPassword("userprueba");
-		newuser.setFirstName("user");
-		newuser.setLastName("prueba");
-		
-		newuser.setCreator("newuser");
-		newuser.setCreatedDate(LocalDateTime.now());
-		newuser.setLastModifiedDate(LocalDateTime.now());
-		newuser.setModifier("newuser");
-		userServices.saveUser(newuser);
+	public void init() {
 		
 		Authorities auth = new Authorities();
 		auth.setAuthority("player");
 		auth.setUser(newuser);
 		authoritiesServices.saveAuthorities(auth);
-		
+		newuser.setUsername("userprueba");
+		newuser.setPassword("userprueba");
+		newuser.setFirstName("user");
+		newuser.setLastName("prueba");
 		newuser.setAuthorities(auth);
+		newuser.setCreator("newuser");
+		newuser.setCreatedDate(LocalDateTime.now());
+		newuser.setLastModifiedDate(LocalDateTime.now());
+		newuser.setModifier("newuser");
 		userServices.saveUser(newuser);
 	}
 	
@@ -94,21 +86,18 @@ public class AuthoritiesServicesTest {
 	}
 	
 	@Test
-	public void TestSaveAuthorities() throws DataAccessException, DuplicatedUserNameException {
+	public void TestSaveAuthorities() {
 		int countinicial= authoritiesServices.authCount();
-		
-		User user = new User();
-		user.setFirstName("Manuel");
-		user.setLastName("Gallego");
-		user.setPassword("manuelgal");
-		user.setUsername("manU");
-		userServices.saveUser(user);
-		
 		Authorities auth = new Authorities();
+		User user = new User();
 		auth.setAuthority("player");
 		auth.setUser(user);
 		authoritiesServices.saveAuthorities(auth);
 		
+		user.setFirstName("Manuel");
+		user.setLastName("Gallego");
+		user.setPassword("manuelgal");
+		user.setUsername("manU");
 		user.setAuthorities(auth);
 		userServices.saveUser(user);
 		int countfinal= authoritiesServices.authCount();
@@ -118,7 +107,7 @@ public class AuthoritiesServicesTest {
 	}
 
 	@Test
-	public void testDeleteAuth() throws DataAccessException, DuplicatedUserNameException {
+	public void testDeleteAuth() {
 		int cuentaInicial = authoritiesServices.authCount();
 		Optional<Authorities> auth = authoritiesServices.findAuthByUser(newuser.getId());
 		if(auth.isPresent()) {
@@ -131,20 +120,17 @@ public class AuthoritiesServicesTest {
 	}
 	
 	@Test
-	public void testEditdataAuditory() throws DataAccessException, DuplicatedUserNameException {
+	public void testEditdataAuditory() {
 		
 		User user2 = new User();
-		user2.setUsername("userprueba2");
-		user2.setPassword("userprueba2");
-		user2.setFirstName("user2");
-		user2.setLastName("prueba");
-		userServices.saveUser(user2);
-		
 		Authorities auth2 = new Authorities();
 		auth2.setAuthority("admin");
 		auth2.setUser(user2);
 		authoritiesServices.saveAuthorities(auth2);
-		
+		user2.setUsername("userprueba2");
+		user2.setPassword("userprueba2");
+		user2.setFirstName("user2");
+		user2.setLastName("prueba");
 		user2.setAuthorities(auth2);
 		user2.setCreator("Modificador");
 		user2.setCreatedDate(LocalDateTime.now());
@@ -159,20 +145,17 @@ public class AuthoritiesServicesTest {
 	}
 	
 	@Test
-	public void testInsertdataAuditory() throws DataAccessException, DuplicatedUserNameException {
+	public void testInsertdataAuditory() {
 		
 		User user2 = new User();
-		user2.setUsername("userprueba2");
-		user2.setPassword("userprueba2");
-		user2.setFirstName("user2");
-		user2.setLastName("prueba");
-		userServices.saveUser(user2);
-		
 		Authorities auth2 = new Authorities();
 		auth2.setAuthority("admin");
 		auth2.setUser(user2);
 		authoritiesServices.saveAuthorities(auth2);
-		
+		user2.setUsername("userprueba2");
+		user2.setPassword("userprueba2");
+		user2.setFirstName("user2");
+		user2.setLastName("prueba");
 		user2.setAuthorities(auth2);
 		user2.setCreator("Modificador");
 		user2.setCreatedDate(LocalDateTime.now());

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.dao.DataAccessException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,6 @@ import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.user.User;
 import sevenisles.user.UserService;
-import sevenisles.user.exceptions.DuplicatedUserNameException;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
@@ -63,7 +61,7 @@ public class StatusServicesTest {
 	
 
 	@BeforeEach
-	public void init() throws DataAccessException, DuplicatedUserNameException {
+	public void init() {
 		
 		newstatus = new Status();
 		newtwostatus = new Status();
@@ -73,15 +71,12 @@ public class StatusServicesTest {
 		
 		User user1 = new User();
 		user1.setUsername("prueba");
+		newplayer.setUser(user1);
+		playerServices.savePlayer(newplayer);
 		user1.setPlayer(newplayer);
 		user1.setFirstName("Prueba");
 		user1.setLastName("Uno");
 		user1.setPassword("123");
-		userService.saveUser(user1);
-		
-		newplayer.setUser(user1);
-		playerServices.savePlayer(newplayer);
-
 		userService.saveUser(user1);
 		playerServices.savePlayer(newtwoplayer);
 		gameServices.saveGame(newgame);

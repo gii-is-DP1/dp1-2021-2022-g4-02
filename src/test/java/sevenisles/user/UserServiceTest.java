@@ -18,14 +18,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
-
-import sevenisles.user.exceptions.DuplicatedUserNameException;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class UserServiceTest {
@@ -39,19 +36,16 @@ public class UserServiceTest {
 	
 	
 	@BeforeEach
-	public void init() throws DataAccessException, DuplicatedUserNameException {
-		
-		newuser.setUsername("userprueba");
-		newuser.setPassword("userprueba");
-		newuser.setFirstName("user");
-		newuser.setLastName("prueba");
-		userServices.saveUser(newuser);
+	public void init() {
 		
 		Authorities auth = new Authorities();
 		auth.setAuthority("player");
 		auth.setUser(newuser);
 		authoritiesServices.saveAuthorities(auth);
-		
+		newuser.setUsername("userprueba");
+		newuser.setPassword("userprueba");
+		newuser.setFirstName("user");
+		newuser.setLastName("prueba");
 		newuser.setAuthorities(auth);
 		userServices.saveUser(newuser);
 		
@@ -107,21 +101,18 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void TestSaveUser() throws DataAccessException, DuplicatedUserNameException {
+	public void TestSaveUser() {
 		int countinicial= userServices.userCount();
 		Authorities auth = new Authorities();
 		User user = new User();
-		user.setFirstName("Manuel");
-		user.setLastName("Gallego");
-		user.setPassword("manuelgal");
-		user.setUsername("manU");
-		userServices.saveUser(user);
-		
 		auth.setAuthority("player");
 		auth.setUser(user);
 		authoritiesServices.saveAuthorities(auth);
 		
-
+		user.setFirstName("Manuel");
+		user.setLastName("Gallego");
+		user.setPassword("manuelgal");
+		user.setUsername("manU");
 		user.setAuthorities(auth);
 		userServices.saveUser(user);
 		int countfinal= userServices.userCount();

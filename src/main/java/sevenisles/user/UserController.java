@@ -22,6 +22,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -89,22 +90,21 @@ public class UserController {
 	}
 	
 	@PostMapping(value = "profile/edit")
-	public String processUpdateUserForm(@Valid User user, BindingResult result,
-			 ModelMap model) {
+	public String processUpdateUserForm(@Valid User user, BindingResult result, ModelMap model) {
 		if(result.hasErrors()) {
 			model.put("user", user);
 			return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 		}else {
 			User userToUpdate = this.userService.findCurrentUser().get();
-			BeanUtils.copyProperties(user, userToUpdate,"id");
+			BeanUtils.copyProperties(user, userToUpdate,"id","player","authorities");
 			try {
 				this.userService.saveUser(userToUpdate);
-				ManualLogin.login(userToUpdate);
-				return VIEWS_USER_DETAILS;
-			}catch(DuplicatedUserNameException e) {
-				 result.rejectValue("username", "duplicate", "already exists");
-                 return VIEWS_USER_CREATE_OR_UPDATE_FORM;
+			}catch (DuplicatedUserNameException e) {
+				result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
+                return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 			}
+			ManualLogin.login(userToUpdate);
+			return VIEWS_USER_DETAILS;
 		}
 		
 	}
@@ -117,7 +117,7 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/users/new")
-	public String processCreationUserForm(@Valid User user, Model model, BindingResult result) {
+	public String processCreationUserForm(@Valid User user, BindingResult result) {
 		if (result.hasErrors()) {
 			return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 		}
@@ -125,27 +125,27 @@ public class UserController {
 			
 			try {
 				this.userService.saveUser(user);
-				Player player = new Player();
-				player.setUser(user);
-				this.playerService.savePlayer(player);
-				
-				Statistics statistics = new Statistics();
-				statistics.setPlayer(player);
-				this.statisticsService.saveStatistic(statistics);
-				achievementStatusService.asignacionInicialDeLogros(statistics);
-				
-				
-				Authorities auth = new Authorities();
-		        auth.setAuthority("player");
-		        auth.setUser(user);
-		        authoritiesService.saveAuthorities(auth);
-		        
-		        
-		        ManualLogin.login(user);
-			}catch(DuplicatedUserNameException e) {
-                result.rejectValue("username", "duplicate", "already exists");
+			}catch (DuplicatedUserNameException e) {
+				result.rejectValue("username", "duplicado", "ese nombre de usuario ya existe");
                 return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 			}
+			Player player = new Player();
+			player.setUser(user);
+			this.playerService.savePlayer(player);
+			
+			Statistics statistics = new Statistics();
+			statistics.setPlayer(player);
+			this.statisticsService.saveStatistic(statistics);
+			achievementStatusService.asignacionInicialDeLogros(statistics);
+			
+			
+			Authorities auth = new Authorities();
+	        auth.setAuthority("player");
+	        auth.setUser(user);
+	        authoritiesService.saveAuthorities(auth);
+	        
+	        
+	        ManualLogin.login(user);
 			
 			return "redirect:/";
 		}
