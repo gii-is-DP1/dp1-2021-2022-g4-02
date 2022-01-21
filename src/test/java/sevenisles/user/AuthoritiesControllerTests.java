@@ -86,8 +86,7 @@ public class AuthoritiesControllerTests {
 	
 	@BeforeEach
 	public void setup() { 
-		//mockMvc = MockMvcBuilders.webAppContextSetup(context) 
-			//	.apply(SecurityMockMvcConfigurers.springSecurity()).build();
+		
 		
 		List<User> lusers = new ArrayList<User>();
 		User user = new User();
@@ -295,7 +294,7 @@ public class AuthoritiesControllerTests {
 	
 	@Test
 	@WithMockUser(value="spring", authorities=("admin"))
-	void initUpdateAuthCreationFormTest() throws Exception{
+	void initAuthCreationFormTest() throws Exception{
 		mockMvc.perform(get("/admin/authorities/{user}/new",TEST_USERNOAUTH_ID)).andExpect(status().isOk())
 				.andExpect(model().attributeExists("authorities"))
 				.andExpect(view().name("authorities/editAuth"));
@@ -423,14 +422,5 @@ public class AuthoritiesControllerTests {
 		.andExpect(view().name("authorities/editUser"));
 	}
 	
-	
-	@Test
-	@WithMockUser(value="useradmin", authorities=("admin"))
-	void initAuthCreationUserForm() throws Exception{
-		mockMvc.perform(get("/admin/users/new"))
-				.andExpect(status().isOk())
-				.andExpect(model().attributeExists("user"))
-				.andExpect(view().name("authorities/editUser"));
-	}
 	
 }

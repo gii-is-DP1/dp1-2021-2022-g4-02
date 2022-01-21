@@ -169,11 +169,7 @@ public class StatusServicesTest {
 		boolean cond = statusServices.isReadyToStart(newgame.getId());
 		assertEquals(cond,expected);
 	}
-	/*
 	
-	@Test
-	public void add
-	*/
 	@Test
 	public void testIsNotReadyToStartOverPlayers() {
 		boolean expected = false;
