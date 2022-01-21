@@ -143,7 +143,6 @@ public class GameService extends ScoreCountImpl{
 			Game game = gameopt.get();
 			List<Card> ls = game.getCards();
 			game.setCards(ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList()));
-			saveGame(game);
 		}
 		
 	}
@@ -153,7 +152,7 @@ public class GameService extends ScoreCountImpl{
 		game.setCards(ls.stream().filter(c->c.getId()!=card.getId()).collect(Collectors.toList()));
 	}
 	
-	@Transactional
+	
 	public Boolean loggedUserBelongsToGame(Game game) {
 		Optional<Player> loggedPlayer = playerService.findCurrentPlayer();
 		if(loggedPlayer.isPresent()) {
