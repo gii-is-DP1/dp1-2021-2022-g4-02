@@ -51,7 +51,7 @@ public class PlayerService {
 	
 	@Transactional(readOnly = true)
 	public Optional<Player> findCurrentPlayer() throws DataAccessException {
-		if(User.getCurrentUser()=="") {
+		if(User.getCurrentUser().equals("")) {
 			Optional<Player> player = Optional.empty();
 			return player;
 		}else {

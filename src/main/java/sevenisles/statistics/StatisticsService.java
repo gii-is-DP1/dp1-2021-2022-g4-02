@@ -63,7 +63,7 @@ public class StatisticsService {
 		playerStatistics.setTotalScore(playerStatistics.getTotalScore()+score);
 		Integer numGamesPlayed = playerStatistics.getGamesPlayed();
 		Integer totalScore = playerStatistics.getTotalScore();
-		Double averageScore = (double) (totalScore/numGamesPlayed);
+		Double averageScore = ((double) totalScore/numGamesPlayed);
 		playerStatistics.setAverageScore(averageScore);
 		
 		List<Card> cards = s.getCards();
