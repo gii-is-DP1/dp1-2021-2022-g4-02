@@ -13,10 +13,8 @@
         <tr>
         	<th>Número de partidas jugadas</th>
         	<th>Número de partidas ganadas</th>
-        	<th>Puntuación acumulada</th>
-        	<th>Tiempo acumulado</th>
             <th>Puntuación media por partida</th>
-            <th>Tiempo medio por partida</th>
+            <th>Tiempo medio por partida (en minutos)</th>
             
         </tr>
         </thead>
@@ -27,12 +25,6 @@
                 </td>
                 <td>
                     <c:out value="${statistics.gamesWon}"/>
-                </td>
-                <td>
-                    <c:out value="${statistics.totalScore}"/>
-                </td>
-                <td>
-                    <c:out value="${statistics.totalTime}"/>
                 </td>
                 <td>
                     <c:out value="${statistics.averageScore}"/>

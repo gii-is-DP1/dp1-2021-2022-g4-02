@@ -125,13 +125,6 @@ public class GameControllerTest {
 		p1.setUser(user);
 		
 		user.setPlayer(p1);
-		/*
-		Player p2 = new Player();
-		p2.setId(2);
-		
-		gameService.enterGame(game, p1);
-		gameService.enterGame(game, p2);
-		gameService.startGame(game);*/
 		
 		sts = new ArrayList<>();
 		

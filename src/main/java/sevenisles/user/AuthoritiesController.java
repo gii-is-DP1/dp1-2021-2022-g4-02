@@ -197,8 +197,6 @@ public class AuthoritiesController {
 	public String processDeleteUser(@PathVariable("id") Integer id, ModelMap model) {
 		Optional<User> user =  userService.findUserById(id);
 		if(user.isPresent()) {
-			System.out.println(User.getCurrentUser());
-			System.out.println(user.get().getUsername());
 			if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
 				userService.deleteUser(user.get());
 				model.addAttribute("message", "Permisos encontrados!");
@@ -286,9 +284,6 @@ public class AuthoritiesController {
 			Optional<Authorities> auth =  authoritiesService.findAuthByUser(id);
 			if(auth.isPresent()) {
 				Optional<User> user = userService.findUserById(id);
-				
-					System.out.println("Username currentUser "+User.getCurrentUser());
-					System.out.println("Username User "+user.get().getUsername());
 					if(!(User.getCurrentUser().equals(user.get().getUsername()))) {
 						user.get().setAuthorities(null);
 						userService.saveUser(user.get());

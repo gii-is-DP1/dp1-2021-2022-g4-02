@@ -136,7 +136,6 @@ public class GameController {
 	@GetMapping(value = "/games/{code}/board")
 	public String gameBoardByCode(ModelMap modelMap, @PathVariable("code") String code, HttpServletResponse response) throws GameControllerException{
 		String vista = "games/board";
-		//String vistaError = "error";
 		Optional<Game> game = gameService.findGameByCode(code);
 		if(game.isPresent()) {
 			if(gameService.loggedUserBelongsToGame(game.get())) {
@@ -212,7 +211,6 @@ public class GameController {
     		throw new GameControllerException("Lo sentimos, pero dicha partida no existe.");
     	}
     }
-    //Hay que crear vista del tablero, para volver si sales de la partida
     
     @GetMapping(value = "/games/{code}/start")
     public String startGame(
@@ -303,7 +301,6 @@ public class GameController {
 						if(game.getCurrentRound()==game.getMaxRounds()+1 && game.getCards().isEmpty()) {
 							return "redirect:/games/{code}/endGame";
 						}else return "redirect:/games/{code}/board";
-	        			//return "redirect:../../board";
 	        		}else {
 	        			model.addAttribute("game", game);
 	        			model.addAttribute("status", status);

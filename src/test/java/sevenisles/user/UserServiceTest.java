@@ -140,8 +140,6 @@ public class UserServiceTest {
 	@Test
 	@WithMockUser(username="userprueba",authorities="player")
 	public void testFindCurrentUser(){
-		System.out.println(SecurityContextHolder.getContext());
-		System.out.println(User.getCurrentUser());
 		Optional<User> user = userServices.findCurrentUser();
 		assertTrue(user.isPresent());
 		assertEquals(user.get().getUsername(), "userprueba");
@@ -152,10 +150,4 @@ public class UserServiceTest {
 		Optional<User> user = userServices.findCurrentUser();
 		assertTrue(user.isEmpty());
 	}
-	
-//	@Test
-//	public void testFindByUsernamePageable(){
-//		
-//	}
-
 }

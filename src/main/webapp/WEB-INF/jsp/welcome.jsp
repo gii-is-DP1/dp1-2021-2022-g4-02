@@ -8,10 +8,6 @@
 
 	<p style="text-align: center;font-size:350%; font-weight:bold; margin-top:2%; color: #0769C6">¡Bienvenido a 7Islas!</p><br><br><br>
 	
-	<!--<spring:url value="/resources/images/barco-pantalla-principal.png"
-			var="pirateShipImage" />
-	<img src="${pirateShipImage}" style="width:100%; border-radius: 10px;"/>-->
-	
 	<div class="row">
 	<div class="col-md-6 text-center">
 	<a href="/games/create">

@@ -105,7 +105,6 @@ public class IslandStatusServiceTests {
 	public void finish() {
 		IslandStatusService.deleteIslandStatus(newstatus);
         IslandService.deleteIsland(newisland);
-        //GameService.deleteGame(newgame);
 	}
 	
 	@Test

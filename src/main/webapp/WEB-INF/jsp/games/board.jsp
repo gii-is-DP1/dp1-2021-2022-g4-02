@@ -39,7 +39,6 @@
 				<th>Número de isla</th>
 				<th>Carta asociada</th>
 
-				<!-- <th>Acción</th>-->
 			</tr>
 		</thead>
 		<tbody>
