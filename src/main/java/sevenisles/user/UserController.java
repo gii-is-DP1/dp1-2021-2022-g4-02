@@ -34,6 +34,7 @@ import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.statistics.Statistics;
 import sevenisles.statistics.StatisticsService;
+import sevenisles.user.exceptions.DuplicatedUserNameException;
 import sevenisles.util.ManualLogin;
 
 
@@ -96,9 +97,14 @@ public class UserController {
 		}else {
 			User userToUpdate = this.userService.findCurrentUser().get();
 			BeanUtils.copyProperties(user, userToUpdate,"id");
-			this.userService.saveUser(userToUpdate);
-			ManualLogin.login(userToUpdate);
-			return VIEWS_USER_DETAILS;
+			try {
+				this.userService.saveUser(userToUpdate);
+				ManualLogin.login(userToUpdate);
+				return VIEWS_USER_DETAILS;
+			}catch(DuplicatedUserNameException e) {
+				 result.rejectValue("username", "duplicate", "already exists");
+                 return VIEWS_USER_CREATE_OR_UPDATE_FORM;
+			}
 		}
 		
 	}
@@ -111,30 +117,35 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/users/new")
-	public String processCreationUserForm(@Valid User user, BindingResult result) {
+	public String processCreationUserForm(@Valid User user, Model model, BindingResult result) {
 		if (result.hasErrors()) {
 			return VIEWS_USER_CREATE_OR_UPDATE_FORM;
 		}
 		else {
 			
-			this.userService.saveUser(user);
-			Player player = new Player();
-			player.setUser(user);
-			this.playerService.savePlayer(player);
-			
-			Statistics statistics = new Statistics();
-			statistics.setPlayer(player);
-			this.statisticsService.saveStatistic(statistics);
-			achievementStatusService.asignacionInicialDeLogros(statistics);
-			
-			
-			Authorities auth = new Authorities();
-	        auth.setAuthority("player");
-	        auth.setUser(user);
-	        authoritiesService.saveAuthorities(auth);
-	        
-	        
-	        ManualLogin.login(user);
+			try {
+				this.userService.saveUser(user);
+				Player player = new Player();
+				player.setUser(user);
+				this.playerService.savePlayer(player);
+				
+				Statistics statistics = new Statistics();
+				statistics.setPlayer(player);
+				this.statisticsService.saveStatistic(statistics);
+				achievementStatusService.asignacionInicialDeLogros(statistics);
+				
+				
+				Authorities auth = new Authorities();
+		        auth.setAuthority("player");
+		        auth.setUser(user);
+		        authoritiesService.saveAuthorities(auth);
+		        
+		        
+		        ManualLogin.login(user);
+			}catch(DuplicatedUserNameException e) {
+                result.rejectValue("username", "duplicate", "already exists");
+                return VIEWS_USER_CREATE_OR_UPDATE_FORM;
+			}
 			
 			return "redirect:/";
 		}

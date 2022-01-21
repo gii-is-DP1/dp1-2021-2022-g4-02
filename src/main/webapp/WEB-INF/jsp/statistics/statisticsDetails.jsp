@@ -6,7 +6,7 @@
 <%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
 
 <petclinic:layout pageName="statistics">
-    <h2>Statistics con ID: <c:out value="${statistics.id}"/></h2>
+    <h2>Statistics del jugador: <c:out value="${statistics.player.user.username}"/></h2>
 
     <table id="statisticsTable1" class="table table-striped">
         <thead>

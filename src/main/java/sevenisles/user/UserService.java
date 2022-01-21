@@ -26,6 +26,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sevenisles.user.exceptions.DuplicatedUserNameException;
+
 /**
  * Mostly used as a facade for all Petclinic controllers Also a placeholder
  * for @Transactional and @Cacheable annotations
@@ -42,10 +44,16 @@ public class UserService {
 		this.userRepository = userRepository;
 	}
 
-	@Transactional
-	public void saveUser(User user) throws DataAccessException {
-		user.setEnabled(true);
-		userRepository.save(user);
+	@Transactional(rollbackFor = DuplicatedUserNameException.class)
+	public void saveUser(User user) throws DataAccessException, DuplicatedUserNameException {
+		List<User> users = (List<User>) userFindAll();
+		users.remove(user);
+		if(users.stream().filter(x->x.getUsername().equals(user.getUsername())).findAny().isPresent()) {
+			throw new DuplicatedUserNameException();
+		}else {
+			user.setEnabled(true);
+			userRepository.save(user);
+		}
 	}
 	
 	@Transactional(readOnly = true)

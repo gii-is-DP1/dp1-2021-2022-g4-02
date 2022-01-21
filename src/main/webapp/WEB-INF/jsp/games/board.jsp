@@ -43,7 +43,7 @@
 		</thead>
 		<tbody>
 			<c:forEach items="${game.islandStatus}" var="islandstatus">
-				<c:if test="${islandstatus.island.id%2==1}">
+				<c:if test="${islandstatus.island.id<=3}">
 					<tr>
 						<td><c:out value="${islandstatus.island.id}" /></td>
 						<td><img width=12% src="<spring:url value="${islandstatus.card.urlCardImg}" htmlEscape="true" />"/></td>
@@ -65,7 +65,7 @@
 		<tbody>
 		<tr></tr>
 			<c:forEach items="${game.islandStatus}" var="islandstatus">
-				<c:if test="${islandstatus.island.id%2==0}">
+				<c:if test="${islandstatus.island.id>3}">
 					<tr>
 						<td><c:out value="${islandstatus.island.id}" /></td>
 						<td><img width=12% src="<spring:url value="${islandstatus.card.urlCardImg}" htmlEscape="true" />"/></td>

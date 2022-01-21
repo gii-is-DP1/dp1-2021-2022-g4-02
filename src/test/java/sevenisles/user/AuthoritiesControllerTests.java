@@ -61,7 +61,7 @@ public class AuthoritiesControllerTests {
 	private AuthoritiesService authoritiesService;
 	
 	@MockBean
-    private StringtoUserConverter stringToUserConverter;
+    private StringToUserConverter stringToUserConverter;
 	
 	@Autowired
 	private AuthoritiesController authoritiesController;

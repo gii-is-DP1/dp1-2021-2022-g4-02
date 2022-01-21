@@ -330,41 +330,45 @@ public class GameService extends ScoreCountImpl{
 	
 	@Transactional
 	public void endGame(Game game) {
-		game.setEndHour(LocalTime.now());
-		saveGame(game);
 		Integer max = 0;
-		for(int i=0;i<game.getStatus().size();i++) {
-			Status s = game.getStatus().get(i);
-			Map<String, List<Card>> map = new HashMap<String, List<Card>>();
-			switch(game.getGameMode()) {
-			case 0:
-				map = normalGameMode(s);
-				break;
-			case 1:
-				map = secondaryGameMode(s);
-				break;
-			default:
-				map = normalGameMode(s);
+		if(game.getEndHour()==null) {
+			game.setEndHour(LocalTime.now());
+			saveGame(game);
+			for(int i=0;i<game.getStatus().size();i++) {
+				Status s = game.getStatus().get(i);
+				Map<String, List<Card>> map = new HashMap<String, List<Card>>();
+				switch(game.getGameMode()) {
+				case 0:
+					map = normalGameMode(s);
+					break;
+				case 1:
+					map = secondaryGameMode(s);
+					break;
+				default:
+					map = normalGameMode(s);
+				}
+				Integer score = countPoints(map);
+				s.setScore(score);
+				if(score>max) max=score;
+				statusService.saveStatus(s);
+				statisticsService.setStatistics(s,game);
+				achievementStatusService.setAchievements(s.getPlayer());
 			}
-			Integer score = countPoints(map);
-			s.setScore(score);
-			if(score>max) max=score;
-			statusService.saveStatus(s);
-			statisticsService.setStatistics(s,game);
-			achievementStatusService.setAchievements(s.getPlayer());
-		}
+		
 		List<Status> ls = statusService.findStatusByGameAndScore(game.getId(), max).get();
 		if(ls.size()>1) ls = tiebreaker(ls);
-		for(Status st:ls) {
-			st.setWinner(1);
-			Player player = st.getPlayer();
-			Statistics playerStatistics =  player.getStatistics();
-			statusService.saveStatus(st);
-			playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
-			statisticsService.saveStatistic(playerStatistics);
-
-			achievementStatusService.WonGamesAchievement(player);
+			for(Status st:ls) {
+				st.setWinner(1);
+				Player player = st.getPlayer();
+				Statistics playerStatistics =  player.getStatistics();
+				statusService.saveStatus(st);
+				playerStatistics.setGamesWon(playerStatistics.getGamesWon()+1);
+				statisticsService.saveStatistic(playerStatistics);
+	
+				achievementStatusService.WonGamesAchievement(player);
+			}
 		}
+		
 	}
 	
 	public List<Status> orderStatusByScore(List<Status> statuses){
