@@ -2,6 +2,7 @@ package sevenisles.achievementStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -62,231 +63,267 @@ public class AchievementStatusService {
 	
 	@Transactional
 	public void setAchievements(Player p) {
-		PlayedGamesAchievement(p);
-		ChaliceAchievement(p);
-		RubiAchievement(p);
-		DiamondAchievement(p);
-		NecklaceAchievement(p);
-		MapAchievement(p);
-		CrownAchievement(p);
-		GunAchievement(p);
-		SwordAchievement(p);
-		RumAchievement(p);
+		playedGamesAchievement(p);
+		chaliceAchievement(p);
+		rubiAchievement(p);
+		diamondAchievement(p);
+		necklaceAchievement(p);
+		mapAchievement(p);
+		crownAchievement(p);
+		gunAchievement(p);
+		swordAchievement(p);
+		rumAchievement(p);
 	}
 	
 	@Transactional
-	public void PlayedGamesAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer GamesPlayed = stats.getGamesPlayed();
-		if(GamesPlayed >= 1) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_1);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);		
-		}if(GamesPlayed >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void playedGamesAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer gamesPlayed = stats.getGamesPlayed();
+			if(gamesPlayed >= 1) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_1);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);		
+			}if(gamesPlayed >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	
 	@Transactional
-	public void WonGamesAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer WonGames = stats.getGamesWon();
-		if(WonGames >= 1) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_1);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(WonGames >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void wonGamesAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer wonGames = stats.getGamesWon();
+			if(wonGames >= 1) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_1);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(wonGames >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void ScoreAchievement(Player p, Integer score) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		if(score >= 60) {													 
-			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_60);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}
-		if(score >= 40) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-		}
-	}
-	
-	@Transactional
-	public void ChaliceAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer chalices = stats.getChaliceCount();
-		if(chalices >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(chalices >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void scoreAchievement(Player p, Integer score) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			if(score >= 60) {													 
+				Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_60);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}
+			if(score >= 40) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void RubiAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer rubies = stats.getRubyCount();
-		if(rubies >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(rubies >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void chaliceAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer chalices = stats.getChaliceCount();
+			if(chalices >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(chalices >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void DiamondAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer diamonds = stats.getDiamondCount();
-		if(diamonds >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(diamonds >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void rubiAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer rubies = stats.getRubyCount();
+			if(rubies >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(rubies >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void NecklaceAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer necklaces = stats.getNecklaceCount();
-		if(necklaces >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(necklaces >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void diamondAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer diamonds = stats.getDiamondCount();
+			if(diamonds >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(diamonds >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void MapAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer maps = stats.getMapCount();
-		if(maps >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(maps >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void necklaceAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer necklaces = stats.getNecklaceCount();
+			if(necklaces >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(necklaces >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void CrownAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer crowns = stats.getCrownCount();
-		if(crowns >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(crowns >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void mapAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer maps = stats.getMapCount();
+			if(maps >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(maps >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void GunAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer guns = stats.getGunCount();
-		if(guns >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(guns >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void crownAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer crowns = stats.getCrownCount();
+			if(crowns >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(crowns >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void SwordAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer swords = stats.getSwordCount();
-		if(swords >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(swords >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void gunAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer guns = stats.getGunCount();
+			if(guns >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(guns >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 	
 	@Transactional
-	public void RumAchievement(Player p) {
-		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		Integer rums = stats.getRumCount();
-		if(rums >= 5) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_5);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
-			
-		}if(rums >= 10) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_10);
-			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
-			as.setAchieved(true);
-			saveAchievementStatus(as);
+	public void swordAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer swords = stats.getSwordCount();
+			if(swords >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(swords >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
+		}
+	}
+	
+	@Transactional
+	public void rumAchievement(Player p) {
+		Optional<Statistics> opt = statisticsService.getStatsByPlayer(p.getId());
+		if(opt.isPresent()) {
+			Statistics stats = opt.get();
+			Integer rums = stats.getRumCount();
+			if(rums >= 5) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_5);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+				
+			}if(rums >= 10) {
+				Achievement a = achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_10);
+				AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
+				as.setAchieved(true);
+				saveAchievementStatus(as);
+			}
 		}
 	}
 
