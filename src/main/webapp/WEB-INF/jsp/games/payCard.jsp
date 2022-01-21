@@ -42,7 +42,6 @@
         <tr>
             <th>Jugador</th>
             <th>Cartas en el inventario</th>
-            <th>ID Carta</th>
         </tr>
         </thead>
         <tbody>
@@ -55,10 +54,6 @@
                 	<c:forEach items="${status2.cards}" var="card">
                    	 	<img width=4% src="<spring:url value="${card.urlCardImg}" htmlEscape="true" />" />
                    	</c:forEach>
-                </td> 
-                                <td>
-                	<c:forEach items="${status2.cards}" var="card">
-                   	 	<p><c:out value="${card.id}"/></p></c:forEach>
                 </td> 
             </tr>
         </c:forEach>

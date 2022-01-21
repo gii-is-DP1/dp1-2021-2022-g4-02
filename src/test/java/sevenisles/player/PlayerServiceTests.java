@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import sevenisles.user.Authorities;
 import sevenisles.user.AuthoritiesService;
 import sevenisles.user.User;
 import sevenisles.user.UserService;
+import sevenisles.user.exceptions.DuplicatedUserNameException;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 public class PlayerServiceTests {
@@ -91,12 +93,13 @@ public class PlayerServiceTests {
 	}
 	
 	@BeforeEach
-	public void init(){
+	public void init() throws DataAccessException, DuplicatedUserNameException{
 		User user = new User();
 		user.setFirstName("prueba");
 		user.setLastName("prueba");
 		user.setUsername("username");
 		user.setPassword("password");
+		userService.saveUser(user);
 		
 		Authorities auth = new Authorities();
 		auth.setAuthority("player");

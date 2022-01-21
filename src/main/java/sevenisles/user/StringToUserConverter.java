@@ -5,7 +5,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StringtoUserConverter implements Converter<String,User> {
+public class StringToUserConverter implements Converter<String,User> {
 	
 	@Autowired
     private UserService userService;
