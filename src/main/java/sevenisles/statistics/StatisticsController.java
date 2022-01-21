@@ -1,6 +1,7 @@
 package sevenisles.statistics;
  
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import sevenisles.achievementStatus.AchievementStatus;
 import sevenisles.achievementStatus.AchievementStatusService;
+import sevenisles.game.exceptions.GameControllerException;
+import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 
 @Controller
@@ -29,15 +32,6 @@ public class StatisticsController {
 	}
 	
 	
-	@GetMapping(value = "/statistics")
-	public String statisticsList(ModelMap modelMap) {
-		String vista = "statistics/statisticsList";
-		Iterable<Statistics> statistics = statisticsService.statisticsFindAll();
-		modelMap.addAttribute("statistics", statistics);
-		return vista;
-	}
-	
-	
 	@GetMapping(value = "/statistics/ranking")
 	public String statisticsRankingList(ModelMap modelMap) {
 		List<Statistics> statistics = statisticsService.getRanking();
@@ -45,14 +39,20 @@ public class StatisticsController {
 		return VIEW_RANKING;
 	}
 	
-	@GetMapping(value = "/statistics/details")
-	public String statisticsDetails(ModelMap modelMap){
+	@GetMapping(value = "/statistics")
+	public String statisticsDetails(ModelMap modelMap) throws GameControllerException{
 		String vista = "statistics/statisticsDetails";
-		Statistics st = statisticsService.getStatsByPlayer(playerService.findCurrentPlayer().get().getId()).get();
-		List<AchievementStatus> ls = achievementStatusService.findAchievementStatusByStats(st);
-		modelMap.addAttribute("statistics", st);
-		modelMap.addAttribute("achievements", ls);
-		return vista;
+		Optional<Player> player = playerService.findCurrentPlayer();
+		if(!player.isPresent()) {
+			throw new GameControllerException("Necesitas estar logueado para ver tus estadísticas.");
+		}else {
+			Statistics st = statisticsService.getStatsByPlayer(player.get().getId()).get();
+			List<AchievementStatus> ls = achievementStatusService.findAchievementStatusByStats(st);
+			modelMap.addAttribute("statistics", st);
+			modelMap.addAttribute("achievements", ls);
+			return vista;
+		}
+		
 	}
 
 }

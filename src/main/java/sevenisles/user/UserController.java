@@ -48,7 +48,6 @@ public class UserController {
 
 	private static final String VIEWS_USER_CREATE_OR_UPDATE_FORM = "users/createOrUpdateUserForm";
 	private static final String VIEWS_USER_DETAILS = "users/userDetails";
-//	private static final String VIEWS_ERROR = "error";
 	
 	private PlayerService playerService;
 	

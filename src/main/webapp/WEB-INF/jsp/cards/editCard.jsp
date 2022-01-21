@@ -14,7 +14,6 @@
             <div class="form-group has-feedback">
             <h2> Choose between : DOUBLOON, CHALICE, RUBY, DIAMOND, NECKLACE, TREASUREMAP, CROWN, GUN, SWORD, RUM </h2>
                 <div class="control-group">
-                    <!--<petclinic:selectField name="cardType" label="Type " names="${types}" size="5"/> -->
         	
         
             		<petclinic:inputField label="Card Type" name="cardType" />

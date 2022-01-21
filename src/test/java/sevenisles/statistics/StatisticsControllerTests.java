@@ -1,5 +1,7 @@
 package sevenisles.statistics;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import sevenisles.achievementStatus.AchievementStatusService;
 import sevenisles.configuration.SecurityConfiguration;
+import sevenisles.game.exceptions.GameControllerException;
 import sevenisles.player.Player;
 import sevenisles.player.PlayerService;
 import sevenisles.user.User;
@@ -77,10 +80,11 @@ public class StatisticsControllerTests {
 	
 	@Test
 	@WithMockUser(value="spring", authorities={"player","admin"})
-	void statisticsListTest() throws Exception{
-		mockMvc.perform(get("/statistics")).andExpect(status().isOk())
-			.andExpect(model().attributeExists("statistics"))
-			.andExpect(view().name("statistics/statisticsList"));
+	void statisticDetailsTest() throws Exception{
+		mockMvc.perform(get("/statistics"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("statistics","achievements"))
+			.andExpect(view().name("statistics/statisticsDetails"));
 	}
 	
 	@Test
@@ -92,13 +96,16 @@ public class StatisticsControllerTests {
 	}
 	
 	@Test
-	@WithMockUser(value="spring", authorities={"player","admin"})
-	void statisticDetailsTest() throws Exception{
-		mockMvc.perform(get("/statistics/details"))
-			.andExpect(status().isOk())
-			.andExpect(model().attributeExists("statistics","achievements"))
-			.andExpect(view().name("statistics/statisticsDetails"));
+	@WithMockUser(value="spring", authorities= {"player", "admin"})
+	public void statisticDetailsNotLoggedTest() throws Exception{
+		Mockito.when(playerService.findCurrentPlayer()).thenReturn(Optional.ofNullable(null));
+		mockMvc.perform(get("/statistics"))
+		.andExpect(status().isBadRequest())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GameControllerException))
+	    .andExpect(result -> assertEquals("Necesitas estar logueado para ver tus estadísticas.", result.getResolvedException().getMessage()));
 	}
+	
+
 	
 	
 }

@@ -490,8 +490,6 @@ public class GameServicesTest {
 	
 	@Test
 	public void testRepartoInicial() {
-		//Todavia no tiene la cobertura total del método del servicio
-		//Hace falta retocar
 		gameService.asignacionInicialIslas(game);
 		gameService.repartoInicial(game);
 		

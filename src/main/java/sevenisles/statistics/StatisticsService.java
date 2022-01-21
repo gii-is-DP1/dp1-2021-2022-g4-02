@@ -1,6 +1,7 @@
 package sevenisles.statistics;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,8 +92,13 @@ public class StatisticsService {
 				playerStatistics.setCrownCount(playerStatistics.getCrownCount()+1);
 			}
 		}
-		
-		long gameTime = Duration.between(game.getStartHour(), game.getEndHour()).toMinutes();
+		long gameTime;
+		if(game.getStartHour().isBefore(game.getEndHour())){
+			gameTime = Math.abs(Duration.between(game.getStartHour(), game.getEndHour()).toMinutes());
+		}else {
+			gameTime = Math.abs(Duration.between(game.getStartHour(), LocalTime.of(23, 59, 59)).toMinutes())
+					+ Math.abs(Duration.between(LocalTime.of(0, 0, 0), game.getEndHour()).toMinutes());
+		}
 		playerStatistics.setTotalTime(playerStatistics.getTotalTime()+gameTime);
 		long averageTime = playerStatistics.getTotalTime()/playerStatistics.getGamesPlayed();
 		playerStatistics.setAverageTime(averageTime);

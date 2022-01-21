@@ -129,7 +129,7 @@ public class StatisticsServicesTests {
 	    newgame.setCards(deck);
 	    newgame.setStartHour(LocalTime.of(13,5, 10));
 	    newgame.setGameMode(1);
-	    newgame.setEndHour(LocalTime.now());
+	    newgame.setEndHour(LocalTime.of(15,20,40));
 	    gamesService.saveGame(newgame);
 	}
 	
@@ -178,6 +178,25 @@ public class StatisticsServicesTests {
 		
 		Statistics statsploneaft = statisticServices.getStatsByPlayer(playerId).get();
 		assertEquals(statsploneaft.getTotalTime(), Duration.between(newgame.getStartHour(), newgame.getEndHour()).toMinutes());
+		assertEquals(statsploneaft.getChaliceCount(),ChaliceCount+1);
+		assertEquals(gamesPlayed+1,statsploneaft.getGamesPlayed());
+	}
+	
+	//Igual que el de arriba pero con tiempo de finalización pasando de las 00:00
+	@Test
+	public void setStatisticsTest2() {
+		
+		//Obtenemos las estadísticas previas del jugador
+		Integer playerId = player.getId();
+		Statistics statsplonebef = statisticServices.getStatsByPlayer(playerId).get();
+		Integer gamesPlayed = statsplonebef.getGamesPlayed();
+		Integer ChaliceCount = statsplonebef.getChaliceCount();
+		newgame.setEndHour(LocalTime.of(2, 30,40));
+		
+		statisticServices.setStatistics(newstatus,newgame);
+		
+		Statistics statsploneaft = statisticServices.getStatsByPlayer(playerId).get();
+		assertEquals(statsploneaft.getTotalTime(), Duration.between(newgame.getStartHour(), LocalTime.of(23, 59, 59)).toMinutes() + Duration.between(LocalTime.of(0,0,0), newgame.getEndHour()).toMinutes());
 		assertEquals(statsploneaft.getChaliceCount(),ChaliceCount+1);
 		assertEquals(gamesPlayed+1,statsploneaft.getGamesPlayed());
 	}
