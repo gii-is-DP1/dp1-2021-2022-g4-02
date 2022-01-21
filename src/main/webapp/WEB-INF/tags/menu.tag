@@ -23,6 +23,13 @@
 								<span class="glyphicon" aria-hidden="true"></span>
 								<span>Usuarios</span>
 						</petclinic:menuItem>
+						
+						
+						<petclinic:menuItem active="${name eq 'users'}" url="/admin/users/auditory"
+								title="Ver auditoría de usuarios">
+								<span class="glyphicon" aria-hidden="true"></span>
+								<span>Auditoría de Usuarios</span>
+						</petclinic:menuItem>
 							
 						<petclinic:menuItem active="${name eq 'gamesList'}" url="/games/unfinishedGames"
 								title="Ver partidas en curso">
