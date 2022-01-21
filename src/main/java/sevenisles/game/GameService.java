@@ -142,14 +142,14 @@ public class GameService extends ScoreCountImpl{
 		if(gameopt.isPresent()) {
 			Game game = gameopt.get();
 			List<Card> ls = game.getCards();
-			game.setCards(ls.stream().filter(c->c.getId().equals(cardId)).collect(Collectors.toList()));
+			game.setCards(ls.stream().filter(c->!c.getId().equals(cardId)).collect(Collectors.toList()));
 		}
 		
 	}
 	
 	public void deleteCardFromDeck(Game game, Card card) {
 		List<Card> ls = game.getCards();
-		game.setCards(ls.stream().filter(c->c.getId().equals(card.getId())).collect(Collectors.toList()));
+		game.setCards(ls.stream().filter(c->!c.getId().equals(card.getId())).collect(Collectors.toList()));
 	}
 	
 	

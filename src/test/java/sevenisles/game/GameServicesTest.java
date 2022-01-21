@@ -465,7 +465,7 @@ public class GameServicesTest {
 		Card islandCard = game.getIslandStatus().get(0).getCard();
 		assertNotEquals(islandCard, null);
 		for(Card c:game.getCards()) {
-            assertFalse(c.getId()==islandCard.getId());
+            assertFalse(c.getId().equals(islandCard.getId()));
         }	
 	}
 	
