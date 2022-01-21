@@ -103,7 +103,6 @@ public class UserControllerTest {
 	
 	@Test
 	public void userDetailsTestNoUser() throws Exception{
-		System.out.println(SecurityContextHolder.getContext().getAuthentication());
 		mockMvc.perform(get("/profile")).andExpect(status().isUnauthorized());
 	}
 	
