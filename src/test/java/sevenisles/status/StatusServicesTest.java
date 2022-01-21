@@ -73,15 +73,14 @@ public class StatusServicesTest {
 		
 		User user1 = new User();
 		user1.setUsername("prueba");
-		user1.setPlayer(newplayer);
 		user1.setFirstName("Prueba");
 		user1.setLastName("Uno");
 		user1.setPassword("123");
 		userService.saveUser(user1);
-		
 		newplayer.setUser(user1);
 		playerServices.savePlayer(newplayer);
-
+		user1.setPlayer(newplayer);
+		
 		userService.saveUser(user1);
 		playerServices.savePlayer(newtwoplayer);
 		gameServices.saveGame(newgame);

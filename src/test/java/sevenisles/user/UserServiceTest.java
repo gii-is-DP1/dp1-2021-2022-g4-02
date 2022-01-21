@@ -21,7 +21,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 
@@ -116,12 +115,11 @@ public class UserServiceTest {
 		user.setPassword("manuelgal");
 		user.setUsername("manU");
 		userServices.saveUser(user);
-		
 		auth.setAuthority("player");
 		auth.setUser(user);
 		authoritiesServices.saveAuthorities(auth);
 		
-
+		
 		user.setAuthorities(auth);
 		userServices.saveUser(user);
 		int countfinal= userServices.userCount();

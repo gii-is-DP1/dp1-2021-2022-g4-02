@@ -83,8 +83,7 @@ public class AchievementStatusService {
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
 			saveAchievementStatus(as);		
-		}
-		if(GamesPlayed >= 5) {
+		}if(GamesPlayed >= 5) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_JUGADAS_5);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -103,8 +102,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(WonGames >= 5) {
+		}if(WonGames >= 5) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.PARTIDAS_GANADAS_5);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -115,15 +113,15 @@ public class AchievementStatusService {
 	@Transactional
 	public void ScoreAchievement(Player p, Integer score) {
 		Statistics stats = statisticsService.getStatsByPlayer(p.getId()).get();
-		if(score >= 40) {													 
-			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40);
+		if(score >= 60) {													 
+			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_60);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
 		}
-		if(score >= 60) {
-			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_60);
+		if(score >= 40) {
+			Achievement a = achievementService.getAchievementByType(AchievementType.PUNTOS_CONSEGUIDOS_40);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
 			saveAchievementStatus(as);
@@ -140,8 +138,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(chalices >= 10) {
+		}if(chalices >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.CALICES_CONSEGUIDOS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -159,8 +156,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(rubies >= 10) {
+		}if(rubies >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.RUBIES_CONSEGUIDOS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -178,8 +174,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(diamonds >= 10) {
+		}if(diamonds >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.DIAMANTES_CONSEGUIDOS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -197,8 +192,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(necklaces >= 10) {
+		}if(necklaces >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.COLLARES_CONSEGUIDOS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -216,8 +210,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(maps >= 10) {
+		}if(maps >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.MAPAS_CONSEGUIDOS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -235,8 +228,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(crowns >= 10) {
+		}if(crowns >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.CORONAS_CONSEGUIDAS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -254,8 +246,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(guns >= 10) {
+		}if(guns >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.PISTOLAS_CONSEGUIDAS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -273,8 +264,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(swords >= 10) {
+		}if(swords >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.ESPADAS_CONSEGUIDAS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);
@@ -292,8 +282,7 @@ public class AchievementStatusService {
 			as.setAchieved(true);
 			saveAchievementStatus(as);
 			
-		}
-		if(rums >= 10) {
+		}if(rums >= 10) {
 			Achievement a = achievementService.getAchievementByType(AchievementType.RONES_CONSEGUIDOS_10);
 			AchievementStatus as = findAchievementStatusByStatsAndAchievement(stats, a);
 			as.setAchieved(true);

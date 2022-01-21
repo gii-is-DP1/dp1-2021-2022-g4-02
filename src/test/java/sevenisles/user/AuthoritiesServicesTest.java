@@ -38,16 +38,10 @@ public class AuthoritiesServicesTest {
 	@BeforeEach
 	public void init() throws DataAccessException, DuplicatedUserNameException {
 		
-
 		newuser.setUsername("userprueba");
 		newuser.setPassword("userprueba");
 		newuser.setFirstName("user");
 		newuser.setLastName("prueba");
-		
-		newuser.setCreator("newuser");
-		newuser.setCreatedDate(LocalDateTime.now());
-		newuser.setLastModifiedDate(LocalDateTime.now());
-		newuser.setModifier("newuser");
 		userServices.saveUser(newuser);
 		
 		Authorities auth = new Authorities();
@@ -56,6 +50,10 @@ public class AuthoritiesServicesTest {
 		authoritiesServices.saveAuthorities(auth);
 		
 		newuser.setAuthorities(auth);
+		newuser.setCreator("newuser");
+		newuser.setCreatedDate(LocalDateTime.now());
+		newuser.setLastModifiedDate(LocalDateTime.now());
+		newuser.setModifier("newuser");
 		userServices.saveUser(newuser);
 	}
 	
@@ -96,19 +94,16 @@ public class AuthoritiesServicesTest {
 	@Test
 	public void TestSaveAuthorities() throws DataAccessException, DuplicatedUserNameException {
 		int countinicial= authoritiesServices.authCount();
-		
+		Authorities auth = new Authorities();
 		User user = new User();
 		user.setFirstName("Manuel");
 		user.setLastName("Gallego");
 		user.setPassword("manuelgal");
 		user.setUsername("manU");
 		userServices.saveUser(user);
-		
-		Authorities auth = new Authorities();
 		auth.setAuthority("player");
 		auth.setUser(user);
 		authoritiesServices.saveAuthorities(auth);
-		
 		user.setAuthorities(auth);
 		userServices.saveUser(user);
 		int countfinal= authoritiesServices.authCount();
@@ -167,7 +162,6 @@ public class AuthoritiesServicesTest {
 		user2.setFirstName("user2");
 		user2.setLastName("prueba");
 		userServices.saveUser(user2);
-		
 		Authorities auth2 = new Authorities();
 		auth2.setAuthority("admin");
 		auth2.setUser(user2);
