@@ -142,14 +142,14 @@ public class GameService extends ScoreCountImpl{
 		if(gameopt.isPresent()) {
 			Game game = gameopt.get();
 			List<Card> ls = game.getCards();
-			game.setCards(ls.stream().filter(c->c.getId()!=cardId).collect(Collectors.toList()));
+			game.setCards(ls.stream().filter(c->c.getId().equals(cardId)).collect(Collectors.toList()));
 		}
 		
 	}
 	
 	public void deleteCardFromDeck(Game game, Card card) {
 		List<Card> ls = game.getCards();
-		game.setCards(ls.stream().filter(c->c.getId()!=card.getId()).collect(Collectors.toList()));
+		game.setCards(ls.stream().filter(c->c.getId().equals(card.getId())).collect(Collectors.toList()));
 	}
 	
 	
@@ -240,7 +240,7 @@ public class GameService extends ScoreCountImpl{
 		playerstatus.setChosenIsland(null);
 		statusService.saveStatus(playerstatus);
 		nextPlayer(game);
-		if(game.getCurrentPlayer()==game.getInitialPlayer()) {
+		if(game.getCurrentPlayer().equals(game.getInitialPlayer())) {
 			game.setCurrentRound(game.getCurrentRound()+1);
 		}
 		game.setFinishedTurn(0);
@@ -252,7 +252,7 @@ public class GameService extends ScoreCountImpl{
 		if(game.getFinishedTurn()==0) {
 			if(status.getDiceNumber()!=null) {
 				Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
-				if(status.getChosenIsland()==null || status.getChosenIsland()==islandId) {
+				if(status.getChosenIsland()==null || status.getChosenIsland().equals(islandId)) {
 					if(opt.isPresent()) {
     					IslandStatus is = opt.get();
     					if(is.getCard()!=null) {
@@ -291,16 +291,21 @@ public class GameService extends ScoreCountImpl{
 	@Transactional
 	public void robIsland(Game game, Integer islandId, Status status) throws GameControllerException{
 		if(status.getChosenIsland()!=null) {
-			if(status.getChosenIsland()==islandId) {
-				IslandStatus is = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId).get();
-				Card card = is.getCard();
-				status.getCards().add(card);
-				statusService.saveStatus(status);
-				llenarIsla(game, is);
-				game.setFinishedTurn(1);
-				saveGame(game);
-				status.setNumberOfCardsToPay(null);
-				statusService.saveStatus(status);
+			if(status.getChosenIsland().equals(islandId)) {
+				Optional<IslandStatus> opt = islandStatusService.findIslandStatusByGameAndIsland(game.getId(), islandId);
+				if(opt.isPresent()) {
+					IslandStatus is = opt.get();
+					Card card = is.getCard();
+					status.getCards().add(card);
+					statusService.saveStatus(status);
+					llenarIsla(game, is);
+					game.setFinishedTurn(1);
+					saveGame(game);
+					status.setNumberOfCardsToPay(null);
+					statusService.saveStatus(status);
+				}else {
+					throw new GameControllerException("Esa isla no existe.");
+				}
 			}else {
 				throw new GameControllerException("Ya has elegido saquear la isla " + status.getChosenIsland() + ". No puedes cambiarla.");
 			}
@@ -314,7 +319,8 @@ public class GameService extends ScoreCountImpl{
 			if(!(game.getCurrentRound()>game.getMaxRounds())) {
 				Integer pn = game.getCurrentPlayer();
 				Status status = game.getStatus().get(pn);
-				if(status.getPlayer().getId()==playerService.findCurrentPlayer().get().getId()) {
+				Optional<Player> opt = playerService.findCurrentPlayer();
+				if(status.getPlayer().getId().equals(opt.get().getId())) {
 					return true;		
 				}else {
 					throw new GameControllerException("No es tu turno.");
