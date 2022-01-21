@@ -27,10 +27,6 @@ import sevenisles.player.Player;
 @Table(name = "users")
 public class User extends UserAuditory implements Serializable, Comparable<User>{
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	
 	
 	@NotEmpty
 	@Size(min = 3, max = 50)
